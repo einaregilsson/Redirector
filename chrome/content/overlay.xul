@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- $Id$ -->
+<?xml-stylesheet href="chrome://redirector/skin/overlay.css" type="text/css"?>
+<!DOCTYPE overlay SYSTEM "chrome://redirector/locale/redirector.dtd">
+<overlay id="redirector-overlay"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <script src="redirlib.js"/>
+  <script src="common.js"/>
+  <script src="redirector.js"/>
+
+  <stringbundleset id="stringbundleset">
+    <stringbundle id="redirector-strings" src="chrome://redirector/locale/redirector.properties"/>
+  </stringbundleset>
+
+  <menupopup id="menu_ToolsPopup">
+    <menuitem id="redirector-menuitem" label="&RedirectorMenuItem.label;"
+              accesskey="&RedirectorMenuItem.accesskey;"
+              oncommand="Redirector.onMenuItemCommand(event);"/>
+  </menupopup>
+  <popup id="contentAreaContextMenu">
+    <menuitem id="redirector-context" label="&RedirectorContext.label;"
+              accesskey="&RedirectorContext.accesskey;"
+              insertafter="context-stop"
+              oncommand="Redirector.onContextMenuCommand(event)"/>
+  </popup>
+</overlay>

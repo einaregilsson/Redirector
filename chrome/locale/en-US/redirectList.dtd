@@ -1,0 +1,9 @@
+<!-- $Id$ -->
+<!ENTITY window.title "Redirects">
+<!ENTITY header "Pattern">
+<!ENTITY colPattern.label "Pattern">
+<!ENTITY colRedirectTo.label "Redirect to">
+<!ENTITY colOnlyIfLinkExits.label "Only if link exists">
+<!ENTITY colPatternType.label "Pattern type">
+<!ENTITY header "Redirects">
+<!ENTITY header.description "All active redirects">

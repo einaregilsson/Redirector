@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<!DOCTYPE dialog SYSTEM "chrome://redirector/locale/redirect.dtd">
+<dialog title="&redirectWindow.title;"
+        orient="vertical"
+        autostretch="always"
+        onload="Redirect.onLoad();"
+        buttons="accept,cancel"
+        ondialogaccept="return Redirect.onAccept();"
+        xmlns:nc="http://home.netscape.com/NC-rdf#"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <script type="application/x-javascript" src="common.js"/>
+  <script type="application/x-javascript" src="redirlib.js"/>
+  <script type="application/x-javascript" src="redirect.js"/>
+  <style type="text/css">
+    textbox { width:500px; }
+  </style>
+
+  <grid>
+    <rows>
+      <row>
+        <text value="&txtExampleUrl.label;"/>
+        <textbox id="txtExampleUrl" disabled="true" />
+      </row>
+      <row>
+        <text value="&txtPattern.label;"/>
+        <textbox id="txtPattern"/>
+        <button id="btnTestPattern" label="&btnTestPattern.label;" onclick="Redirect.testPattern();" />
+      </row>
+      <row>
+        <text value="&txtRedirectUrl.label;"/>
+        <textbox id="txtRedirectUrl"/>
+      </row>
+    </rows>
+  </grid>
+  <checkbox id="chkOnlyIfLinkExists" label="&chkOnlyIfLinkExists.label;"/>
+
+</dialog>
