@@ -66,6 +66,10 @@ var RedirLib = {
         return this._prefBranch.getCharPref(branch);
     },
 
+    setCharPref : function(branch, value) {
+        return this._prefBranch.setCharPref(branch, value);
+    },
+
     getBoolPref : function(branch) {
         return this._prefBranch.getBoolPref(branch);
     },

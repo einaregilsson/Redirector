@@ -17,6 +17,9 @@ var Redirector = {
 
             $('contentAreaContextMenu')
                 .addEventListener("popupshowing", function(e) { Redirector.showContextMenu(e); }, false);
+
+            this.redirects = eval(RedirLib.getCharPref('redirects'));
+
             var appcontent = window.document.getElementById('appcontent');
 
             if (appcontent && !appcontent.processed) {
@@ -44,15 +47,46 @@ var Redirector = {
     },
 
     onDOMContentLoaded : function(event) {
-        var redirect;
-        try {
+        var redirect, link, links, url;
+
+        url = window.content.location.href;
+
+        RedirLib.debug('Processing url %1'._(url));
+
         for each (redirect in this.redirects) {
-            if (RedirectorCommon.wildcardMatch(redirect.pattern, window.content.location.href)) {
-                window.content.location.href = redirect.redirectUrl;
+            if (RedirectorCommon.wildcardMatch(redirect.pattern, url)) {
+                RedirLib.debug('%1 matches %2'._(redirect.pattern, url));
+
+                if (redirect.onlyIfLinkExists) {
+
+                    links = window.content.document.getElementsByTagName('a');
+
+                    for each(link in links) {
+
+                        if (link.href && link.href.toString() == redirect.redirectUrl) {
+                            RedirLib.debug('Found a link for %1'._(redirect.redirectUrl));
+                            this.goto(redirect);
+                            return;
+                        }
+                    }
+
+                    RedirLib.debug('Did not find a link for %1'._(redirect.redirectUrl));
+
+                } else {
+                    this.goto(redirect);
+                }
             }
         }
-        } catch(e) {alert(e);}
 
+    },
+
+    goto : function(redirect) {
+
+        if (redirect.redirectUrl == window.content.location.href) {
+            RedirLib.msgBox(this.strings.getString('extensionName'), this.strings.getFormattedString('recursiveError', [redirect.pattern, redirect.redirectUrl]));
+        } else {
+            window.content.location.href = redirect.redirectUrl;
+        }
     },
 
     onUnload : function(event) {
@@ -82,6 +116,8 @@ var Redirector = {
         if (params.out.pattern) {
             this.redirects.push(params.out);
         }
+
+        RedirLib.setCharPref('redirects', this.redirects.toSource());
     },
 
     onMenuItemCommand: function(event) {
