@@ -17,7 +17,6 @@ var Redirector = {
         for each (r in this.list) {
             tempList.push([r.exampleUrl, r.pattern, r.redirectUrl, r.onlyIfLinkExists, r.patternType]);
         }
-        alert(tempList.toSource());
         RedirLib.setCharPref('redirects', tempList.toSource());
     },
 
@@ -41,7 +40,6 @@ var Redirector = {
 
     addRedirect : function(redirect) {
         this.list.push(redirect);
-        alert(redirect.toSource());
         this.save();
     },
 

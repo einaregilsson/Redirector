@@ -10,13 +10,13 @@
         xmlns:nc="http://home.netscape.com/NC-rdf#"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-  <script type="application/x-javascript" src="common.js"/>
   <script type="application/x-javascript" src="redirlib.js"/>
+  <script type="application/x-javascript" src="redirector.js"/>
   <script type="application/x-javascript" src="redirectList.js"/>
 
   <dialogheader title="&header;" description="&header.description;"/>
 
-  <listbox id="foo">
+  <listbox id="lstRedirects">
 
     <listhead>
       <listheader label="&colPattern.label;"/>
