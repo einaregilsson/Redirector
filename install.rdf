@@ -5,12 +5,11 @@
   <Description about="urn:mozilla:install-manifest">
     <em:id>redirector@einaregilsson.com</em:id>
     <em:name>Redirector</em:name>
-    <em:version>0.1</em:version>
+    <em:version>0.0.1</em:version>
     <em:creator>Einar Egilsson</em:creator>
     <em:description>Automatically redirects to user-defined urls on certain pages</em:description>
     <!-- <em:homepageURL>http://addons.mozilla.org/{app}/xxx/</em:homepageURL> --> <!-- Add after upload to addons.mozilla.org -->
-    <em:aboutURL>chrome://redirector/content/about.xul</em:aboutURL>
-    <em:optionsURL>chrome://redirector/content/options.xul</em:optionsURL>
+    <em:optionsURL>chrome://redirector/content/redirectList.xul</em:optionsURL>
     <em:iconURL>chrome://redirector/content/redirector.png</em:iconURL>
     <em:targetApplication>
       <Description>

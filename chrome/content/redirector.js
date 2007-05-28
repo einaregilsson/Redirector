@@ -1,71 +1,64 @@
-//// $Id$
+const kRedirectorWildcard = 'W';
+const kRedirectorRegex= 'R';
 
 var Redirector = {
 
-    id          : "redirector@einaregilsson.com",
-    name        : "Redirector",
-    initialized : false,
-    strings     : null,
-    redirects   : [],
+    list : [],
 
-    onLoad : function(event) {
-        try {
-
-            // initialization code
-            RedirLib.initialize(this);
-            RedirLib.debug("Initializing...");
-
-            $('contentAreaContextMenu')
-                .addEventListener("popupshowing", function(e) { Redirector.showContextMenu(e); }, false);
-
-            this.redirects = eval(RedirLib.getCharPref('redirects'));
-
-            var appcontent = window.document.getElementById('appcontent');
-
-            if (appcontent && !appcontent.processed) {
-                appcontent.processed = true;
-
-                appcontent.addEventListener('DOMContentLoaded', function(event) {
-
-                    Redirector.onDOMContentLoaded(event);
-
-                }, false);
-            }
-            this.strings = document.getElementById("redirector-strings");
-
-            RedirLib.debug("Finished initialization");
-            this.initialized = true;
-
-        } catch(e) {
-            //Don't use RedirLib because it's initialization might have failed.
-            if (this.strings) {
-                alert(this.strings.getString("initError")._(this.name) + "\n\n" + e);
-            } else {
-                alert(e);
-            }
-        }
+    init : function() {
+        this.load();
+        this.prefObserver.register();
     },
 
-    onDOMContentLoaded : function(event) {
-        var redirect, link, links, url;
+    save : function() {
+        var r
+          , tempList = [];
 
-        url = window.content.location.href;
+        for each (r in this.list) {
+            tempList.push([r.exampleUrl, r.pattern, r.redirectUrl, r.onlyIfLinkExists, r.patternType]);
+        }
+        alert(tempList.toSource());
+        RedirLib.setCharPref('redirects', tempList.toSource());
+    },
 
-        RedirLib.debug('Processing url %1'._(url));
+    load : function() {
+        var tempList = eval(RedirLib.getCharPref('redirects'));
+        var arr;
 
-        for each (redirect in this.redirects) {
-            if (RedirectorCommon.wildcardMatch(redirect.pattern, url)) {
+        this.list = [];
+
+        for each (arr in tempList) {
+            this.list.push({
+                exampleUrl          : arr[0],
+                pattern             : arr[1],
+                redirectUrl         : arr[2],
+                onlyIfLinkExists    : arr[3],
+                patternType         : arr[4]
+            });
+        }
+
+    },
+
+    addRedirect : function(redirect) {
+        this.list.push(redirect);
+        alert(redirect.toSource());
+        this.save();
+    },
+
+    processUrl : function(url) {
+        var redirect, link, links;
+        for each (redirect in this.list) {
+
+            if (redirect.patternType == kRedirectorWildcard && this.wildcardMatch(redirect.pattern, url)) {
                 RedirLib.debug('%1 matches %2'._(redirect.pattern, url));
-
                 if (redirect.onlyIfLinkExists) {
-
                     links = window.content.document.getElementsByTagName('a');
 
                     for each(link in links) {
 
                         if (link.href && link.href.toString() == redirect.redirectUrl) {
                             RedirLib.debug('Found a link for %1'._(redirect.redirectUrl));
-                            this.goto(redirect);
+                            this._goto(redirect);
                             return;
                         }
                     }
@@ -73,14 +66,13 @@ var Redirector = {
                     RedirLib.debug('Did not find a link for %1'._(redirect.redirectUrl));
 
                 } else {
-                    this.goto(redirect);
+                    this._goto(redirect);
                 }
             }
         }
-
     },
 
-    goto : function(redirect) {
+    _goto : function(redirect) {
 
         if (redirect.redirectUrl == window.content.location.href) {
             RedirLib.msgBox(this.strings.getString('extensionName'), this.strings.getFormattedString('recursiveError', [redirect.pattern, redirect.redirectUrl]));
@@ -89,45 +81,58 @@ var Redirector = {
         }
     },
 
-    onUnload : function(event) {
-        //Clean up here
-        RedirLib.debug("Finished cleanup");
-    },
+    wildcardMatch : function(pattern, text) {
+        var parts
+          , part
+          , i
+          , pos;
 
-    showContextMenu : function(event) {
-        if (gContextMenu.onLink) {
-            $("redirector-context").label = this.strings.getString('addLinkUrl');
-        } else {
-            $("redirector-context").label = this.strings.getString('addCurrentUrl');
+        parts = pattern.split('*');
+
+        for (i in parts) {
+
+            part = parts[i];
+
+            pos = text.indexOf(part);
+
+            if (pos == -1) {
+                return false;
+            }
+
+            if (i == 0 && pos != 0) {
+                return false;
+            }
+
+            if (i == parts.length -1 && i != "" && text.substr(text.length - part.length) != part) {
+                return false;
+
+            }
+
+            text = text.substr(pos + part.length);
         }
+
+        return true;
     },
 
-    onContextMenuCommand: function(event) {
+    prefObserver : {
 
-        params = { inn : { url : window.content.location.href}, out : {} };
-        if (gContextMenu.onLink) {
-            params.inn.redirect = gContextMenu.link.toString();
+        getService : function() {
+            return Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefBranchInternal);
+        },
+
+        register: function() {
+            this.getService().addObserver('extensions.redirector', this, false);
+        },
+
+        unregister: function() {
+            this.getService().removeObserver('extensions.redirector', this);
+        },
+
+        observe : function(subject, topic, data) {
+            if (topic == 'nsPref:changed' && data == 'extensions.redirector.redirects') {
+                Redirector.load();
+            }
         }
 
-        window.openDialog("chrome://redirector/content/redirect.xul",
-                    "redirect",
-                    "chrome,dialog,modal,centerscreen", params);
-
-        if (params.out.pattern) {
-            this.redirects.push(params.out);
-        }
-
-        RedirLib.setCharPref('redirects', this.redirects.toSource());
     },
-
-    onMenuItemCommand: function(event) {
-        window.openDialog("chrome://redirector/content/redirectList.xul",
-                    "redirectList",
-                    "chrome,dialog,modal,centerscreen", this);
-
-    },
-
 };
-
-window.addEventListener("load", function(event) { Redirector.onLoad(event); }, false);
-window.addEventListener("unload", function(event) { Redirector.onUnload(event); }, false);

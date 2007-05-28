@@ -14,7 +14,8 @@ var Redirect = {
         var params = window.arguments[0];
 
         params.out.pattern = $('txtPattern').value;
-        params.out.patternType = 'Wildcard';
+        params.out.patternType = kRedirectorWildcard;
+        params.out.exampleUrl =$('txtExampleUrl').value;
         params.out.redirectUrl = $('txtRedirectUrl').value;
         params.out.onlyIfLinkExists = $('chkOnlyIfLinkExists').checked;
 
@@ -23,7 +24,7 @@ var Redirect = {
 
     testPattern : function() {
         try {
-        alert(RedirectorCommon.wildcardMatch($('txtPattern').value, $('txtExampleUrl').value));
+        alert(Redirector.wildcardMatch($('txtPattern').value, $('txtExampleUrl').value));
         } catch(e) {alert(e);}
     }
 
