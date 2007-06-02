@@ -13,33 +13,38 @@
   <script type="application/x-javascript" src="redirlib.js"/>
   <script type="application/x-javascript" src="redirector.js"/>
   <script type="application/x-javascript" src="redirect.js"/>
-  <style type="text/css">
-    textbox { width:500px; }
-  </style>
+  <stringbundleset id="stringbundleset">
+    <stringbundle id="redirector-strings" src="chrome://redirector/locale/redirector.properties"/>
+  </stringbundleset>
 
   <grid>
     <rows>
       <row>
-        <text value="&txtExampleUrl.label;"/>
-        <textbox id="txtExampleUrl" disabled="true" />
+        <text value="&txtExampleUrl.label;" style="margin-top:6px;"/>
+        <textbox id="txtExampleUrl" disabled="true" style="width:400px;"/>
       </row>
       <row>
-        <text value="&txtPattern.label;"/>
-        <textbox id="txtPattern"/>
-        <button id="btnTestPattern" label="&btnTestPattern.label;" onclick="Redirect.testPattern();" />
+        <text value="&txtPattern.label;" style="margin-top:6px;"/>
+        <textbox id="txtPattern" taborder="1"/>
+        <button id="btnTestPattern" label="&btnTestPattern.label;" onclick="Redirect.testPattern();" taborder="2"/>
       </row>
       <row>
-        <text value="&txtRedirectUrl.label;"/>
-        <textbox id="txtRedirectUrl"/>
+        <text value="&txtRedirectUrl.label;" style="margin-top:6px;"/>
+        <textbox id="txtRedirectUrl" taborder="3"/>
       </row>
       <row>
-        <checkbox id="chkOnlyIfLinkExists" label="&chkOnlyIfLinkExists.label;"/>
+        <text value="&rdoPatternTypes.label;"/>
         <radiogroup>
-          <radio id="rdoWildcard" label="&rdoWildcard.label;" accesskey="&rdoWildcard.accessKey;" selected="true"/>
-          <radio id="rdoRegex" label="&rdoRegex.label;"  accesskey="&rdoRegex.accessKey;"/>
+          <radio id="rdoWildcard" label="&rdoWildcard.label;" accesskey="&rdoWildcard.accessKey;" selected="true" taborder="4"/>
+          <radio id="rdoRegex" label="&rdoRegex.label;"  accesskey="&rdoRegex.accessKey;" taborder="5"/>
         </radiogroup>
       </row>
+      <row>
+        <text value="&chkOnlyIfLinkExists.label;" />
+        <checkbox id="chkOnlyIfLinkExists" label="" taborder="6"/>
+      </row>
     </rows>
+
   </grid>
 
 </dialog>

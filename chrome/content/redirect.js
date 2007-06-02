@@ -10,6 +10,8 @@ var Redirect = {
         $('txtRedirectUrl').value = item.redirectUrl || '';
         $('chkOnlyIfLinkExists').checked = item.onlyIfLinkExists || false;
 
+        this.strings = document.getElementById("redirector-strings");
+
         if (item.patternType == kRedirectorRegex) {
             $('rdoRegex').setAttribute('selected', true);
             $('rdoWildcard').setAttribute('selected', false);
@@ -34,9 +36,25 @@ var Redirect = {
     },
 
     testPattern : function() {
-        var match;
+        var redirectUrl, pattern, example, extName;
 
-        alert(Redirector.wildcardMatch($('txtPattern').value, $('txtExampleUrl').value));
+        redirectUrl = $('txtRedirectUrl').value;
+        pattern = $('txtPattern').value;
+        example = $('txtExampleUrl').value;
+
+        extName = this.strings.getString('extensionName');
+
+        if ($('rdoRegex').selected) {
+            redirectUrl = Redirector.regexMatch(pattern, example, redirectUrl);
+        } else {
+            redirectUrl = Redirector.wildcardMatch(pattern, example, redirectUrl);
+        }
+
+        if (redirectUrl || (redirectUrl === '' && $('txtRedirectUrl').value === '')) {
+            RedirLib.msgBox(extName, this.strings.getFormattedString('testPatternSuccess', [pattern, example, redirectUrl]));
+        } else {
+            RedirLib.msgBox(extName, this.strings.getFormattedString('testPatternFailure', [pattern, example]));
+        }
     }
 
 };

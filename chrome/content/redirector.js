@@ -51,7 +51,7 @@ var Redirector = {
     },
 
     processUrl : function(url) {
-        var redirect, link, links, redirectUrl, match;
+        var redirect, link, links, redirectUrl;
 
         if (!this.enabled) {
             return;
@@ -59,17 +59,14 @@ var Redirector = {
 
         for each (redirect in this.list) {
 
-            var redirectUrl;
 
             if (redirect.patternType == kRedirectorWildcard) {
-                match = this.wildcardMatch(redirect.pattern, url);
-                redirectUrl = redirect.redirectUrl;
+                redirectUrl = this.wildcardMatch(redirect.pattern, url, redirect.redirectUrl);
             } else if (redirect.patternType == kRedirectorRegex) {
-                match = this.regexMatch(redirect.pattern, url);
-                redirectUrl = redirect.redirectUrl;
+                redirectUrl = this.regexMatch(redirect.pattern, url, redirect.redirectUrl);
             }
 
-            if (match) {
+            if (redirectUrl) {
                 RedirLib.debug('%1 matches %2'._(redirect.pattern, url));
                 if (redirect.onlyIfLinkExists) {
                     links = window.content.document.getElementsByTagName('a');
@@ -101,12 +98,38 @@ var Redirector = {
         }
     },
 
-    regexMatch : function(pattern, text) {
-        alert('regexmatch');
+    regexMatch : function(pattern, text, redirectUrl) {
+
+        var strings, rx, match;
+        try {
+            rx = new RegExp(pattern, 'gi');
+            match = rx.exec(text);
+        } catch(e) {
+            //HACK, need to make this better
+            if (window.RedirectorOverlay) {
+                strings = window.RedirectorOverlay.strings;
+            } else if(window.Redirect) {
+                strings = window.Redirect.strings;
+            }
+            RedirLib.msgBox(strings.getString('extensionName'), strings.getFormattedString('regexPatternError', [pattern, e.toString()]));
+            return null;
+        }
+
+        var rxrepl;
+
+        if (match) {
+            for (var i = 1; i < match.length; i++) {
+                rxrepl = new RegExp('\\$' + i, 'gi');
+                redirectUrl = redirectUrl.replace(rxrepl, match[i]);
+            }
+            return redirectUrl;
+        }
+
+        return null;
 
     },
 
-    wildcardMatch : function(pattern, text) {
+    wildcardMatch : function(pattern, text, redirectUrl) {
         var parts
           , part
           , i
@@ -121,22 +144,22 @@ var Redirector = {
             pos = text.indexOf(part);
 
             if (pos == -1) {
-                return false;
+                return null;
             }
 
             if (i == 0 && pos != 0) {
-                return false;
+                return null;
             }
 
             if (i == parts.length -1 && i != "" && text.substr(text.length - part.length) != part) {
-                return false;
+                return null;
 
             }
 
             text = text.substr(pos + part.length);
         }
 
-        return true;
+        return redirectUrl;
     },
 
     prefObserver : {

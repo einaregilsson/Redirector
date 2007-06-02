@@ -16,7 +16,7 @@
   <script type="application/x-javascript" src="redirectList.js"/>
 
   <vbox>
-  <listbox id="lstRedirects" height="300px" ondblclick="RedirectList.editRedirect();" onselect="RedirectList.selectionChange();">
+  <listbox id="lstRedirects" style="margin-bottom:5px;" height="330px" ondblclick="RedirectList.editRedirect();" onselect="RedirectList.selectionChange();">
 
     <listhead>
       <listheader label="&colPattern.label;"/>
