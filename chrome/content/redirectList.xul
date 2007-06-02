@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <!DOCTYPE dialog SYSTEM "chrome://redirector/locale/redirectList.dtd">
-<dialog title="&window.title;"
+<window title="&window.title;"
         orient="vertical"
         autostretch="always"
         onload="RedirectList.onLoad();"
         buttons="accept"
-        ondialogaccept="return RedirectList.onAccept();"
+        width="600px;"
+        height="400px;"
         xmlns:nc="http://home.netscape.com/NC-rdf#"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
@@ -14,24 +15,31 @@
   <script type="application/x-javascript" src="redirector.js"/>
   <script type="application/x-javascript" src="redirectList.js"/>
 
-  <dialogheader title="&header;" description="&header.description;"/>
-
-  <listbox id="lstRedirects">
+  <vbox>
+  <listbox id="lstRedirects" height="300px" ondblclick="RedirectList.editRedirect();" onselect="RedirectList.selectionChange();">
 
     <listhead>
       <listheader label="&colPattern.label;"/>
+      <listheader label="&colExample.label;"/>
       <listheader label="&colRedirectTo.label;"/>
       <listheader label="&colOnlyIfLinkExits.label;"/>
       <listheader label="&colPatternType.label;"/>
     </listhead>
 
     <listcols>
-      <listcol flex="1"/>
-      <listcol flex="1"/>
-      <listcol flex="1"/>
-      <listcol flex="1"/>
+      <listcol/>
+      <listcol/>
+      <listcol/>
+      <listcol/>
+      <listcol/>
 
     </listcols>
 
   </listbox>
-</dialog>
+  <hbox style="align:right;">
+    <button id="btnEdit" onclick="RedirectList.editRedirect();" label="&btnEdit.label;" disabled="true" />
+    <button id="btnDelete" onclick="RedirectList.deleteRedirect();" label="&btnDelete.label;" disabled="true" />
+    <button id="btnClose" onclick="RedirectList.close();" label="&btnClose.label;"/>
+  </hbox>
+  </vbox>
+</window>

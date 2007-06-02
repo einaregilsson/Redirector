@@ -70,6 +70,10 @@ var RedirLib = {
         return this._prefBranch.setCharPref(branch, value);
     },
 
+    setBoolPref : function(branch, value) {
+        return this._prefBranch.setBoolPref(branch, value);
+    },
+
     getBoolPref : function(branch) {
         return this._prefBranch.getBoolPref(branch);
     },

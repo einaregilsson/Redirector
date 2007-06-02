@@ -32,6 +32,9 @@ var RedirectorOverlay = {
             }
             this.strings = document.getElementById("redirector-strings");
 
+            this.prefObserver.register();
+            this.setStatusBarImg();
+
             RedirLib.debug("Finished initialization");
             this.initialized = true;
 
@@ -74,17 +77,17 @@ var RedirectorOverlay = {
 
     onContextMenuCommand: function(event) {
 
-        params = { inn : { url : window.content.location.href}, out : {} };
+        var item = { exampleUrl : window.content.location.href, pattern: window.content.location.href};
         if (gContextMenu.onLink) {
-            params.inn.redirect = gContextMenu.link.toString();
+            item.redirectUrl = gContextMenu.link.toString();
         }
 
         window.openDialog("chrome://redirector/content/redirect.xul",
                     "redirect",
-                    "chrome,dialog,modal,centerscreen", params);
+                    "chrome,dialog,modal,centerscreen", item);
 
-        if (params.out.pattern) {
-            Redirector.addRedirect(params.out);
+        if (item.saved) {
+            Redirector.addRedirect(item);
         }
 
     },
@@ -96,6 +99,47 @@ var RedirectorOverlay = {
 
     },
 
+    toggleEnabled : function(event) {
+        RedirLib.setBoolPref('enabled', !RedirLib.getBoolPref('enabled'));
+    },
+
+    setStatusBarImg : function() {
+        var statusImg = $('redirector-statusbar-img');
+
+        if (RedirLib.getBoolPref('enabled')) {
+            statusImg.src = 'chrome://redirector/content/statusactive.png'
+            statusImg.setAttribute('tooltiptext', this.strings.getString('enabledTooltip'));
+        } else {
+            statusImg.src = 'chrome://redirector/content/statusinactive.png'
+            statusImg.setAttribute('tooltiptext', this.strings.getString('disabledTooltip'));
+        }
+    },
+
+    prefObserver : {
+
+        getService : function() {
+            return Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefBranchInternal);
+        },
+
+        register: function() {
+            this.getService().addObserver('extensions.redirector', this, false);
+        },
+
+        unregister: function() {
+            this.getService().removeObserver('extensions.redirector', this);
+        },
+
+        observe : function(subject, topic, data) {
+            if (topic == 'nsPref:changed' && data == 'extensions.redirector.enabled') {
+                RedirectorOverlay.setStatusBarImg();
+            }
+        }
+
+    }
+
+
 };
 window.addEventListener("load", function(event) { RedirectorOverlay.onLoad(event); }, false);
 window.addEventListener("unload", function(event) { RedirectorOverlay.onUnload(event); }, false);
+
+

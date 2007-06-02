@@ -32,8 +32,14 @@
         <text value="&txtRedirectUrl.label;"/>
         <textbox id="txtRedirectUrl"/>
       </row>
+      <row>
+        <checkbox id="chkOnlyIfLinkExists" label="&chkOnlyIfLinkExists.label;"/>
+        <radiogroup>
+          <radio id="rdoWildcard" label="&rdoWildcard.label;" accesskey="&rdoWildcard.accessKey;" selected="true"/>
+          <radio id="rdoRegex" label="&rdoRegex.label;"  accesskey="&rdoRegex.accessKey;"/>
+        </radiogroup>
+      </row>
     </rows>
   </grid>
-  <checkbox id="chkOnlyIfLinkExists" label="&chkOnlyIfLinkExists.label;"/>
 
 </dialog>

@@ -3,29 +3,40 @@
 var Redirect = {
 
     onLoad : function() {
-        var params = window.arguments[0];
-        $('txtExampleUrl').value = params.inn.url;
-        $('txtPattern').value = params.inn.url;
-        $('txtRedirectUrl').value = params.inn.redirect || '';
+        var item = window.arguments[0];
+        item.saved = false;
+        $('txtExampleUrl').value = item.exampleUrl;
+        $('txtPattern').value = item.pattern;
+        $('txtRedirectUrl').value = item.redirectUrl || '';
+        $('chkOnlyIfLinkExists').checked = item.onlyIfLinkExists || false;
 
+        if (item.patternType == kRedirectorRegex) {
+            $('rdoRegex').setAttribute('selected', true);
+            $('rdoWildcard').setAttribute('selected', false);
+        }
     },
 
     onAccept : function() {
-        var params = window.arguments[0];
+        var item = window.arguments[0];
 
-        params.out.pattern = $('txtPattern').value;
-        params.out.patternType = kRedirectorWildcard;
-        params.out.exampleUrl =$('txtExampleUrl').value;
-        params.out.redirectUrl = $('txtRedirectUrl').value;
-        params.out.onlyIfLinkExists = $('chkOnlyIfLinkExists').checked;
+        item.pattern = $('txtPattern').value;
+        if ($('rdoRegex').selected) {
+            item.patternType = kRedirectorRegex;
+        } else {
+            item.patternType = kRedirectorWildcard;
+        }
+        item.exampleUrl =$('txtExampleUrl').value;
+        item.redirectUrl = $('txtRedirectUrl').value;
+        item.onlyIfLinkExists = $('chkOnlyIfLinkExists').checked;
+        item.saved = true;
 
         return true;
     },
 
     testPattern : function() {
-        try {
+        var match;
+
         alert(Redirector.wildcardMatch($('txtPattern').value, $('txtExampleUrl').value));
-        } catch(e) {alert(e);}
     }
 
 };

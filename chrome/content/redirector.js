@@ -5,6 +5,8 @@ var Redirector = {
 
     list : [],
 
+    enabled : true,
+
     init : function() {
         this.load();
         this.prefObserver.register();
@@ -43,40 +45,65 @@ var Redirector = {
         this.save();
     },
 
+    deleteAt : function(index) {
+        this.list.splice(index, 1);
+        this.save();
+    },
+
     processUrl : function(url) {
-        var redirect, link, links;
+        var redirect, link, links, redirectUrl, match;
+
+        if (!this.enabled) {
+            return;
+        }
+
         for each (redirect in this.list) {
 
-            if (redirect.patternType == kRedirectorWildcard && this.wildcardMatch(redirect.pattern, url)) {
+            var redirectUrl;
+
+            if (redirect.patternType == kRedirectorWildcard) {
+                match = this.wildcardMatch(redirect.pattern, url);
+                redirectUrl = redirect.redirectUrl;
+            } else if (redirect.patternType == kRedirectorRegex) {
+                match = this.regexMatch(redirect.pattern, url);
+                redirectUrl = redirect.redirectUrl;
+            }
+
+            if (match) {
                 RedirLib.debug('%1 matches %2'._(redirect.pattern, url));
                 if (redirect.onlyIfLinkExists) {
                     links = window.content.document.getElementsByTagName('a');
 
                     for each(link in links) {
 
-                        if (link.href && link.href.toString() == redirect.redirectUrl) {
-                            RedirLib.debug('Found a link for %1'._(redirect.redirectUrl));
-                            this._goto(redirect);
+                        if (link.href && link.href.toString() == redirectUrl) {
+                            RedirLib.debug('Found a link for %1'._(redirectUrl));
+                            this._goto(redirectUrl, redirect.pattern);
                             return;
                         }
                     }
 
-                    RedirLib.debug('Did not find a link for %1'._(redirect.redirectUrl));
+                    RedirLib.debug('Did not find a link for %1'._(redirectUrl));
 
                 } else {
-                    this._goto(redirect);
+                    this._goto(redirectUrl, redirect.pattern);
                 }
             }
         }
     },
 
-    _goto : function(redirect) {
+    _goto : function(redirectUrl, pattern) {
 
-        if (redirect.redirectUrl == window.content.location.href) {
-            RedirLib.msgBox(this.strings.getString('extensionName'), this.strings.getFormattedString('recursiveError', [redirect.pattern, redirect.redirectUrl]));
+        if (redirectUrl == window.content.location.href) {
+            RedirLib.msgBox(this.strings.getString('extensionName'), this.strings.getFormattedString('recursiveError', [pattern, redirectUrl]));
         } else {
-            window.content.location.href = redirect.redirectUrl;
+            window.content.location.href = redirectUrl;
         }
+    },
+
+    regexMatch : function(pattern, text) {
+        alert('regexmatch');
+
     },
 
     wildcardMatch : function(pattern, text) {
@@ -127,8 +154,14 @@ var Redirector = {
         },
 
         observe : function(subject, topic, data) {
-            if (topic == 'nsPref:changed' && data == 'extensions.redirector.redirects') {
+            if (topic != 'nsPref:changed') {
+                return;
+            }
+
+            if (data == 'extensions.redirector.redirects') {
                 Redirector.load();
+            } else if (data == 'extensions.redirector.enabled') {
+                Redirector.enabled = RedirLib.getBoolPref('enabled');
             }
         }
 
