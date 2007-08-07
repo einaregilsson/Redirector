@@ -12,16 +12,7 @@ var RedirectList = {
         var item, row, value;
 
         for each (item in items) {
-            row = document.createElement('listitem');
-
-            this.createCell(row, item.pattern);
-            this.createCell(row, item.exampleUrl);
-            this.createCell(row, item.redirectUrl);
-            this.createCell(row, item.onlyIfLinkExists);
-            this.createCell(row, item.patternType);
-
-            row.item = item;
-
+            row = this.createRow(item);
             list.appendChild(row);
         }
     },
@@ -33,6 +24,18 @@ var RedirectList = {
         row.appendChild(cell);
     },
 
+	createRow : function(item) {
+		var row = document.createElement('listitem');
+
+		this.createCell(row, item.pattern);
+		this.createCell(row, item.exampleUrl);
+		this.createCell(row, item.redirectUrl);
+		this.createCell(row, item.onlyIfLinkExists);
+		this.createCell(row, item.patternType);
+
+		row.item = item;
+		return row;
+	},
 
     onLoad : function() {
         try {
@@ -49,6 +52,22 @@ var RedirectList = {
 
     close : function() {
         window.close();
+    },
+
+    addRedirect : function() {
+
+        var item = { pattern : '', exampleUrl : '', redirectUrl : '', onlyIfLinkExists : false, patternType : 'W'};
+
+        window.openDialog("chrome://redirector/content/redirect.xul",
+                    "redirect",
+                    "chrome,dialog,modal,centerscreen", item);
+
+        if (item.saved) {
+			var row = this.createRow(item);
+			$('lstRedirects').appendChild(row);
+			Redirector.addRedirect(item);
+        }
+
     },
 
     editRedirect : function() {

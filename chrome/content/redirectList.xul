@@ -37,6 +37,7 @@
 
   </listbox>
   <hbox style="align:right;">
+    <button id="btnAdd" onclick="RedirectList.addRedirect();" label="&btnAdd.label;" disabled="false" />
     <button id="btnEdit" onclick="RedirectList.editRedirect();" label="&btnEdit.label;" disabled="true" />
     <button id="btnDelete" onclick="RedirectList.deleteRedirect();" label="&btnDelete.label;" disabled="true" />
     <button id="btnClose" onclick="RedirectList.close();" label="&btnClose.label;"/>

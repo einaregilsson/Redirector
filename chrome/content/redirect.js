@@ -10,6 +10,7 @@ var Redirect = {
         $('txtRedirectUrl').value = item.redirectUrl || '';
         $('chkOnlyIfLinkExists').checked = item.onlyIfLinkExists || false;
 
+		$('txtPattern').focus();
         this.strings = document.getElementById("redirector-strings");
 
         if (item.patternType == kRedirectorRegex) {

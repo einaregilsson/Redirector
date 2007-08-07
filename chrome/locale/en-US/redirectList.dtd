@@ -5,6 +5,7 @@
 <!ENTITY colRedirectTo.label "Redirect to">
 <!ENTITY colOnlyIfLinkExits.label "Only if link exists">
 <!ENTITY colPatternType.label "Pattern type">
+<!ENTITY btnAdd.label "Add...">
 <!ENTITY btnEdit.label "Edit...">
 <!ENTITY btnDelete.label "Delete">
 <!ENTITY btnClose.label "Close">

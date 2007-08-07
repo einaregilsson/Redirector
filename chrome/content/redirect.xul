@@ -21,7 +21,7 @@
     <rows>
       <row>
         <text value="&txtExampleUrl.label;" style="margin-top:6px;"/>
-        <textbox id="txtExampleUrl" disabled="true" style="width:400px;"/>
+        <textbox id="txtExampleUrl" style="width:400px;"/>
       </row>
       <row>
         <text value="&txtPattern.label;" style="margin-top:6px;"/>
