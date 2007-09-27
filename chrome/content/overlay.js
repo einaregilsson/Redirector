@@ -20,6 +20,7 @@ var RedirectorOverlay = {
             Redirector.init();
 
             var appcontent = window.document.getElementById('appcontent');
+            this.overrideOnStateChange();            
 
             if (appcontent && !appcontent.processed) {
                 appcontent.processed = true;
@@ -31,7 +32,7 @@ var RedirectorOverlay = {
                 }, false);
             }
             this.strings = document.getElementById("redirector-strings");
-
+            Redirector.strings = this.strings;
             this.prefObserver.register();
             this.setStatusBarImg();
 
@@ -48,6 +49,53 @@ var RedirectorOverlay = {
         }
     },
 
+    overrideOnStateChange : function() {
+        var origOnStateChange = nsBrowserStatusHandler.prototype.onStateChange;
+
+        nsBrowserStatusHandler.prototype.onStateChange = function(aWebProgress, aRequest, aStateFlags, aStatus) {
+
+            if(aStateFlags & Ci.nsIWebProgressListener.STATE_START
+            && aStateFlags| Ci.nsIWebProgressListener.STATE_IS_NETWORK
+            && aStateFlags| Ci.nsIWebProgressListener.STATE_IS_REQUEST
+                && aRequest && aWebProgress.DOMWindow == content) {
+      
+                //If it's not a GET request we'll always do a slow redirect so the web will continue
+                //to work in the way you'd expect
+                try {
+                    var oHttp = aRequest.QueryInterface(Ci.nsIHttpChannel);
+                    var method = oHttp.requestMethod;
+          
+                    if (method != "GET") {
+                        origOnStateChange.apply(this, arguments);
+                        return;
+                    }
+        
+                } catch(ex) {
+                    origOnStateChange.apply(this, arguments);
+                    return;
+                }
+
+                var uri = aRequest.QueryInterface(Ci.nsIChannel).URI.spec;
+                
+                RedirLib.debug('Checking url %1 for instant redirect'._(uri));
+                var redirectUrl = Redirector.getRedirectUrlForInstantRedirect(uri);
+                if (redirectUrl.url && oHttp.notificationCallbacks) {
+                    const NS_BINDING_ABORTED = 0x804b0002;
+                    aRequest.cancel(NS_BINDING_ABORTED);
+                    var newStateFlags = Ci.nsIWebProgressListener.STATE_STOP | Ci.nsIWebProgressListener.STATE_IS_NETWORK;
+                    origOnStateChange.call(this, aWebProgress, aRequest, newStateFlags, "");
+                    var interfaceRequestor = oHttp.notificationCallbacks.QueryInterface(Ci.nsIInterfaceRequestor);
+                    var targetDoc = interfaceRequestor.getInterface(Ci.nsIDOMWindow).document;    
+                    var gotoUrl = Redirector.makeAbsoluteUrl(uri, redirectUrl.url);
+                    Redirector.goto(gotoUrl, redirectUrl.pattern, uri, targetDoc); 
+                } else {
+                    origOnStateChange.apply(this, arguments);
+                }
+
+            }
+        };
+    },
+
     onDOMContentLoaded : function(event) {
         var redirect, link, links, url;
 
@@ -58,7 +106,7 @@ var RedirectorOverlay = {
         url = window.content.location.href;
 
         RedirLib.debug('Processing url %1'._(url));
-        Redirector.processUrl(url);
+        Redirector.processUrl(url, window.content);
     },
 
 
@@ -109,9 +157,11 @@ var RedirectorOverlay = {
         if (RedirLib.getBoolPref('enabled')) {
             statusImg.src = 'chrome://redirector/content/statusactive.png'
             statusImg.setAttribute('tooltiptext', this.strings.getString('enabledTooltip'));
+            Redirector.enabled = true;
         } else {
             statusImg.src = 'chrome://redirector/content/statusinactive.png'
             statusImg.setAttribute('tooltiptext', this.strings.getString('disabledTooltip'));
+            Redirector.enabled = false;
         }
     },
 
@@ -141,5 +191,3 @@ var RedirectorOverlay = {
 };
 window.addEventListener("load", function(event) { RedirectorOverlay.onLoad(event); }, false);
 window.addEventListener("unload", function(event) { RedirectorOverlay.onUnload(event); }, false);
-
-

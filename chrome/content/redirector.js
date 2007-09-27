@@ -50,6 +50,43 @@ var Redirector = {
         this.save();
     },
 
+    getRedirectUrlForInstantRedirect : function(url) {
+        var redirect, link, links, redirectUrl;
+
+        if (!this.enabled) {
+            return null;
+        }
+
+        for each (redirect in this.list) {
+
+            redirectUrl = this.getRedirectUrl(url, redirect);
+            //Can't do fast redirect if it requires that link exists
+            //we need the original page to verify that it exists.
+            //Slow redirect will be done automatically.
+            if (redirectUrl) {
+            
+                if (!redirect.onlyIfLinkExists && !redirect.redirectUrl.startsWith('xpath:')) {
+                    RedirLib.debug('%1 matches %2, and it\'s not only if link exists and not an xpath expression. Can do instant redirect.'._(redirect.pattern, url));
+                    return { 'url' : redirectUrl, 'pattern' : redirect.pattern};
+                } else if (redirect.redirectUrl.startsWith('xpath:')) {
+                    RedirLib.debug('%1 matches %2, but the redirect is a xpath expression and so has to be a slow redirect'._(redirect.pattern, url));
+                } else {
+                    RedirLib.debug('%1 matches %2, but it\'s "only if link exists" and so has to be a slow redirect'._(redirect.pattern, url));
+                }
+            }
+        }
+        return { 'url' : null, 'pattern' : null};
+    },
+
+    getRedirectUrl: function(url, redirect) {
+        if (redirect.patternType == kRedirectorWildcard) {
+            return this.wildcardMatch(redirect.pattern, url, redirect.redirectUrl);
+        } else if (redirect.patternType == kRedirectorRegex) {
+            return this.regexMatch(redirect.pattern, url, redirect.redirectUrl);
+        }
+        return null;
+    },
+
     processUrl : function(url) {
         var redirect, link, links, redirectUrl;
 
@@ -59,12 +96,7 @@ var Redirector = {
 
         for each (redirect in this.list) {
 
-
-            if (redirect.patternType == kRedirectorWildcard) {
-                redirectUrl = this.wildcardMatch(redirect.pattern, url, redirect.redirectUrl);
-            } else if (redirect.patternType == kRedirectorRegex) {
-                redirectUrl = this.regexMatch(redirect.pattern, url, redirect.redirectUrl);
-            }
+            redirectUrl = this.getRedirectUrl(url, redirect);
 
             if (redirectUrl) {
                 RedirLib.debug('%1 matches %2'._(redirect.pattern, url));
@@ -75,7 +107,7 @@ var Redirector = {
 
                         if (link.href && link.href.toString() == redirectUrl) {
                             RedirLib.debug('Found a link for %1'._(redirectUrl));
-                            this._goto(redirectUrl, redirect.pattern);
+                            this.goto(redirectUrl, redirect.pattern, url, window.content.document);
                             return;
                         }
                     }
@@ -83,18 +115,53 @@ var Redirector = {
                     RedirLib.debug('Did not find a link for %1'._(redirectUrl));
 
                 } else {
-                    this._goto(redirectUrl, redirect.pattern);
+                    this.goto(redirectUrl, redirect.pattern, url, window.content.document);
                 }
             }
         }
     },
+    
+    makeAbsoluteUrl : function(currentUrl, relativeUrl) {
+        
+        if (relativeUrl.startsWith('http://') || relativeUrl.startsWith('https://')) {
+            return relativeUrl;
+        } 
+        
+        var ioService = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
+        RedirLib.debug(currentUrl);
+        var uri = ioService.newURI(currentUrl, null, null); 
+        
+        return uri.resolve(relativeUrl);
+    },
 
-    _goto : function(redirectUrl, pattern) {
+    goto : function(redirectUrl, pattern, url, doc) {
 
-        if (redirectUrl == window.content.location.href) {
+
+        if (redirectUrl.startsWith('xpath:')) {
+            
+            var xpath = redirectUrl.substr('xpath:'.length);
+            RedirLib.debug('Evaluating xpath: ' + xpath);
+            xpathResult = doc.evaluate(redirectUrl.substr('xpath:'.length), doc, null, XPathResult.STRING_TYPE,null);
+            if (!xpathResult) {
+                //fail silently
+                RedirLib.debug('%1 returned nothing on url %2'._(xpath, url));
+                return;
+            } else {
+                RedirLib.debug('%1 evaluated to %2'._(redirectUrl, xpathResult.stringValue));
+                redirectUrl = xpathResult.stringValue;
+                if (redirectUrl == '') {
+                    RedirLib.debug('XPath failed, no redirection will be made');
+                    return;
+                }
+            }
+        }
+        
+        redirectUrl = this.makeAbsoluteUrl(url, redirectUrl);
+
+        if (redirectUrl == url) {
             RedirLib.msgBox(this.strings.getString('extensionName'), this.strings.getFormattedString('recursiveError', [pattern, redirectUrl]));
         } else {
-            window.content.location.href = redirectUrl;
+            doc.location.href = redirectUrl;
         }
     },
 
@@ -180,6 +247,10 @@ var Redirector = {
             if (topic != 'nsPref:changed') {
                 return;
             }
+            
+            if (!window.Redirector) {
+                return;
+            }
 
             if (data == 'extensions.redirector.redirects') {
                 Redirector.load();
@@ -188,5 +259,5 @@ var Redirector = {
             }
         }
 
-    },
+    }
 };
