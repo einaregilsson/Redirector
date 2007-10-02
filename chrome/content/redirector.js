@@ -11,6 +11,10 @@ var Redirector = {
         this.load();
         this.prefObserver.register();
     },
+    
+    unload : function() {
+        this.prefObserver.unregister();
+    },
 
     save : function() {
         var r

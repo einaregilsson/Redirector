@@ -24,18 +24,18 @@ var RedirectList = {
         row.appendChild(cell);
     },
 
-	createRow : function(item) {
-		var row = document.createElement('listitem');
+    createRow : function(item) {
+        var row = document.createElement('listitem');
 
-		this.createCell(row, item.pattern);
-		this.createCell(row, item.exampleUrl);
-		this.createCell(row, item.redirectUrl);
-		this.createCell(row, item.onlyIfLinkExists);
-		this.createCell(row, item.patternType);
+        this.createCell(row, item.pattern);
+        this.createCell(row, item.exampleUrl);
+        this.createCell(row, item.redirectUrl);
+        this.createCell(row, item.onlyIfLinkExists);
+        this.createCell(row, item.patternType);
 
-		row.item = item;
-		return row;
-	},
+        row.item = item;
+        return row;
+    },
 
     onLoad : function() {
         try {
@@ -63,9 +63,9 @@ var RedirectList = {
                     "chrome,dialog,modal,centerscreen", item);
 
         if (item.saved) {
-			var row = this.createRow(item);
-			$('lstRedirects').appendChild(row);
-			Redirector.addRedirect(item);
+            var row = this.createRow(item);
+            $('lstRedirects').appendChild(row);
+            Redirector.addRedirect(item);
         }
 
     },
@@ -118,3 +118,7 @@ var RedirectList = {
     }
 
 };
+
+window.addEventListener('unload', function() {
+    Redirector.unload();
+}, false);

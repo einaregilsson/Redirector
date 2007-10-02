@@ -82,7 +82,7 @@ var RedirectorOverlay = {
                 if (redirectUrl.url && oHttp.notificationCallbacks) {
                     const NS_BINDING_ABORTED = 0x804b0002;
                     aRequest.cancel(NS_BINDING_ABORTED);
-                    var newStateFlags = Ci.nsIWebProgressListener.STATE_STOP | Ci.nsIWebProgressListener.STATE_IS_NETWORK;
+                    var newStateFlags = Ci.nsIWebProgressListener.STATE_STOP | Ci.nsIWebProgressListener.STATE_IS_NETWORK | Ci.nsIWebProgressListener.STATE_IS_REQUEST;
                     origOnStateChange.call(this, aWebProgress, aRequest, newStateFlags, "");
                     var interfaceRequestor = oHttp.notificationCallbacks.QueryInterface(Ci.nsIInterfaceRequestor);
                     var targetDoc = interfaceRequestor.getInterface(Ci.nsIDOMWindow).document;    
@@ -92,7 +92,10 @@ var RedirectorOverlay = {
                     origOnStateChange.apply(this, arguments);
                 }
 
+            } else {
+                origOnStateChange.apply(this, arguments);
             }
+            
         };
     },
 
@@ -111,6 +114,8 @@ var RedirectorOverlay = {
 
 
     onUnload : function(event) {
+        RedirectorOverlay.prefObserver.unregister();
+        Redirector.prefObserver.unregister();
         //Clean up here
         RedirLib.debug("Finished cleanup");
     },
