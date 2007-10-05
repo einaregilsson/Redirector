@@ -26,7 +26,7 @@
   </popup>
   <statusbar id="status-bar">
   <statusbarpanel id="redirector-status">
-      <image id="redirector-statusbar-img" src="chrome://redirector/content/statusactive.png"
+      <image id="redirector-statusbar-img" src="chrome://redirector/content/statusactive.PNG"
              tooltiptext="Redirector is enabled;"
              style="width:16px; height:16px;"
              onclick="RedirectorOverlay.toggleEnabled();" />

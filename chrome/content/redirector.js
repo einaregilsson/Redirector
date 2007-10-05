@@ -57,25 +57,23 @@ var Redirector = {
     getRedirectUrlForInstantRedirect : function(url) {
         var redirect, link, links, redirectUrl;
 
-        if (!this.enabled) {
-            return null;
-        }
+        if (this.enabled) {
 
-        for each (redirect in this.list) {
+            for each (redirect in this.list) {
 
-            redirectUrl = this.getRedirectUrl(url, redirect);
-            //Can't do fast redirect if it requires that link exists
-            //we need the original page to verify that it exists.
-            //Slow redirect will be done automatically.
-            if (redirectUrl) {
-            
-                if (!redirect.onlyIfLinkExists && !redirect.redirectUrl.startsWith('xpath:')) {
-                    RedirLib.debug('%1 matches %2, and it\'s not only if link exists and not an xpath expression. Can do instant redirect.'._(redirect.pattern, url));
-                    return { 'url' : redirectUrl, 'pattern' : redirect.pattern};
-                } else if (redirect.redirectUrl.startsWith('xpath:')) {
-                    RedirLib.debug('%1 matches %2, but the redirect is a xpath expression and so has to be a slow redirect'._(redirect.pattern, url));
-                } else {
-                    RedirLib.debug('%1 matches %2, but it\'s "only if link exists" and so has to be a slow redirect'._(redirect.pattern, url));
+                redirectUrl = this.getRedirectUrl(url, redirect);
+                //Can't do fast redirect if it requires that link exists
+                //we need the original page to verify that it exists.
+                //Slow redirect will be done automatically.
+                if (redirectUrl) {
+                    if (!redirect.onlyIfLinkExists && !redirect.redirectUrl.startsWith('xpath:')) {
+                        RedirLib.debug('%1 matches %2, and it\'s not only if link exists and not an xpath expression. Can do instant redirect.'._(redirect.pattern, url));
+                        return { 'url' : redirectUrl, 'pattern' : redirect.pattern};
+                    } else if (redirect.redirectUrl.startsWith('xpath:')) {
+                        RedirLib.debug('%1 matches %2, but the redirect is a xpath expression and so has to be a slow redirect'._(redirect.pattern, url));
+                    } else {
+                        RedirLib.debug('%1 matches %2, but it\'s "only if link exists" and so has to be a slow redirect'._(redirect.pattern, url));
+                    }
                 }
             }
         }

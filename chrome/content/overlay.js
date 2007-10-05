@@ -160,11 +160,11 @@ var RedirectorOverlay = {
         var statusImg = $('redirector-statusbar-img');
 
         if (RedirLib.getBoolPref('enabled')) {
-            statusImg.src = 'chrome://redirector/content/statusactive.png'
+            statusImg.src = 'chrome://redirector/content/statusactive.PNG'
             statusImg.setAttribute('tooltiptext', this.strings.getString('enabledTooltip'));
             Redirector.enabled = true;
         } else {
-            statusImg.src = 'chrome://redirector/content/statusinactive.png'
+            statusImg.src = 'chrome://redirector/content/statusinactive.PNG'
             statusImg.setAttribute('tooltiptext', this.strings.getString('disabledTooltip'));
             Redirector.enabled = false;
         }
