@@ -26,10 +26,14 @@
   </popup>
   <statusbar id="status-bar">
   <statusbarpanel id="redirector-status">
+      <menupopup id="redirector-status-popup">
+        <menuitem label="&RedirectorManageRedirects.label;" accesskey="&RedirectorManageRedirects.accesskey;" oncommand="Redirector.openSettings();" />
+        <menuitem label="&RedirectorHelp.label;" accesskey="&RedirectorHelp.accesskey;" oncommand="Redirector.openHelp();" />
+      </menupopup>
       <image id="redirector-statusbar-img" src="chrome://redirector/content/statusactive.PNG"
              tooltiptext="Redirector is enabled;"
              style="width:16px; height:16px;"
-             onclick="RedirectorOverlay.toggleEnabled();" />
+             onclick="RedirectorOverlay.statusBarClick(event);" />
   </statusbarpanel>
   </statusbar>
 

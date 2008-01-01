@@ -22,9 +22,13 @@ var RedirLib = {
     },
 
     debug : function(str) {
+        if (!this._ext) {
+            return; //not initalized yet, _ext will be null
+        }
+        
         if (this._ext.prefs.debug) {
             this._cout.logStringMessage("%1: %2"._(this._ext.name, str));
-        }
+        }    
     },
 
 

@@ -1,11 +1,10 @@
 <!-- $Id$ -->
 <!ENTITY window.title "Redirector Settings">
-<!ENTITY colPattern.label "Pattern">
-<!ENTITY colExample.label "Example URL">
+<!ENTITY colIncludePattern.label "Include pattern">
+<!ENTITY colExcludePattern.label "Exclude pattern">
 <!ENTITY colRedirectTo.label "Redirect to">
-<!ENTITY colOnlyIfLinkExits.label "Only if link exists">
-<!ENTITY colPatternType.label "Pattern type">
 <!ENTITY btnAdd.label "Add...">
 <!ENTITY btnEdit.label "Edit...">
 <!ENTITY btnDelete.label "Delete">
 <!ENTITY btnClose.label "Close">
+<!ENTITY btnHelp.label "Help">

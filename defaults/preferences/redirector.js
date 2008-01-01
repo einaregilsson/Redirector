@@ -2,6 +2,8 @@
 
 pref("extensions.redirector.debug", false);
 pref("extensions.redirector.enabled", true);
+pref("extensions.redirector.showContextMenu", true);
+pref("extensions.redirector.showStatusBarIcon", true);
 pref("extensions.redirector.redirects", '[]');
 
 // See http://kb.mozillazine.org/Localize_extension_descriptions

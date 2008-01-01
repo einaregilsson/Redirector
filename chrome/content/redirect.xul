@@ -29,19 +29,23 @@
         <button id="btnTestPattern" label="&btnTestPattern.label;" onclick="Redirect.testPattern();" taborder="2"/>
       </row>
       <row>
+        <text value="&txtExcludePattern.label;" style="margin-top:6px;"/>
+        <textbox id="txtExcludePattern" taborder="3"/>
+      </row>
+      <row>
         <text value="&txtRedirectUrl.label;" style="margin-top:6px;"/>
-        <textbox id="txtRedirectUrl" taborder="3"/>
+        <textbox id="txtRedirectUrl" taborder="4"/>
       </row>
       <row>
         <text value="&rdoPatternTypes.label;"/>
         <radiogroup>
-          <radio id="rdoWildcard" label="&rdoWildcard.label;" accesskey="&rdoWildcard.accessKey;" selected="true" taborder="4"/>
-          <radio id="rdoRegex" label="&rdoRegex.label;"  accesskey="&rdoRegex.accessKey;" taborder="5"/>
+          <radio id="rdoWildcard" label="&rdoWildcard.label;" accesskey="&rdoWildcard.accessKey;" selected="true" taborder="5"/>
+          <radio id="rdoRegex" label="&rdoRegex.label;"  accesskey="&rdoRegex.accessKey;" taborder="6"/>
         </radiogroup>
       </row>
       <row>
         <text value="&chkOnlyIfLinkExists.label;" />
-        <checkbox id="chkOnlyIfLinkExists" label="" taborder="6"/>
+        <checkbox id="chkOnlyIfLinkExists" label="" taborder="7"/>
       </row>
     </rows>
 

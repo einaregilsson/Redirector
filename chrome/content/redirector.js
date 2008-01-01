@@ -21,7 +21,7 @@ var Redirector = {
           , tempList = [];
 
         for each (r in this.list) {
-            tempList.push([r.exampleUrl, r.pattern, r.redirectUrl, r.onlyIfLinkExists, r.patternType]);
+            tempList.push([r.exampleUrl, r.pattern, r.redirectUrl, r.onlyIfLinkExists, r.patternType, r.excludePattern]);
         }
         RedirLib.setCharPref('redirects', tempList.toSource());
     },
@@ -38,7 +38,8 @@ var Redirector = {
                 pattern             : arr[1],
                 redirectUrl         : arr[2],
                 onlyIfLinkExists    : arr[3],
-                patternType         : arr[4]
+                patternType         : arr[4],
+                excludePattern      : arr[5] || ''
             });
         }
 
@@ -81,15 +82,24 @@ var Redirector = {
     },
 
     getRedirectUrl: function(url, redirect) {
+    
         if (redirect.patternType == kRedirectorWildcard) {
+            if (this.wildcardMatch(redirect.excludePattern, url, 'whatever')) {
+                RedirLib.debug('%1 matches exclude pattern %2'._(url, redirect.excludePattern));
+                return null;
+            }
             return this.wildcardMatch(redirect.pattern, url, redirect.redirectUrl);
         } else if (redirect.patternType == kRedirectorRegex) {
+            if (this.regexMatch(redirect.excludePattern, url, 'whatever')) {
+                RedirLib.debug('%1 matches exclude pattern %2'._(url, redirect.excludePattern));
+                return null;
+            }
             return this.regexMatch(redirect.pattern, url, redirect.redirectUrl);
         }
         return null;
     },
 
-    processUrl : function(url) {
+    processUrl : function(url, doc) {
         var redirect, link, links, redirectUrl;
 
         if (!this.enabled) {
@@ -109,7 +119,7 @@ var Redirector = {
 
                         if (link.href && link.href.toString() == redirectUrl) {
                             RedirLib.debug('Found a link for %1'._(redirectUrl));
-                            this.goto(redirectUrl, redirect.pattern, url, window.content.document);
+                            this.goto(redirectUrl, redirect.pattern, url, doc);
                             return;
                         }
                     }
@@ -117,7 +127,7 @@ var Redirector = {
                     RedirLib.debug('Did not find a link for %1'._(redirectUrl));
 
                 } else {
-                    this.goto(redirectUrl, redirect.pattern, url, window.content.document);
+                    this.goto(redirectUrl, redirect.pattern, url, doc);
                 }
             }
         }
@@ -169,6 +179,9 @@ var Redirector = {
 
     regexMatch : function(pattern, text, redirectUrl) {
 
+        if (!pattern) {
+            return null;
+        }
         var strings, rx, match;
         try {
             rx = new RegExp(pattern, 'gi');
@@ -202,9 +215,18 @@ var Redirector = {
         var parts
           , part
           , i
-          , pos;
+          , pos
+          , originalText
+          , stars;
 
+        if (!pattern) {
+            return null;
+        }
         parts = pattern.split('*');
+
+        stars = [];
+        originalText = text;
+        var starStart = -1;
 
         for (i in parts) {
 
@@ -224,13 +246,51 @@ var Redirector = {
                 return null;
 
             }
-
+            
+            if (i == 0) {
+                //Do nothing, part will be added on next run
+            } else if (i == parts.length-1 && parts[i] == '') {
+                stars.push(text);
+            } else {
+                stars.push(text.substr(0, pos));
+            }
+            
             text = text.substr(pos + part.length);
+        }
+        
+        for (var i = 1; i <= stars.length; i++) {
+            redirectUrl = redirectUrl.replace(new RegExp('\\$' + i, 'gi'), stars[i-1]);
         }
 
         return redirectUrl;
     },
 
+    openHelp : function() {
+        var windowsMediator = Cc["@mozilla.org/appshell/window-mediator;1"].getService(Ci.nsIWindowMediator);
+        var win;
+        var iter = windowsMediator.getEnumerator(null);
+        while (iter.hasMoreElements()) {
+            win = iter.getNext();
+            alert(win.name);
+        }
+        //window.openDialog("chrome://redirector/content/help.html", windowName, "chrome,dialog,resizable=yes,location=0,toolbar=0,status=0,width=800px,height=600px,centerscreen", this);
+    },
+
+
+    openSettings : function() {
+        var windowName = "redirectorSettings";
+        var windowsMediator = Cc["@mozilla.org/appshell/window-mediator;1"].getService(Ci.nsIWindowMediator);
+        var win = windowsMediator.getMostRecentWindow(windowName);
+        if (win) {
+            win.focus();
+        } else {
+            window.openDialog("chrome://redirector/content/redirectList.xul",
+                    windowName,
+                    "chrome,dialog,resizable=no,centerscreen", this);
+        }
+    
+    },
+    
     prefObserver : {
 
         getService : function() {
@@ -263,3 +323,4 @@ var Redirector = {
 
     }
 };
+

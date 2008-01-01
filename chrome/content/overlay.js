@@ -1,5 +1,6 @@
 //// $Id$
 
+
 var RedirectorOverlay = {
 
     id          : "redirector@einaregilsson.com",
@@ -13,24 +14,19 @@ var RedirectorOverlay = {
             // initialization code
             RedirLib.initialize(this);
             RedirLib.debug("Initializing...");
-
             $('contentAreaContextMenu')
                 .addEventListener("popupshowing", function(e) { RedirectorOverlay.showContextMenu(e); }, false);
 
-            Redirector.init();
-
-            var appcontent = window.document.getElementById('appcontent');
-            this.overrideOnStateChange();            
-
-            if (appcontent && !appcontent.processed) {
-                appcontent.processed = true;
-
-                appcontent.addEventListener('DOMContentLoaded', function(event) {
-
-                    RedirectorOverlay.onDOMContentLoaded(event);
-
-                }, false);
+            if (!RedirLib.getBoolPref('showContextMenu')) {
+                $('redirector-context').hidden = true;
             }
+            if (!RedirLib.getBoolPref('showStatusBarIcon')) {
+                $('redirector-status').hidden = true;
+            }
+            Redirector.init();
+            this.overrideOnStateChange();            
+            this.overrideOpenNewWindowWith();
+            this.overrideOpenNewTabWith();
             this.strings = document.getElementById("redirector-strings");
             Redirector.strings = this.strings;
             this.prefObserver.register();
@@ -53,11 +49,11 @@ var RedirectorOverlay = {
         var origOnStateChange = nsBrowserStatusHandler.prototype.onStateChange;
 
         nsBrowserStatusHandler.prototype.onStateChange = function(aWebProgress, aRequest, aStateFlags, aStatus) {
-
+            
             if(aStateFlags & Ci.nsIWebProgressListener.STATE_START
             && aStateFlags| Ci.nsIWebProgressListener.STATE_IS_NETWORK
             && aStateFlags| Ci.nsIWebProgressListener.STATE_IS_REQUEST
-                && aRequest && aWebProgress.DOMWindow == content) {
+                && aRequest && aWebProgress.DOMWindow) {
       
                 //If it's not a GET request we'll always do a slow redirect so the web will continue
                 //to work in the way you'd expect
@@ -99,17 +95,47 @@ var RedirectorOverlay = {
         };
     },
 
+    overrideOpenNewWindowWith: function() {
+        
+        window.__openNewWindowWith = window.openNewWindowWith;
+        window.openNewWindowWith = function (href, sourceURL, postData, allowThirdPartyFixup) {
+            var redirectUrl = Redirector.getRedirectUrlForInstantRedirect(href);
+            if (redirectUrl.url) {
+                __openNewWindowWith(redirectUrl.url, href, postData, allowThirdPartyFixup);
+            } else {
+                __openNewWindowWith(href, sourceURL, postData, allowThirdPartyFixup);
+            }
+        
+        };
+      },
+
+
+    overrideOpenNewTabWith: function() {
+        
+        window.__openNewTabWith = window.openNewTabWith;
+        window.openNewTabWith = function (href, sourceURL, postData, event, allowThirdPartyFixup) {
+            var redirectUrl = Redirector.getRedirectUrlForInstantRedirect(href);
+            if (redirectUrl.url) {
+                __openNewTabWith(redirectUrl.url, href, postData, event, allowThirdPartyFixup);
+            } else {
+                __openNewTabWith(href, sourceURL, postData, event, allowThirdPartyFixup);
+            }
+        
+        };
+    },
+
+  
     onDOMContentLoaded : function(event) {
         var redirect, link, links, url;
-
-        if (event.target != window.content.document) {
+        
+        if (event.target.toString().indexOf('HTMLDocument') == -1) {
             return;
         }
 
-        url = window.content.location.href;
+        url = event.target.location.href;
 
         RedirLib.debug('Processing url %1'._(url));
-        Redirector.processUrl(url, window.content);
+        Redirector.processUrl(url, event.target);
     },
 
 
@@ -146,14 +172,23 @@ var RedirectorOverlay = {
     },
 
     onMenuItemCommand: function(event) {
-        window.openDialog("chrome://redirector/content/redirectList.xul",
-                    "redirectList",
-                    "chrome,dialog,modal,centerscreen", this);
-
+        Redirector.openSettings();
     },
 
     toggleEnabled : function(event) {
         RedirLib.setBoolPref('enabled', !RedirLib.getBoolPref('enabled'));
+    },
+
+    statusBarClick : function(event) {
+        var LEFT = 0, RIGHT = 2;
+
+        alert($('redirector-status-popup').style.right);        
+        if (event.button == LEFT) {
+            RedirectorOverlay.toggleEnabled();
+        } else if (event.button == RIGHT) {
+            $('redirector-status-popup').left = $('redirector-status').left;
+            $('redirector-status-popup').showPopup();
+        }
     },
 
     setStatusBarImg : function() {
@@ -195,4 +230,5 @@ var RedirectorOverlay = {
 
 };
 window.addEventListener("load", function(event) { RedirectorOverlay.onLoad(event); }, false);
+window.addEventListener("DOMContentLoaded", function(event) { RedirectorOverlay.onDOMContentLoaded(event); }, true);
 window.addEventListener("unload", function(event) { RedirectorOverlay.onUnload(event); }, false);

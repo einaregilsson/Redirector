@@ -9,42 +9,35 @@ var RedirectList = {
     addItemsToListBox : function(items) {
 
         var list = $('lstRedirects');
-        var item, row, value;
-
+        var item, row, value, newItem;
+        
         for each (item in items) {
-            row = this.createRow(item);
-            list.appendChild(row);
+            newItem = this.template.cloneNode(true);
+
+            newItem.getElementsByAttribute('name', 'dscrIncludePattern')[0].setAttribute('value', item.pattern);
+            newItem.getElementsByAttribute('name', 'dscrExcludePattern')[0].setAttribute('value', item.excludePattern);
+            newItem.getElementsByAttribute('name', 'dscrRedirectTo')[0].setAttribute('value', item.redirectUrl);
+            newItem.item = item;
+            list.appendChild(newItem);
         }
-    },
-
-    createCell : function(row, value) {
-        var cell = document.createElement('listcell');
-        cell.setAttribute('label', value);
-        cell.setAttribute('value', value);
-        row.appendChild(cell);
-    },
-
-    createRow : function(item) {
-        var row = document.createElement('listitem');
-
-        this.createCell(row, item.pattern);
-        this.createCell(row, item.exampleUrl);
-        this.createCell(row, item.redirectUrl);
-        this.createCell(row, item.onlyIfLinkExists);
-        this.createCell(row, item.patternType);
-
-        row.item = item;
-        return row;
+        if (list.children.length > 0) {
+            list.selectedIndex = 0;
+        }
+        list.clearSelection();
     },
 
     onLoad : function() {
         try {
             RedirLib.initialize(this);
             Redirector.init();
+        
             this.lstRedirects = $('lstRedirects');
+            this.template = document.getElementsByTagName('richlistitem')[0];
+            this.lstRedirects.removeChild(this.template);
             this.btnDelete = $('btnDelete');
             this.btnEdit = $('btnEdit');
             this.addItemsToListBox(Redirector.list);
+            this.lstRedirects.selectedIndex = -1;
         } catch(e) {
             alert(e);
         }
@@ -63,8 +56,7 @@ var RedirectList = {
                     "chrome,dialog,modal,centerscreen", item);
 
         if (item.saved) {
-            var row = this.createRow(item);
-            $('lstRedirects').appendChild(row);
+            this.addItemsToListBox([item]);
             Redirector.addRedirect(item);
         }
 
@@ -85,13 +77,9 @@ var RedirectList = {
                     "chrome,dialog,modal,centerscreen", item);
 
         if (item.saved) {
-            var map = [item.pattern, item.exampleUrl, item.redirectUrl, item.onlyIfLinkExists, item.patternType];
-
-            for (var i in map) {
-                listItem.childNodes[i].setAttribute('value', map[i]);
-                listItem.childNodes[i].setAttribute('label', map[i]);
-            }
-
+            listItem.getElementsByAttribute('name', 'dscrIncludePattern')[0].setAttribute('value', item.pattern);
+            listItem.getElementsByAttribute('name', 'dscrExcludePattern')[0].setAttribute('value', item.excludePattern);
+            listItem.getElementsByAttribute('name', 'dscrRedirectTo')[0].setAttribute('value', item.redirectUrl);
             Redirector.save();
         }
 
@@ -105,9 +93,11 @@ var RedirectList = {
         }
 
         try {
-        this.lstRedirects.removeItemAt(index);
-        Redirector.deleteAt(index);
-        } catch(e) {alert(e);}
+            this.lstRedirects.removeChild(this.lstRedirects.children[index]);
+            Redirector.deleteAt(index);
+        } catch(e) {
+            alert(e);
+        }
     },
 
     selectionChange : function() {

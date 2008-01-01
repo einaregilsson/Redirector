@@ -1,0 +1,120 @@
+<html>
+	<head>
+		<title>Redirector Help</title>
+		<style type="text/css">
+			body { font-family: Verdana, Arial; color:black; background-color:white; font-size:0.9em;}
+			a { color:blue; }
+		</style>
+	</head>
+	<body>
+		<h1>Redirector Help</h1>
+		<h3>Table of contents</h3>
+		<ol>
+			<li><a href="#whatisredirector">What is Redirector?</a></li>
+			<li><a href="#basicusage">Basic usage</a>
+				<ul>
+					<li><a href="#exampleurl">Example url</a></li>
+					<li><a href="#includepattern">Include pattern</a></li>
+					<li><a href="#excludepattern">Exclude pattern</a></li>
+					<li><a href="#redirectto">Redirect to</a></li>
+					<li><a href="#patterntype">Pattern type</a></li>
+					<li><a href="#onlyiflinkexists">Only if link exists</a></li>
+				</ul>
+			</li>
+			<li><a href="#wildcards">Wildcards</a></li>
+			<li><a href="#regularexpressions">Regular expressions</a></li>
+			<li><a href="#xpathredirects">XPath redirects</a></li>
+			<li><a href="#examples">Examples</a></li>
+		</ol>
+		
+		
+		<a name="whatisredirector"></a>
+		<h4>What is Redirector?</h4>
+		
+		<p>Redirector is an extension for Firefox that allows you to automatically redirect from
+		one webpage to another. For example, every time you visit http://abc.com you will automatically
+		load http://def.com instead. This can be useful for instance to always redirect articles to printer friendly
+		versions, redirect http:// to https:// for sites that support both, bypass advertising pages that appear before
+		being able to view certain pages and more.</p>
+		
+		<a name="basicusage"></a>
+		<h4>Basic usage</h4>
+		<p>To add a new redirect you can go to the <em>Tools</em> menuitem and select <em>Redirector</em>. That will
+		open the <em>Redirector settings</em> window which shows all your redirects. The window can also be opened
+		by right clicking on the <strong>R</strong> icon in your statusbar and selecting <em>Manage redirects</em>. 
+		There you can press the <em>Add...</em> button and then you can enter the details for the new redirect. A redirect
+		consists of a few things:
+		<ul>
+			<li><a name="exampleurl"></a><strong>Example url:</strong> This is an example of an url you want to redirect. It is not really used for anything,
+			it's just there to show what types of urls you're targetting. You can leave this out, but then you can't use the <em>Test pattern</em> button.</li>
+			
+			<li><a name="includepattern"></a><strong>Include pattern:</strong> This is pattern for the urls you want to redirect. In the simplest case, where you just want
+			to redirect one specific url to another then this will just be the exact url you want to redirect. For instance, if you just want http://aaa.com to
+			redirect to http://bbb.com then <em>Include pattern</em> will just be http://aaa.com. For more complex patterns that match many
+			urls you can use either <a href="#wildcards">wildcards</a> or <a href="#regularexpressions">regular expressions</a>.</li>
+			
+            <li><a name="excludepattern"></a><strong>Exclude pattern:</strong> Urls that match this pattern will never be redirected. This is not necessary to
+            fill out, but can be useful when you want to redirect all urls that contain some text except if they contain some other text. 
+            Redirects like that can often be done with a complex regular expression, but using an exclude pattern makes it much simpler. The exclude
+            patterns can use wildcard characters or regular expressions like the include patterns.</li>
+
+            <li><a name="redirectto"></a><strong>Redirect to:</strong> This is the url that you will be redirected to when you open any page where the url matches the
+            include pattern. You can use the special signs $1, $2, $3 etc. in the url, they will be replaced by the results of captures with regular
+            expressions or stars with wildcards. For instance, if you have the include pattern <em>http://google.com/*</em>, redirect to <em>http://froogle.com/$1</em>
+            and you open the page http://google.com/foobar, then you will be redireced to http://froogle.com/foobar, since 'foobar' was what the star replaced. $1 is for the
+            first star in the pattern, $2 for the second and so on. For regular expression $1 is for the first parantheses, $2 for the second etc. The redirect url
+            can also be specified as a <a href="#xpathredirects">XPath expression</a>.</li>
+		
+            <li><a name="patterntype"></a><strong>Pattern type:</strong> This specifies how Redirector should interpret the patterns, either as
+            <a href="#wildcards">wildcards</a> or <a href="#regularexpressions#">regular expressions</a>.</li>
+            
+            <li><a name="onlyiflinkexists"></a><strong>Only if link exists:</strong> If this is checked then the redirect will only happen if there is a link
+            to the target page on the page that matches the include pattern. For instance, if you have a redirect from http://foo.com to
+            http://bar.com and check <em>Only if link exists</em> then http://foo.com has to have a hyperlink to http://bar.com, otherwise
+            nothing will happen.
+			</li>
+		</ul>
+		</p>
+
+		<a name="wildcards"></a>
+		<h4>Wildcards</h4>
+		
+		<p>Wildcards are the simplest way to specify include and exclude patterns. When you create a wildcard pattern there
+		is just one special character, the asterisk *. An asterisk in your pattern will match zero or more characters and you can
+		have more than one star in your pattern. Some examples:
+			<ul>
+				<li><em>http://example.com/*</em> matches http://example.com/, http://example.com/foo, http://example.com/bar and all other urls that start with http://example.com/.</li>
+				<li><em>http://*.example.com</em> matches all subdomains of example.com, like http://www.example.com, http://mail.example.com.</li>
+				<li><em>http*://example.com</em> matches both http://example.com and https://example.com.</li>
+				<li><em>http://example.com/index.asp*</em> matches http://example.com/index.asp, http://example.com/index.asp?a=b&c=d.</li>
+			</ul>
+		$1, $2, $3 in the redirect urls will match the text that the stars matched. Examples:
+			<ul>
+				<li><em>http://example.com/*</em> matches http://example.com/foobar, $1 is foobar.</li>
+				<li><em>http://*.example.com/*</em> matches http://www.example.com/foobar, $1 is www, $2 is foobar.</li>
+			</ul>
+		</p>
+		
+		<a name="regularexpressions"></a>
+		<h4>Regular expressions</h4>
+		
+		<p>Regular expressions allow for more complicated patterns but they are a lot harder to learn than wildcards. I'm not gonna
+		create a regex tutorial here but normal javascript regex syntax works, look at <a href="http://regular-expressions.info" target="_blank">http://regular-expressions.info</a> for
+		an introduction to regular expressions. $1,$2 etc. can be used in the redirect url and will be replaced with contents of captures in
+		the regular expressions. Captures are specified with parantheses. Example: http://example.com/index.asp\?id=(\d+) will match the url
+		http://example.com/index.asp?id=12345 and $1 will be replaced by 12345. (A common mistake in regex patterns is to forget to escape
+		the ? sign in the querystring of the url. ? is a special character in regular expressions so if you want to match an url with a querystring
+		you should escape it as \?).</p>
+
+		<a name="xpathredirects"></a>
+		<h4>XPath redirects</h4>
+		<p>The redirect url can be specified as an xpath expression by starting it with xpath: and then you will be redirected to the url
+		that the xpath expression matches. Example: Redirect url is xpath:/div/span/a/@href, then you will be redirected to the href value
+		of the first link that's inside a div in the original page.</p>
+		
+		<a name="examples"></a>
+		<h4>Examples</h4>
+			
+		<p>To be continued in next version...</p>
+	</body>
+</html>
