@@ -19,11 +19,9 @@ var RedirectList = {
             newItem.getElementsByAttribute('name', 'dscrRedirectTo')[0].setAttribute('value', item.redirectUrl);
             newItem.item = item;
             list.appendChild(newItem);
+            newItem.setAttribute("selected", false);
         }
-        if (list.children.length > 0) {
-            list.selectedIndex = 0;
-        }
-        list.clearSelection();
+        
     },
 
     onLoad : function() {
@@ -32,12 +30,12 @@ var RedirectList = {
             Redirector.init();
         
             this.lstRedirects = $('lstRedirects');
+            this.lstRedirects.selType = 'single'; //For fx3
             this.template = document.getElementsByTagName('richlistitem')[0];
             this.lstRedirects.removeChild(this.template);
             this.btnDelete = $('btnDelete');
             this.btnEdit = $('btnEdit');
             this.addItemsToListBox(Redirector.list);
-            this.lstRedirects.selectedIndex = -1;
         } catch(e) {
             alert(e);
         }

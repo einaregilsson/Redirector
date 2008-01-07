@@ -16,7 +16,9 @@ var RedirectorOverlay = {
             RedirLib.debug("Initializing...");
             $('contentAreaContextMenu')
                 .addEventListener("popupshowing", function(e) { RedirectorOverlay.showContextMenu(e); }, false);
-
+            
+            this.ffversion = Cc["@mozilla.org/xre/app-info;1"].getService(Ci.nsIXULAppInfo).version;
+            
             if (!RedirLib.getBoolPref('showContextMenu')) {
                 $('redirector-context').hidden = true;
             }
@@ -44,12 +46,15 @@ var RedirectorOverlay = {
             }
         }
     },
+    
+    isVersion3 : function() {
+        return this.ffversion.toString().charAt(0) == '3';
+    },
 
     overrideOnStateChange : function() {
         var origOnStateChange = nsBrowserStatusHandler.prototype.onStateChange;
 
         nsBrowserStatusHandler.prototype.onStateChange = function(aWebProgress, aRequest, aStateFlags, aStatus) {
-            
             if(aStateFlags & Ci.nsIWebProgressListener.STATE_START
             && aStateFlags| Ci.nsIWebProgressListener.STATE_IS_NETWORK
             && aStateFlags| Ci.nsIWebProgressListener.STATE_IS_REQUEST
@@ -96,32 +101,61 @@ var RedirectorOverlay = {
     },
 
     overrideOpenNewWindowWith: function() {
-        
+      
         window.__openNewWindowWith = window.openNewWindowWith;
-        window.openNewWindowWith = function (href, sourceURL, postData, allowThirdPartyFixup) {
-            var redirectUrl = Redirector.getRedirectUrlForInstantRedirect(href);
-            if (redirectUrl.url) {
-                __openNewWindowWith(redirectUrl.url, href, postData, allowThirdPartyFixup);
-            } else {
-                __openNewWindowWith(href, sourceURL, postData, allowThirdPartyFixup);
-            }
         
-        };
+        
+        if (this.isVersion3()) {
+
+            window.openNewWindowWith = function (aUrl, aDocument, aPostData, aAllowThirdPartyFixup, aReferrer) {
+                var redirectUrl = Redirector.getRedirectUrlForInstantRedirect(aUrl);
+                if (redirectUrl.url) {
+                    __openNewWindowWith(redirectUrl.url, aDocument, aPostData, aAllowThirdPartyFixup, aUrl);
+                } else {
+                    __openNewWindowWith(aUrl, aDocument, aPostData, aAllowThirdPartyFixup, aReferrer);
+                }
+            };
+        
+        } else { //version 2.*
+        
+            window.openNewWindowWith = function (href, sourceURL, postData, allowThirdPartyFixup) {
+                var redirectUrl = Redirector.getRedirectUrlForInstantRedirect(href);
+                if (redirectUrl.url) {
+                    __openNewWindowWith(redirectUrl.url, href, postData, allowThirdPartyFixup);
+                } else {
+                    __openNewWindowWith(href, sourceURL, postData, allowThirdPartyFixup);
+                }
+            };
+        }
       },
 
 
     overrideOpenNewTabWith: function() {
         
         window.__openNewTabWith = window.openNewTabWith;
-        window.openNewTabWith = function (href, sourceURL, postData, event, allowThirdPartyFixup) {
-            var redirectUrl = Redirector.getRedirectUrlForInstantRedirect(href);
-            if (redirectUrl.url) {
-                __openNewTabWith(redirectUrl.url, href, postData, event, allowThirdPartyFixup);
-            } else {
-                __openNewTabWith(href, sourceURL, postData, event, allowThirdPartyFixup);
-            }
+        if (this.isVersion3()) {
+            window.openNewTabWith = function (aUrl, aDocument, aPostData, aEvent, aAllowThirdPartyFixup, aReferrer) {
+                var redirectUrl = Redirector.getRedirectUrlForInstantRedirect(aUrl);
+                if (redirectUrl.url) {
+                    __openNewTabWith(redirectUrl.url, aDocument, aPostData, aEvent, aAllowThirdPartyFixup, aUrl);
+                } else {
+                    __openNewTabWith(aUrl, aDocument, aPostData, aEvent, aAllowThirdPartyFixup, aReferrer);
+                }
+
+            };
         
-        };
+        } else { //version 2.*
+            window.openNewTabWith = function (href, sourceURL, postData, event, allowThirdPartyFixup) {
+                var redirectUrl = Redirector.getRedirectUrlForInstantRedirect(href);
+                if (redirectUrl.url) {
+                    __openNewTabWith(redirectUrl.url, href, postData, event, allowThirdPartyFixup);
+                } else {
+                    __openNewTabWith(href, sourceURL, postData, event, allowThirdPartyFixup);
+                }
+
+            };
+        
+        }
     },
 
   
@@ -182,12 +216,11 @@ var RedirectorOverlay = {
     statusBarClick : function(event) {
         var LEFT = 0, RIGHT = 2;
 
-        alert($('redirector-status-popup').style.right);        
         if (event.button == LEFT) {
             RedirectorOverlay.toggleEnabled();
         } else if (event.button == RIGHT) {
-            $('redirector-status-popup').left = $('redirector-status').left;
-            $('redirector-status-popup').showPopup();
+            Redirector.openSettings();
+            //$('redirector-status-popup').showPopup();
         }
     },
 

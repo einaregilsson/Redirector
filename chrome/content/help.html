@@ -9,7 +9,7 @@
 	<body>
 		<h1>Redirector Help</h1>
 		<h3>Table of contents</h3>
-		<ol>
+		<ul>
 			<li><a href="#whatisredirector">What is Redirector?</a></li>
 			<li><a href="#basicusage">Basic usage</a>
 				<ul>
@@ -24,8 +24,17 @@
 			<li><a href="#wildcards">Wildcards</a></li>
 			<li><a href="#regularexpressions">Regular expressions</a></li>
 			<li><a href="#xpathredirects">XPath redirects</a></li>
-			<li><a href="#examples">Examples</a></li>
-		</ol>
+			<li><a href="#examples">Examples</a>
+				<ol>
+					<li><a href="#ex1">Static redirect</a></li>
+					<li><a href="#ex2">Redirect using query string parameter and wildcards</a></li>
+					<li><a href="#ex3">Redirect using query string parameter and regular expressions</a></li>
+					<li><a href="#ex4">Redirect to a different folder using wildcards</a></li>
+					<li><a href="#ex5">Redirect http to https using wildcards</a></li>
+				</ol>
+			
+			</li>
+		</ul>
 		
 		
 		<a name="whatisredirector"></a>
@@ -114,7 +123,64 @@
 		
 		<a name="examples"></a>
 		<h4>Examples</h4>
-			
-		<p>To be continued in next version...</p>
+		
+		<ol>
+			<li>
+				<strong><a name="ex1"></a>Static redirect</strong><br/>
+				Redirects from http://example.com/foo to http://example.com/bar
+				<p>
+					<strong>Include pattern:</strong> http://example.com/foo<br/>
+					<strong>Exclude pattern:</strong><br/>
+					<strong>Redirect to:</strong> http://example.com/bar<br/>
+					<strong>Pattern type:</strong> Wildcard<br />
+				</p>
+				
+			</li>
+			<li>
+				<strong><a name="ex2"></a>Redirect using query string parameter and wildcards</strong><br/>
+				Redirects from http://example.com/index.php?id=12345&a=b to http://example.com/printerfriendly.php?id=12345&a=b
+				where 12345 could be any number.
+				<p>
+					<strong>Include pattern:</strong> http://example.com/index.php?id=*&a=b<br/>
+					<strong>Exclude pattern:</strong><br/>
+					<strong>Redirect to:</strong> http://example.com/printerfriendly.com?id=$1&a=b<br/>
+					<strong>Pattern type:</strong> Wildcard<br />
+				</p>
+			</li>
+			<li>
+				<strong><a name="ex3"></a>Redirect using query string parameter and regular expressions</strong><br/>
+				Redirects from http://example.com/index.php?id=12345&a=b to http://example.com/printerfriendly.php?id=12345&a=b
+				where 12345 could be any number.
+				<p>
+					<strong>Include pattern:</strong> http://example.com/index.php\?id=(\d+)&a=b<br/>
+					<strong>Exclude pattern:</strong><br/>
+					<strong>Redirect to:</strong> http://example.com/printerfriendly.com?id=$1&a=b<br/>
+					<strong>Pattern type:</strong> Regular Expression<br />
+				</p>
+			</li>
+			<li>
+				<strong><a name="ex4"></a>Redirect to a different folder using wildcards</strong><br/>
+				Redirects from http://example.com/category/fish/index.php to http://example.com/category/cats/index.php
+				where fish could be any word. The exclude pattern makes sure that there is only one
+				folder there, so for instance http://example.com/category/fish/cat/mouse/index.php would not match.
+				<p>
+					<strong>Include pattern:</strong> http://example.com/category/*/index.php<br/>
+					<strong>Exclude pattern:</strong> http://example.com/category/*/*/index.php<br/>
+					<strong>Redirect to:</strong> http://example.com/category/cats/index.php<br/>
+					<strong>Pattern type:</strong> Wildcard<br />
+				</p>
+			</li>
+			<li>
+				<strong><a name="ex5"></a>Redirect http to https using wildcards</strong><br/>
+				Redirects from http://mail.google.com/randomcharacters to https://mail.google.com/randomcharacters
+				where randomcharacters could be anything.
+				<p>
+					<strong>Include pattern:</strong> http://mail.google.com*<br/>
+					<strong>Exclude pattern:</strong><br/>
+					<strong>Redirect to:</strong> https://mail.google.com$1<br/>
+					<strong>Pattern type:</strong> Wildcard<br />
+				</p>
+			</li>
+		</ol>
 	</body>
 </html>

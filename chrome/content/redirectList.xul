@@ -16,8 +16,8 @@
   <script type="application/x-javascript" src="redirectList.js"/>
 
   <vbox>
-  <richlistbox id="lstRedirects" style="margin-bottom:5px; border:solid 1px grey;" height="330px" ondblclick="RedirectList.editRedirect();" onselect="RedirectList.selectionChange();">
-    <richlistitem style="border-bottom:dotted 1px grey;">
+  <richlistbox seltype="single" id="lstRedirects" style="margin-bottom:5px; border:solid 1px grey;" height="330px" ondblclick="RedirectList.editRedirect();" onselect="RedirectList.selectionChange();">
+    <richlistitem style="border-bottom:dotted 1px grey;" selected="false">
         <grid>
 			<cols>
 			</cols>
