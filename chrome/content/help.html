@@ -23,7 +23,6 @@
 			</li>
 			<li><a href="#wildcards">Wildcards</a></li>
 			<li><a href="#regularexpressions">Regular expressions</a></li>
-			<li><a href="#xpathredirects">XPath redirects</a></li>
 			<li><a href="#examples">Examples</a>
 				<ol>
 					<li><a href="#ex1">Static redirect</a></li>
@@ -71,8 +70,7 @@
             include pattern. You can use the special signs $1, $2, $3 etc. in the url, they will be replaced by the results of captures with regular
             expressions or stars with wildcards. For instance, if you have the include pattern <em>http://google.com/*</em>, redirect to <em>http://froogle.com/$1</em>
             and you open the page http://google.com/foobar, then you will be redireced to http://froogle.com/foobar, since 'foobar' was what the star replaced. $1 is for the
-            first star in the pattern, $2 for the second and so on. For regular expression $1 is for the first parantheses, $2 for the second etc. The redirect url
-            can also be specified as a <a href="#xpathredirects">XPath expression</a>.</li>
+            first star in the pattern, $2 for the second and so on. For regular expression $1 is for the first parantheses, $2 for the second etc.</li>
 		
             <li><a name="patterntype"></a><strong>Pattern type:</strong> This specifies how Redirector should interpret the patterns, either as
             <a href="#wildcards">wildcards</a> or <a href="#regularexpressions#">regular expressions</a>.</li>
@@ -115,12 +113,6 @@
 		the ? sign in the querystring of the url. ? is a special character in regular expressions so if you want to match an url with a querystring
 		you should escape it as \?).</p>
 
-		<a name="xpathredirects"></a>
-		<h4>XPath redirects</h4>
-		<p>The redirect url can be specified as an xpath expression by starting it with xpath: and then you will be redirected to the url
-		that the xpath expression matches. Example: Redirect url is xpath:/div/span/a/@href, then you will be redirected to the href value
-		of the first link that's inside a div in the original page.</p>
-		
 		<a name="examples"></a>
 		<h4>Examples</h4>
 		

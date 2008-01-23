@@ -67,11 +67,11 @@ var Redirector = {
                 //we need the original page to verify that it exists.
                 //Slow redirect will be done automatically.
                 if (redirectUrl) {
-                    if (!redirect.onlyIfLinkExists && !redirect.redirectUrl.startsWith('xpath:')) {
-                        RedirLib.debug('%1 matches %2, and it\'s not only if link exists and not an xpath expression. Can do instant redirect.'._(redirect.pattern, url));
+                    if (redirect.redirectUrl.startsWith('xpath:')) {
+                        RedirLib.msgBox(this.strings.getString('extensionName'), this.strings.getString('xpathDeprecated'));
+                    } else if (!redirect.onlyIfLinkExists) {
+                        RedirLib.debug('%1 matches %2, and it\'s not only if link exists. Can do instant redirect.'._(redirect.pattern, url));
                         return { 'url' : redirectUrl, 'pattern' : redirect.pattern};
-                    } else if (redirect.redirectUrl.startsWith('xpath:')) {
-                        RedirLib.debug('%1 matches %2, but the redirect is a xpath expression and so has to be a slow redirect'._(redirect.pattern, url));
                     } else {
                         RedirLib.debug('%1 matches %2, but it\'s "only if link exists" and so has to be a slow redirect'._(redirect.pattern, url));
                     }
@@ -148,29 +148,11 @@ var Redirector = {
 
     goto : function(redirectUrl, pattern, url, doc) {
 
-
-        if (redirectUrl.startsWith('xpath:')) {
-            
-            var xpath = redirectUrl.substr('xpath:'.length);
-            RedirLib.debug('Evaluating xpath: ' + xpath);
-            xpathResult = doc.evaluate(redirectUrl.substr('xpath:'.length), doc, null, XPathResult.STRING_TYPE,null);
-            if (!xpathResult) {
-                //fail silently
-                RedirLib.debug('%1 returned nothing on url %2'._(xpath, url));
-                return;
-            } else {
-                RedirLib.debug('%1 evaluated to %2'._(redirectUrl, xpathResult.stringValue));
-                redirectUrl = xpathResult.stringValue;
-                if (redirectUrl == '') {
-                    RedirLib.debug('XPath failed, no redirection will be made');
-                    return;
-                }
-            }
-        }
-        
         redirectUrl = this.makeAbsoluteUrl(url, redirectUrl);
 
-        if (redirectUrl == url) {
+        if (redirectUrl.startsWith('xpath:')) {
+            //Do nothing, the instant redirect will have popped up a message
+        } else if (redirectUrl == url) {
             RedirLib.msgBox(this.strings.getString('extensionName'), this.strings.getFormattedString('recursiveError', [pattern, redirectUrl]));
         } else {
             doc.location.href = redirectUrl;
