@@ -214,7 +214,7 @@ var Redirector = {
 
             part = parts[i];
 
-            pos = text.indexOf(part);
+            pos = text.lastIndexOf(part);
 
             if (pos == -1) {
                 return null;

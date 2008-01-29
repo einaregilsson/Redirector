@@ -99,10 +99,10 @@ var RedirectList = {
     },
 
     selectionChange : function() {
-        var index = this.lstRedirects.selectedIndex;
+        var index = $('lstRedirects').selectedIndex;
 
-        this.btnEdit.disabled = (index == -1);
-        this.btnDelete.disabled = (index == -1);
+        $('btnEdit').disabled = (index == -1);
+        $('btnDelete').disabled = (index == -1);
     }
 
 };
