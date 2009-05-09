@@ -1,3 +1,10 @@
+
+var Redirector = Components.classes["@einaregilsson.com/redirector;1"].getService(Components.interfaces.nsISupports).wrappedJSObject;
+
+function $(id) {
+    return document.getElementById(id);
+}
+
 var RedirectList = {
 
     id          : "redirector@einaregilsson.com",
@@ -26,11 +33,8 @@ var RedirectList = {
 
     onLoad : function() {
         try {
-            RedirLib.initialize(this);
-            Redirector.init();
-        
             this.lstRedirects = $('lstRedirects');
-            this.lstRedirects.selType = 'single'; //For fx3
+            this.lstRedirects.selType = 'single'; 
             this.template = document.getElementsByTagName('richlistitem')[0];
             this.lstRedirects.removeChild(this.template);
             this.btnDelete = $('btnDelete');
@@ -44,10 +48,41 @@ var RedirectList = {
     close : function() {
         window.close();
     },
+    
+    moveUp : function(){
+        if (this.lstRedirects.selectedIndex <= 0) {
+            return;
+        }
+        this.switchItems(this.lstRedirects.selectedIndex-1);
+    },
 
+    moveDown : function() {
+        if (this.lstRedirects.selectedIndex == Redirector.list.length-1) {
+            return;
+        }
+        this.switchItems(this.lstRedirects.selectedIndex);
+    },
+
+    switchItems : function(firstIndex) {
+        var first = Redirector.list[firstIndex];
+        var second = Redirector.list[firstIndex+1];
+        Redirector.list[firstIndex] = second;
+        Redirector.list[firstIndex+1] = first;
+        this.setListItemValues(this.lstRedirects.children[firstIndex+1], first);
+        this.setListItemValues(this.lstRedirects.children[firstIndex], second);
+        this.lstRedirects.selectedIndex -= 1;
+        Redirector.save();
+    }, 
+    
+    setListItemValues : function(listItem, item){
+        listItem.getElementsByAttribute('name', 'dscrIncludePattern')[0].setAttribute('value', item.pattern);
+        listItem.getElementsByAttribute('name', 'dscrExcludePattern')[0].setAttribute('value', item.excludePattern);
+        listItem.getElementsByAttribute('name', 'dscrRedirectTo')[0].setAttribute('value', item.redirectUrl);
+    },
+    
     addRedirect : function() {
 
-        var item = { pattern : '', exampleUrl : '', redirectUrl : '', onlyIfLinkExists : false, patternType : 'W'};
+        var item = { pattern : '', exampleUrl : '', redirectUrl : '', patternType : 'W'};
 
         window.openDialog("chrome://redirector/content/redirect.xul",
                     "redirect",
@@ -75,12 +110,9 @@ var RedirectList = {
                     "chrome,dialog,modal,centerscreen", item);
 
         if (item.saved) {
-            listItem.getElementsByAttribute('name', 'dscrIncludePattern')[0].setAttribute('value', item.pattern);
-            listItem.getElementsByAttribute('name', 'dscrExcludePattern')[0].setAttribute('value', item.excludePattern);
-            listItem.getElementsByAttribute('name', 'dscrRedirectTo')[0].setAttribute('value', item.redirectUrl);
+            this.setListItemValues(listItem, item);
             Redirector.save();
         }
-
     },
 
     deleteRedirect : function() {

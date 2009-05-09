@@ -10,8 +10,6 @@
         xmlns:nc="http://home.netscape.com/NC-rdf#"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-  <script type="application/x-javascript" src="redirlib.js"/>
-  <script type="application/x-javascript" src="redirector.js"/>
   <script type="application/x-javascript" src="redirect.js"/>
   <stringbundleset id="stringbundleset">
     <stringbundle id="redirector-strings" src="chrome://redirector/locale/redirector.properties"/>
@@ -42,10 +40,6 @@
           <radio id="rdoWildcard" label="&rdoWildcard.label;" accesskey="&rdoWildcard.accessKey;" selected="true" taborder="5"/>
           <radio id="rdoRegex" label="&rdoRegex.label;"  accesskey="&rdoRegex.accessKey;" taborder="6"/>
         </radiogroup>
-      </row>
-      <row>
-        <text value="&chkOnlyIfLinkExists.label;" />
-        <checkbox id="chkOnlyIfLinkExists" label="" taborder="7"/>
       </row>
     </rows>
 

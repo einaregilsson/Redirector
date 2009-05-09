@@ -1,5 +1,10 @@
 //// $Id$
 
+var Redirector = Components.classes["@einaregilsson.com/redirector;1"].getService(Components.interfaces.nsISupports).wrappedJSObject;
+
+function $(id) {
+    return document.getElementById(id);
+}
 
 var RedirectorOverlay = {
 
@@ -12,172 +17,35 @@ var RedirectorOverlay = {
         try {
 
             // initialization code
-            RedirLib.initialize(this);
-            RedirLib.debug("Initializing...");
+            Redirector.debug("Initializing...");
             $('contentAreaContextMenu')
                 .addEventListener("popupshowing", function(e) { RedirectorOverlay.showContextMenu(e); }, false);
             
-            this.ffversion = Cc["@mozilla.org/xre/app-info;1"].getService(Ci.nsIXULAppInfo).version;
-            
-            if (!RedirLib.getBoolPref('showContextMenu')) {
+            if (!Redirector.getBoolPref('showContextMenu')) {
                 $('redirector-context').hidden = true;
             }
-            if (!RedirLib.getBoolPref('showStatusBarIcon')) {
+            if (!Redirector.getBoolPref('showStatusBarIcon')) {
                 $('redirector-status').hidden = true;
             }
-            Redirector.init();
-            this.overrideOnStateChange();            
-            this.overrideOpenNewWindowWith();
-            this.overrideOpenNewTabWith();
             this.strings = document.getElementById("redirector-strings");
-            Redirector.strings = this.strings;
             this.prefObserver.register();
             this.setStatusBarImg();
 
-            RedirLib.debug("Finished initialization");
+            Redirector.debug("Finished initialization");
             this.initialized = true;
 
         } catch(e) {
-            //Don't use RedirLib because it's initialization might have failed.
             if (this.strings) {
-                alert(this.strings.getString("initError")._(this.name) + "\n\n" + e);
+                alert(this.strings.getFormattedString("initError", [this.name]) + "\n\n" + e);
             } else {
                 alert(e);
             }
         }
     },
     
-    isVersion3 : function() {
-        return this.ffversion.toString().charAt(0) == '3';
-    },
-
-    overrideOnStateChange : function() {
-        var origOnStateChange = nsBrowserStatusHandler.prototype.onStateChange;
-
-        nsBrowserStatusHandler.prototype.onStateChange = function(aWebProgress, aRequest, aStateFlags, aStatus) {
-            if(aStateFlags & Ci.nsIWebProgressListener.STATE_START
-            && aStateFlags| Ci.nsIWebProgressListener.STATE_IS_NETWORK
-            && aStateFlags| Ci.nsIWebProgressListener.STATE_IS_REQUEST
-                && aRequest && aWebProgress.DOMWindow) {
-      
-                //If it's not a GET request we'll always do a slow redirect so the web will continue
-                //to work in the way you'd expect
-                try {
-                    var oHttp = aRequest.QueryInterface(Ci.nsIHttpChannel);
-                    var method = oHttp.requestMethod;
-          
-                    if (method != "GET") {
-                        origOnStateChange.apply(this, arguments);
-                        return;
-                    }
-        
-                } catch(ex) {
-                    origOnStateChange.apply(this, arguments);
-                    return;
-                }
-
-                var uri = aRequest.QueryInterface(Ci.nsIChannel).URI.spec;
-                
-                RedirLib.debug('Checking url %1 for instant redirect'._(uri));
-                var redirectUrl = Redirector.getRedirectUrlForInstantRedirect(uri);
-                if (redirectUrl.url && oHttp.notificationCallbacks) {
-                    const NS_BINDING_ABORTED = 0x804b0002;
-                    aRequest.cancel(NS_BINDING_ABORTED);
-                    var newStateFlags = Ci.nsIWebProgressListener.STATE_STOP | Ci.nsIWebProgressListener.STATE_IS_NETWORK | Ci.nsIWebProgressListener.STATE_IS_REQUEST;
-                    origOnStateChange.call(this, aWebProgress, aRequest, newStateFlags, "");
-                    var interfaceRequestor = oHttp.notificationCallbacks.QueryInterface(Ci.nsIInterfaceRequestor);
-                    var targetDoc = interfaceRequestor.getInterface(Ci.nsIDOMWindow).document;    
-                    var gotoUrl = Redirector.makeAbsoluteUrl(uri, redirectUrl.url);
-                    Redirector.goto(gotoUrl, redirectUrl.pattern, uri, targetDoc); 
-                } else {
-                    origOnStateChange.apply(this, arguments);
-                }
-
-            } else {
-                origOnStateChange.apply(this, arguments);
-            }
-            
-        };
-    },
-
-    overrideOpenNewWindowWith: function() {
-      
-        window.__openNewWindowWith = window.openNewWindowWith;
-        
-        
-        if (this.isVersion3()) {
-
-            window.openNewWindowWith = function (aUrl, aDocument, aPostData, aAllowThirdPartyFixup, aReferrer) {
-                var redirectUrl = Redirector.getRedirectUrlForInstantRedirect(aUrl);
-                if (redirectUrl.url) {
-                    __openNewWindowWith(redirectUrl.url, aDocument, aPostData, aAllowThirdPartyFixup, aUrl);
-                } else {
-                    __openNewWindowWith(aUrl, aDocument, aPostData, aAllowThirdPartyFixup, aReferrer);
-                }
-            };
-        
-        } else { //version 2.*
-        
-            window.openNewWindowWith = function (href, sourceURL, postData, allowThirdPartyFixup) {
-                var redirectUrl = Redirector.getRedirectUrlForInstantRedirect(href);
-                if (redirectUrl.url) {
-                    __openNewWindowWith(redirectUrl.url, href, postData, allowThirdPartyFixup);
-                } else {
-                    __openNewWindowWith(href, sourceURL, postData, allowThirdPartyFixup);
-                }
-            };
-        }
-      },
-
-
-    overrideOpenNewTabWith: function() {
-        
-        window.__openNewTabWith = window.openNewTabWith;
-        if (this.isVersion3()) {
-            window.openNewTabWith = function (aUrl, aDocument, aPostData, aEvent, aAllowThirdPartyFixup, aReferrer) {
-                var redirectUrl = Redirector.getRedirectUrlForInstantRedirect(aUrl);
-                if (redirectUrl.url) {
-                    __openNewTabWith(redirectUrl.url, aDocument, aPostData, aEvent, aAllowThirdPartyFixup, aUrl);
-                } else {
-                    __openNewTabWith(aUrl, aDocument, aPostData, aEvent, aAllowThirdPartyFixup, aReferrer);
-                }
-
-            };
-        
-        } else { //version 2.*
-            window.openNewTabWith = function (href, sourceURL, postData, event, allowThirdPartyFixup) {
-                var redirectUrl = Redirector.getRedirectUrlForInstantRedirect(href);
-                if (redirectUrl.url) {
-                    __openNewTabWith(redirectUrl.url, href, postData, event, allowThirdPartyFixup);
-                } else {
-                    __openNewTabWith(href, sourceURL, postData, event, allowThirdPartyFixup);
-                }
-
-            };
-        
-        }
-    },
-
-  
-    onDOMContentLoaded : function(event) {
-        var redirect, link, links, url;
-        
-        if (event.target.toString().indexOf('HTMLDocument') == -1) {
-            return;
-        }
-
-        url = event.target.location.href;
-
-        RedirLib.debug('Processing url %1'._(url));
-        Redirector.processUrl(url, event.target);
-    },
-
-
     onUnload : function(event) {
         RedirectorOverlay.prefObserver.unregister();
-        Redirector.prefObserver.unregister();
-        //Clean up here
-        RedirLib.debug("Finished cleanup");
+        Redirector.debug("Finished cleanup");
     },
 
     showContextMenu : function(event) {
@@ -202,24 +70,37 @@ var RedirectorOverlay = {
         if (item.saved) {
             Redirector.addRedirect(item);
         }
-
     },
 
     onMenuItemCommand: function(event) {
-        Redirector.openSettings();
+        this.openSettings();
     },
 
     toggleEnabled : function(event) {
-        RedirLib.setBoolPref('enabled', !RedirLib.getBoolPref('enabled'));
+        Redirector.setEnabled(!Redirector.enabled);
     },
 
+    openSettings : function() {
+        var windowName = "redirectorSettings";
+        var windowsMediator = Cc["@mozilla.org/appshell/window-mediator;1"].getService(Ci.nsIWindowMediator);
+        var win = windowsMediator.getMostRecentWindow(windowName);
+        if (win) {
+            win.focus();
+        } else {
+            window.openDialog("chrome://redirector/content/redirectList.xul",
+                    windowName,
+                    "chrome,dialog,resizable=no,centerscreen", this);
+        }
+    
+    },
+    
     statusBarClick : function(event) {
         var LEFT = 0, RIGHT = 2;
 
         if (event.button == LEFT) {
             RedirectorOverlay.toggleEnabled();
         } else if (event.button == RIGHT) {
-            Redirector.openSettings();
+            this.openSettings();
             //$('redirector-status-popup').showPopup();
         }
     },
@@ -227,16 +108,16 @@ var RedirectorOverlay = {
     setStatusBarImg : function() {
         var statusImg = $('redirector-statusbar-img');
 
-        if (RedirLib.getBoolPref('enabled')) {
+        if (Redirector.enabled) {
             statusImg.src = 'chrome://redirector/content/statusactive.PNG'
             statusImg.setAttribute('tooltiptext', this.strings.getString('enabledTooltip'));
-            Redirector.enabled = true;
         } else {
             statusImg.src = 'chrome://redirector/content/statusinactive.PNG'
             statusImg.setAttribute('tooltiptext', this.strings.getString('disabledTooltip'));
-            Redirector.enabled = false;
         }
     },
+    
+    
 
     prefObserver : {
 

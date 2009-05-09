@@ -4,7 +4,6 @@
 <!ENTITY txtPattern.label "Include Pattern">
 <!ENTITY txtExcludePattern.label "Exclude Pattern">
 <!ENTITY txtRedirectUrl.label "Redirect to">
-<!ENTITY chkOnlyIfLinkExists.label "Only if link exists">
 <!ENTITY btnTestPattern.label "Test pattern">
 <!ENTITY rdoWildcard.label "Wildcard">
 <!ENTITY rdoWildcard.accessKey "W">

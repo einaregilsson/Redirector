@@ -1,5 +1,13 @@
 //// $Id$
 
+const kRedirectorWildcard = 'W';
+const kRedirectorRegex= 'R';
+var Redirector = Components.classes["@einaregilsson.com/redirector;1"].getService(Components.interfaces.nsISupports).wrappedJSObject;
+
+function $(id) {
+    return document.getElementById(id);
+}
+
 var Redirect = {
 
     onLoad : function() {
@@ -9,7 +17,6 @@ var Redirect = {
         $('txtPattern').value = item.pattern;
         $('txtRedirectUrl').value = item.redirectUrl || '';
         $('txtExcludePattern').value = item.excludePattern || '';
-        $('chkOnlyIfLinkExists').checked = item.onlyIfLinkExists || false;
 
         $('txtPattern').focus();
         this.strings = document.getElementById("redirector-strings");
@@ -32,15 +39,19 @@ var Redirect = {
         item.exampleUrl =$('txtExampleUrl').value;
         item.redirectUrl = $('txtRedirectUrl').value;
         item.excludePattern = $('txtExcludePattern').value;
-        item.onlyIfLinkExists = $('chkOnlyIfLinkExists').checked;
         item.saved = true;
 
         return true;
     },
 
+    msgBox : function(title, text) {
+        Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
+            .getService(Components.interfaces.nsIPromptService)
+                .alert(window, title, text);
+    },
+    
     testPattern : function() {
         var redirectUrl, pattern, excludePattern, example, extName, isExcluded;
-
         redirectUrl = $('txtRedirectUrl').value;
         pattern = $('txtPattern').value;
         excludePattern = $('txtExcludePattern').value;
@@ -62,12 +73,11 @@ var Redirect = {
 
         var isRedirectMatch = redirectUrl || (redirectUrl === '' && $('txtRedirectUrl').value === '');
         if (isRedirectMatch && !isExcluded) {
-            RedirLib.msgBox(extName, this.strings.getFormattedString('testPatternSuccess', [pattern, example, redirectUrl]));
+            this.msgBox(extName, this.strings.getFormattedString('testPatternSuccess', [pattern, example, redirectUrl]));
         } else if (isExcluded) {
-            RedirLib.msgBox(extName, this.strings.getFormattedString('testPatternExclude', [example, excludePattern]));
+            this.msgBox(extName, this.strings.getFormattedString('testPatternExclude', [example, excludePattern]));
         } else {
-            RedirLib.msgBox(extName, this.strings.getFormattedString('testPatternFailure', [pattern, example]));
+            this.msgBox(extName, this.strings.getFormattedString('testPatternFailure', [pattern, example]));
         }
     }
-
 };
