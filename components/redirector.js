@@ -9,7 +9,6 @@ const kRedirectorWildcard = 'W';
 const kRedirectorRegex= 'R';
 
 const nsIContentPolicy = Ci.nsIContentPolicy;
-
 function RedirectorPolicy() {
     this.prefBranch = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefService).getBranch("extensions.redirector.");
 
@@ -59,7 +58,8 @@ RedirectorPolicy.prototype = {
     prefBranch : null,
     list : null,
     strings : null,
-    
+    cout : Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService),
+
     loadStrings : function() {
         var src = 'chrome://redirector/locale/redirector.properties';
         var localeService = Cc["@mozilla.org/intl/nslocaleservice;1"].getService(Ci.nsILocaleService);
@@ -70,7 +70,7 @@ RedirectorPolicy.prototype = {
     
     debug : function(msg) {
         if (this.debugEnabled) {
-            dump("REDIRECTOR: " + msg + "\n");        
+            this.cout.logStringMessage('REDIRECTOR: ' + msg);
         }
     },
     
@@ -83,14 +83,14 @@ RedirectorPolicy.prototype = {
             return nsIContentPolicy.ACCEPT;
         }
 
-        if (contentType != nsIContentPolicy.TYPE_DOCUMENT && contentType != nsIContentPolicy.TYPE_SUBDOCUMENT) {
+        if (contentType != nsIContentPolicy.TYPE_DOCUMENT) {
             return nsIContentPolicy.ACCEPT;
         }
         
         if (!aContext || !aContext.loadURI) {
             return nsIContentPolicy.ACCEPT;
         }
-        this.debug("CHECK: " + contentLocation.spec + "\n");
+        this.debug("CHECK: " + contentLocation.spec);
         
         var url = contentLocation.spec;
         
@@ -98,6 +98,7 @@ RedirectorPolicy.prototype = {
             var redirectUrl = this.getRedirectUrl(url, redirect);
             if (redirectUrl) {
                 redirectUrl = this.makeAbsoluteUrl(url, redirectUrl);
+                this.debug('Redirecting ' + url + ' to ' + redirectUrl);
                 aContext.loadURI(redirectUrl, requestOrigin, null);
                 return nsIContentPolicy.REJECT_REQUEST;
             }
