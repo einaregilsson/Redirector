@@ -1,4 +1,5 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- $Id$ -->
 <Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -52,7 +53,6 @@
     <Content Include="chrome\content\redirector.png" />
     <Content Include="chrome\content\statusactive.PNG" />
     <Content Include="chrome\content\statusinactive.PNG" />
-    <Content Include="chrome\skin\overlay.css" />
     <Content Include="components\redirector.js" />
     <Content Include="defaults\preferences\redirector.js" />
   </ItemGroup>

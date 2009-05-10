@@ -1,4 +1,4 @@
-
+//// $Id$
 const CSSB_CONTRACTID = "@einaregilsson.com/redirector;1";
 const CSSB_CID = Components.ID("{b7a7a54f-0581-47ff-b086-d6920cb7a3f7}");
 

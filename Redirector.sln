@@ -1,4 +1,4 @@
-
+# $Id$
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Redirector", "Redirector.csproj", "{1C962CCA-74DC-4F72-8C83-7617F2275D1A}"

@@ -1,3 +1,4 @@
+<!-- $Id$ -->
 <html>
 	<head>
 		<title>Redirector Help</title>
@@ -18,7 +19,6 @@
 					<li><a href="#excludepattern">Exclude pattern</a></li>
 					<li><a href="#redirectto">Redirect to</a></li>
 					<li><a href="#patterntype">Pattern type</a></li>
-					<li><a href="#onlyiflinkexists">Only if link exists</a></li>
 				</ul>
 			</li>
 			<li><a href="#wildcards">Wildcards</a></li>
@@ -49,7 +49,7 @@
 		<h4>Basic usage</h4>
 		<p>To add a new redirect you can go to the <em>Tools</em> menuitem and select <em>Redirector</em>. That will
 		open the <em>Redirector settings</em> window which shows all your redirects. The window can also be opened
-		by right clicking on the <strong>R</strong> icon in your statusbar and selecting <em>Manage redirects</em>. 
+		by right clicking on the <strong>R</strong> icon in your statusbar. 
 		There you can press the <em>Add...</em> button and then you can enter the details for the new redirect. A redirect
 		consists of a few things:
 		<ul>
@@ -75,11 +75,6 @@
             <li><a name="patterntype"></a><strong>Pattern type:</strong> This specifies how Redirector should interpret the patterns, either as
             <a href="#wildcards">wildcards</a> or <a href="#regularexpressions#">regular expressions</a>.</li>
             
-            <li><a name="onlyiflinkexists"></a><strong>Only if link exists:</strong> If this is checked then the redirect will only happen if there is a link
-            to the target page on the page that matches the include pattern. For instance, if you have a redirect from http://foo.com to
-            http://bar.com and check <em>Only if link exists</em> then http://foo.com has to have a hyperlink to http://bar.com, otherwise
-            nothing will happen.
-			</li>
 		</ul>
 		</p>
 

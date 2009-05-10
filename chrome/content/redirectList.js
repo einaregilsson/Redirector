@@ -1,5 +1,8 @@
+//// $Id$ 
 
 var Redirector = Components.classes["@einaregilsson.com/redirector;1"].getService(Components.interfaces.nsISupports).wrappedJSObject;
+const Cc = Components.classes;
+const Ci = Components.interfaces;
 
 function $(id) {
     return document.getElementById(id);
@@ -45,6 +48,21 @@ var RedirectList = {
         }
     },
 
+    openHelp : function() {
+        var windowName = "redirectorHelp";
+        var windowsMediator = Cc["@mozilla.org/appshell/window-mediator;1"].getService(Ci.nsIWindowMediator);
+        var win;
+        var iter = windowsMediator.getEnumerator(null);
+        while (iter.hasMoreElements()) {
+            win = iter.getNext();
+            if (win.name == windowName) {
+                win.focus();
+                return;
+            }
+        }
+        window.openDialog("chrome://redirector/content/help.html", windowName, "chrome,dialog,resizable=yes,location=0,toolbar=0,status=0,width=800px,height=600px,centerscreen", this);
+    },
+    
     close : function() {
         window.close();
     },

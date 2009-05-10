@@ -117,8 +117,6 @@ var RedirectorOverlay = {
         }
     },
     
-    
-
     prefObserver : {
 
         getService : function() {
@@ -138,11 +136,7 @@ var RedirectorOverlay = {
                 RedirectorOverlay.setStatusBarImg();
             }
         }
-
     }
-
-
 };
 window.addEventListener("load", function(event) { RedirectorOverlay.onLoad(event); }, false);
-window.addEventListener("DOMContentLoaded", function(event) { RedirectorOverlay.onDOMContentLoaded(event); }, true);
 window.addEventListener("unload", function(event) { RedirectorOverlay.onUnload(event); }, false);
