@@ -1,0 +1,1 @@
+mozbuild.py redirector.xpi
