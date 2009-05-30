@@ -156,7 +156,3 @@ var RedirectList = {
     }
 
 };
-
-window.addEventListener('unload', function() {
-    Redirector.unload();
-}, false);

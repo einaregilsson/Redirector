@@ -42,15 +42,17 @@ function RedirectorPolicy() {
     data = this.prefBranch.getCharPref('redirects');
     var arr;
     this.list = [];
-    for each (redirectString in data.split(':::')) {
-        arr = redirectString.split(',,,');
-        this.list.push({
-            exampleUrl          : arr[0],
-            pattern             : arr[1],
-            redirectUrl         : arr[2],
-            patternType         : arr[3],
-            excludePattern      : arr[4]
-        });
+    if (data != '') {
+        for each (redirectString in data.split(':::')) {
+            arr = redirectString.split(',,,');
+            this.list.push({
+                exampleUrl          : arr[0],
+                pattern             : arr[1],
+                redirectUrl         : arr[2],
+                patternType         : arr[3],
+                excludePattern      : arr[4]
+            });
+        }
     }
 }
 
