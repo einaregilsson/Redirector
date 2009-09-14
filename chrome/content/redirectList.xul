@@ -43,6 +43,8 @@
         <button id="btnDelete" onclick="RedirectList.deleteRedirect();" label="&btnDelete.label;" disabled="true" />
         <button id="btnClose" onclick="RedirectList.close();" label="&btnClose.label;"/>
         <button id="btnHelp" onclick="RedirectList.openHelp();" label="&btnHelp.label;"/>
+        <button id="btnImport" onclick="RedirectList.import();" label="&btnImport.label;"/>
+        <button id="btnExport" onclick="RedirectList.export();" label="&btnExport.label;"/>
         <!-- TODO: include in v2.0 
         <button id="btnUp" onclick="RedirectList.moveUp();" label="UP" disabled="false" />
         <button id="btnDown" onclick="RedirectList.moveDown();" label="Down" />

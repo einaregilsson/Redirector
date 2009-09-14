@@ -8,3 +8,5 @@
 <!ENTITY btnDelete.label "Delete">
 <!ENTITY btnClose.label "Close">
 <!ENTITY btnHelp.label "Help">
+<!ENTITY btnImport.label "Import...">
+<!ENTITY btnExport.label "Export...">
