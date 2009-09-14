@@ -39,12 +39,7 @@
     <None Include="chrome\locale\en-US\redirector.properties" />
     <None Include="install.rdf" />
   </ItemGroup>
-  <Target Name="Build">
-  </Target>
-  <!--<Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+  <Target Name="Build" />
+  <Target Name="Rebuild" />
+  <Target Name="Clean" />
 </Project>

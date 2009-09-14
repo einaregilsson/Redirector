@@ -50,7 +50,8 @@ function RedirectorPolicy() {
                 pattern             : arr[1],
                 redirectUrl         : arr[2],
                 patternType         : arr[3],
-                excludePattern      : arr[4]
+                excludePattern      : arr[4],
+                unescapeMatches		: !!arr[5] //This might be undefined for those upgrading from 1.7.1 but that's ok
             });
         }
     }
@@ -117,6 +118,10 @@ RedirectorPolicy.prototype = {
         this.prefBranch.setBoolPref('enabled', val);
     },
     
+    reload : function() {
+		//TODO: Reload implementation    
+    }, 
+    
     addRedirect : function(redirect) {
         this.list.push(redirect);
         this.save();
@@ -132,7 +137,7 @@ RedirectorPolicy.prototype = {
           , tempList = [];
 
         for each (r in this.list) {
-            tempList.push([r.exampleUrl, r.pattern, r.redirectUrl, r.patternType, r.excludePattern].join(',,,'));
+            tempList.push([r.exampleUrl, r.pattern, r.redirectUrl, r.patternType, r.excludePattern, r.unescapeMatches].join(',,,'));
         }
         this.prefBranch.setCharPref('redirects', tempList.join(':::'));
     },
@@ -141,7 +146,7 @@ RedirectorPolicy.prototype = {
         return this.prefBranch.getBoolPref(name);
     },
     
-    regexMatch : function(pattern, text, redirectUrl) {
+    regexMatch : function(pattern, text, redirectUrl, unescapeMatches) {
 
         if (!pattern) {
             return null;
@@ -160,7 +165,7 @@ RedirectorPolicy.prototype = {
         if (match) {
             for (var i = 1; i < match.length; i++) {
                 rxrepl = new RegExp('\\$' + i, 'gi');
-                redirectUrl = redirectUrl.replace(rxrepl, match[i]);
+                redirectUrl = redirectUrl.replace(rxrepl, unescapeMatches ? unescape(match[i]) : match[i]);
             }
             return redirectUrl;
         }
@@ -182,13 +187,13 @@ RedirectorPolicy.prototype = {
                 this.debug(url + ' matches exclude pattern ' + redirect.excludePattern);
                 return null;
             }
-            return this.wildcardMatch(redirect.pattern, url, redirect.redirectUrl);
+            return this.wildcardMatch(redirect.pattern, url, redirect.redirectUrl, redirect.unescapeMatches);
         } else if (redirect.patternType == kRedirectorRegex) {
             if (this.regexMatch(redirect.excludePattern, url, 'whatever')) {
                 this.debug(url + ' matches exclude pattern ' + redirect.excludePattern);
                 return null;
             }
-            return this.regexMatch(redirect.pattern, url, redirect.redirectUrl);
+            return this.regexMatch(redirect.pattern, url, redirect.redirectUrl, redirect.unescapeMatches);
         }
         return null;
     },
@@ -206,7 +211,7 @@ RedirectorPolicy.prototype = {
         return uri.resolve(relativeUrl);
     },
 
-    wildcardMatch : function(pattern, text, redirectUrl) {
+    wildcardMatch : function(pattern, text, redirectUrl, unescapeMatches) {
         var parts
           , part
           , i
@@ -239,15 +244,14 @@ RedirectorPolicy.prototype = {
 
             if (i == parts.length -1 && i != "" && text.substr(text.length - part.length) != part) {
                 return null;
-
             }
             
             if (i == 0) {
                 //Do nothing, part will be added on next run
             } else if (i == parts.length-1 && parts[i] == '') {
-                stars.push(text);
+                stars.push(unescapeMatches ? unescape(text) : text);
             } else {
-                stars.push(text.substr(0, pos));
+                stars.push(unescapeMatches ? unescape(text.substr(0, pos)) : text.substr(0, pos));
             }
             
             text = text.substr(pos + part.length);

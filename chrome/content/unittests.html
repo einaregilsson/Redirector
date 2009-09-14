@@ -1,0 +1,86 @@
+<!-- $Id: help.html 210 2009-05-10 05:20:55Z einar@einaregilsson.com $ -->
+<html>
+	<head>
+		<title>Redirector Unit Tests</title>
+		<style type="text/css">
+			body { font-family: Verdana, Arial; color:black; background-color:white; font-size:0.8em; width:800px; margin:auto; text-align:center;}
+			a { color:blue; }
+			h1 { text-align:center; margin:20px 0px; }
+			table { margin:auto; border:solid 1px black; width:500px; border-collapse:collapse;}
+			td { border:solid 1px black; padding:3px; }
+			td.result { width:20px; height:20px; padding:0;}
+			td.result div { width:70%; height:70%; margin:auto;  }
+		</style>
+		<script type="text/javascript">
+
+		//Global variables
+		var subscriptLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
+		var redirector = Components.classes["@einaregilsson.com/redirector;1"].getService(Components.interfaces.nsISupports).wrappedJSObject;
+		
+		function setupTest(name, testcase) {
+			var table = document.createElement('table');
+			var row = document.createElement('tr');
+			var cell = document.createElement('th');
+			var testdata;
+			cell.setAttribute('colspan', 2);
+			row.appendChild(cell);
+			table.appendChild(row);
+			cell.innerHTML = name;
+			document.getElementsByTagName('body')[0].appendChild(table);
+			for (var i = 0; i < testcase.tests.length; i++) {
+				var testdata = testcase.tests[i];
+				row = document.createElement('tr');
+				cell = document.createElement('td');
+				cell.setAttribute('class', 'result');
+				var dot = document.createElement('div');
+				dot.setAttribute('id', name + '_' + i);
+				cell.appendChild(dot);
+				
+				row.appendChild(cell);
+				cell = document.createElement('td');
+				cell.innerHTML = testcase.describe(testdata);
+				row.appendChild(cell);
+				table.appendChild(row);
+			}
+		}
+		
+		function setup() {
+			var tables = document.getElementsByTagName('table');
+			for (var i = 0; i < tables.length; i++) {
+				tables[i].parentNode.removeChild(tables[i]);
+			}
+			
+			subscriptLoader.loadSubScript('chrome://redirector/content/unittests.js');
+			redirector.reload();
+			
+			for (var name in tests) {
+				setupTest(name, tests[name]);
+			}	
+		}
+		
+		function runTests() {
+			for (var testcaseName in tests) {
+				var testcase = tests[testcaseName];
+				for (var i = 0; i < testcase.tests.length; i++) {
+					try {
+						var result = testcase.run(testcase.tests[i]);
+						if (result) {
+							document.getElementById(testcaseName + '_' + i).style.backgroundColor = 'green';
+						} else {
+							document.getElementById(testcaseName + '_' + i).style.backgroundColor = 'red';
+						}
+					} catch(e) {
+						document.getElementById(testcaseName + '_' + i).style.backgroundColor = 'red';
+					}
+				}
+			}	
+		}
+		
+		</script>
+	</head>
+	<body onload="setup();">
+		<h1>Redirector Unit Tests</h1>
+		<button onclick="runTests();">Run tests</button>
+		<button onclick="setup();">Reload tests</button>
+	</body>
+</html>

@@ -17,6 +17,7 @@ var Redirect = {
         $('txtPattern').value = item.pattern;
         $('txtRedirectUrl').value = item.redirectUrl || '';
         $('txtExcludePattern').value = item.excludePattern || '';
+        $('chkUnescapeMatches').setAttribute('selected', !!item.unescapeMatches);
 
         $('txtPattern').focus();
         this.strings = document.getElementById("redirector-strings");
@@ -39,6 +40,7 @@ var Redirect = {
         item.exampleUrl =$('txtExampleUrl').value;
         item.redirectUrl = $('txtRedirectUrl').value;
         item.excludePattern = $('txtExcludePattern').value;
+        item.unescapeMatches = $('chkUnescapeMatches').selected;
         item.saved = true;
 
         return true;
@@ -51,21 +53,22 @@ var Redirect = {
     },
     
     testPattern : function() {
-        var redirectUrl, pattern, excludePattern, example, extName, isExcluded;
+        var redirectUrl, pattern, excludePattern, example, extName, isExcluded, unescapeMatches;
         redirectUrl = $('txtRedirectUrl').value;
         pattern = $('txtPattern').value;
         excludePattern = $('txtExcludePattern').value;
         example = $('txtExampleUrl').value;
-
+		unescapeMatches = $('chkUnescapeMatches').checked;
+		
         extName = this.strings.getString('extensionName');
 
         if ($('rdoRegex').selected) {
-            redirectUrl = Redirector.regexMatch(pattern, example, redirectUrl);
+            redirectUrl = Redirector.regexMatch(pattern, example, redirectUrl, unescapeMatches);
             if (excludePattern) {
                 isExcluded = Redirector.regexMatch(excludePattern, example, 'exclude');
             }
         } else {
-            redirectUrl = Redirector.wildcardMatch(pattern, example, redirectUrl);
+            redirectUrl = Redirector.wildcardMatch(pattern, example, redirectUrl, unescapeMatches);
             if (excludePattern) {
                 isExcluded = Redirector.wildcardMatch(excludePattern, example, 'exclude');
             }

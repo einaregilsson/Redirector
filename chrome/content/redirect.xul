@@ -18,32 +18,36 @@
 
   <grid>
     <rows>
-      <row>
+      <row align="center">
         <text value="&txtExampleUrl.label;" style="margin-top:6px;"/>
         <textbox id="txtExampleUrl" style="width:400px;"/>
       </row>
-      <row>
+      <row align="center">
         <text value="&txtPattern.label;" style="margin-top:6px;"/>
         <textbox id="txtPattern" taborder="1"/>
         <button id="btnTestPattern" label="&btnTestPattern.label;" onclick="Redirect.testPattern();" taborder="2"/>
       </row>
-      <row>
+      <row align="center">
         <text value="&txtExcludePattern.label;" style="margin-top:6px;"/>
         <textbox id="txtExcludePattern" taborder="3"/>
       </row>
-      <row>
+      <row align="center">
         <text value="&txtRedirectUrl.label;" style="margin-top:6px;"/>
         <textbox id="txtRedirectUrl" taborder="4"/>
       </row>
-      <row>
+      <row align="center">
         <text value="&rdoPatternTypes.label;"/>
         <radiogroup>
-          <radio id="rdoWildcard" label="&rdoWildcard.label;" accesskey="&rdoWildcard.accessKey;" selected="true" taborder="5"/>
-          <radio id="rdoRegex" label="&rdoRegex.label;"  accesskey="&rdoRegex.accessKey;" taborder="6"/>
+          <hbox>
+            <radio id="rdoWildcard" label="&rdoWildcard.label;" accesskey="&rdoWildcard.accessKey;" selected="true" taborder="5"/>
+            <radio id="rdoRegex" label="&rdoRegex.label;"  accesskey="&rdoRegex.accessKey;" taborder="6"/>
+          </hbox>
         </radiogroup>
       </row>
+      <row align="center">
+        <text value="&chkUnescapeMatches.label;" />
+        <checkbox id="chkUnescapeMatches" label="" taborder="7"/>
+      </row>
     </rows>
-
   </grid>
-
 </dialog>

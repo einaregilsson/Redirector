@@ -10,4 +10,5 @@
 <!ENTITY rdoRegex.label "Regular Expression">
 <!ENTITY rdoPatternTypes.label "Pattern Type">
 <!ENTITY rdoRegex.accessKey "R">
+<!ENTITY chkUnescapeMatches.label "Unescape matches">
 
