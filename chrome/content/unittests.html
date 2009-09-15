@@ -6,7 +6,7 @@
 			body { font-family: Verdana, Arial; color:black; background-color:white; font-size:0.8em; width:800px; margin:auto; text-align:center;}
 			a { color:blue; }
 			h1 { text-align:center; margin:20px 0px; }
-			table { margin:auto; border:solid 1px black; width:500px; border-collapse:collapse;}
+			table { margin:auto; border:solid 1px black; width:700px; border-collapse:collapse;}
 			td { border:solid 1px black; padding:3px; }
 			td.result { width:20px; height:20px; padding:0;}
 			td.result div { width:70%; height:70%; margin:auto;  }
@@ -45,6 +45,7 @@
 		}
 		
 		function setup() {
+			try{
 			var tables = document.getElementsByTagName('table');
 			for (var i = 0; i < tables.length; i++) {
 				tables[i].parentNode.removeChild(tables[i]);
@@ -56,6 +57,7 @@
 			for (var name in tests) {
 				setupTest(name, tests[name]);
 			}	
+		}catch(e){alert(e);}
 		}
 		
 		function runTests() {
@@ -65,12 +67,12 @@
 					try {
 						var result = testcase.run(testcase.tests[i]);
 						if (result) {
-							document.getElementById(testcaseName + '_' + i).style.backgroundColor = 'green';
+							document.getElementById(testcaseName + '_' + i).style.backgroundColor = '#17f816';
 						} else {
-							document.getElementById(testcaseName + '_' + i).style.backgroundColor = 'red';
+							document.getElementById(testcaseName + '_' + i).style.backgroundColor = '#ff0000';
 						}
 					} catch(e) {
-						document.getElementById(testcaseName + '_' + i).style.backgroundColor = 'red';
+						document.getElementById(testcaseName + '_' + i).style.backgroundColor = '#ff0000';
 					}
 				}
 			}	

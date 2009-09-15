@@ -9,17 +9,16 @@ var kRedirectorWildcard = 'W';
 var kRedirectorRegex= 'R';
 var nsIContentPolicy = Ci.nsIContentPolicy;
 
-function RedirectorPolicy() {
+function Redirector() {
 	this.init();
 }
 
 try {
-Cc["@mozilla.org/moz/jssubscript-loader;1"]
-	.getService(Ci.mozIJSSubScriptLoader)
-		.loadSubScript('chrome://redirector/content/redirector.prototype.js');
-}catch(e) {
-Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService).logStringMessage(e);
-
+	Cc["@mozilla.org/moz/jssubscript-loader;1"]
+		.getService(Ci.mozIJSSubScriptLoader)
+			.loadSubScript('chrome://redirector/content/redirector.prototype.js');
+} catch(e) {
+	Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService).logStringMessage('Loading Redirector implementation failed: ' + e);
 }
 /*
  * Factory object
@@ -42,7 +41,7 @@ const factory = {
         }
 
         if(!redirectorInstance) {
-            redirectorInstance = new RedirectorPolicy();
+            redirectorInstance = new Redirector();
             redirectorInstance.wrappedJSObject = redirectorInstance;
         }
 

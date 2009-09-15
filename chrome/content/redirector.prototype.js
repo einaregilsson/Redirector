@@ -8,7 +8,7 @@ kRedirectorRegex= 'R';
 nsIContentPolicy = Ci.nsIContentPolicy;
 
 
-RedirectorPolicy.prototype = {
+Redirector.prototype = {
     prefBranch : null,
     list : null,
     strings : null,
@@ -109,6 +109,7 @@ RedirectorPolicy.prototype = {
         return nsIContentPolicy.ACCEPT;
     },
 
+    // nsIContentPolicy interface implementation
     shouldProcess: function(contentType, contentLocation, requestOrigin, insecNode, mimeType, extra) {
         return nsIContentPolicy.ACCEPT;
     },
@@ -123,8 +124,8 @@ RedirectorPolicy.prototype = {
 			.getService(Ci.mozIJSSubScriptLoader)
 				.loadSubScript('chrome://redirector/content/redirector.prototype.js');
 		
-		for (var key in RedirectorPolicy.prototype) {
-			this[key] = RedirectorPolicy.prototype[key];
+		for (var key in Redirector.prototype) {
+			this[key] = Redirector.prototype[key];
 		}
 		this.init();
     }, 
@@ -217,55 +218,53 @@ RedirectorPolicy.prototype = {
         
         return uri.resolve(relativeUrl);
     },
-
+    
     wildcardMatch : function(pattern, text, redirectUrl, unescapeMatches) {
-        var parts
-          , part
-          , i
-          , pos
-          , originalText
-          , stars;
 
-        if (!pattern) {
-            return null;
-        }
-        parts = pattern.split('*');
+	    if (!pattern || !text) {
+	    	return null;
+		}
+		if (pattern.indexOf('*') == -1) {
+			return (pattern == text) ? redirectUrl : null;
+		}
+		
+		var parts = pattern.split('*');  
+		var first = parts[0], 
+		    last  = parts[parts.length-1];
 
-        stars = [];
-        originalText = text;
-        var starStart = -1;
+		if (first) {
+			if (text.substr(0, first.length) != first) {
+				return null;
+			}
+			text = text.substr(first.length);
+		}
 
-        for (i in parts) {
-
-            part = parts[i];
-
-            pos = text.lastIndexOf(part);
-
+		if (last) {
+			if (text.substr(text.length-last.length) != last) {
+				return null;
+			}
+			text = text.substr(0, text.length-last.length);
+		}
+		
+		if ((first || last) && parts.length == 2) {
+			return redirectUrl.replace('$1', text);
+		}
+		parts.splice(0,1);
+		parts.splice(parts.length-1,1);
+		var pos = 0, lastPos = 0;
+    	var matches = [];
+		for each(part in parts) {
+            pos = text.indexOf(part, lastPos);
             if (pos == -1) {
                 return null;
             }
-
-            if (i == 0 && pos != 0) {
-                return null;
-            }
-
-            if (i == parts.length -1 && i != "" && text.substr(text.length - part.length) != part) {
-                return null;
-            }
-            
-            if (i == 0) {
-                //Do nothing, part will be added on next run
-            } else if (i == parts.length-1 && parts[i] == '') {
-                stars.push(unescapeMatches ? unescape(text) : text);
-            } else {
-                stars.push(unescapeMatches ? unescape(text.substr(0, pos)) : text.substr(0, pos));
-            }
-            
-            text = text.substr(pos + part.length);
+            var match = text.substr(lastPos, pos-lastPos);
+            matches.push(match);
+            lastPos = pos + part.length;
         }
-        
-        for (var i = 1; i <= stars.length; i++) {
-            redirectUrl = redirectUrl.replace(new RegExp('\\$' + i, 'gi'), stars[i-1]);
+        matches.push(text.substr(lastPos));
+        for (var i = 1; i <= matches.length; i++) {
+            redirectUrl = redirectUrl.replace(new RegExp('\\$' + i, 'gi'), unescapeMatches ? unescape(matches[i-1]) : matches[i-1]);
         }
 
         return redirectUrl;
