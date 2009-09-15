@@ -1,4 +1,4 @@
-<!-- $Id: help.html 210 2009-05-10 05:20:55Z einar@einaregilsson.com $ -->
+<!-- $Id$ -->
 <html>
 	<head>
 		<title>Redirector Unit Tests</title>
@@ -45,7 +45,6 @@
 		}
 		
 		function setup() {
-			try{
 			var tables = document.getElementsByTagName('table');
 			for (var i = 0; i < tables.length; i++) {
 				tables[i].parentNode.removeChild(tables[i]);
@@ -57,7 +56,6 @@
 			for (var name in tests) {
 				setupTest(name, tests[name]);
 			}	
-		}catch(e){alert(e);}
 		}
 		
 		function runTests() {

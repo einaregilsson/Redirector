@@ -1,4 +1,4 @@
-
+//// $Id$
 var tests = {
 	"Wildcard matches" : {
 		run : function(data) { 
@@ -17,17 +17,23 @@ var tests = {
 			return result == expected;
 		},
 		
-		describe : function(data) { return data[0] + ' matches ' + data[1] + ', matches=' + data[2]; },
+		describe : function(data) { return data[0] + ' == ' + data[1] + ', matches=' + data[2]; },
 		tests : [
 			['http://foo*', 'http://foobar.is', 'bar.is'],
 			['http://foo*', 'http://foo', ''],
+			['*://foo.is', 'http://foo.is', 'http'],
+			['*http://foo.is', 'http://foo.is', ''],
+			['http*foo*', 'http://foobar.is', '://,bar.is'],
+			['http*foo*', 'http://foo', '://,'],
+			['*://f*.is', 'http://foo.is', 'http,oo'],
+			['*http://f*.is', 'http://foo.is', ',oo'],
 			['*foo*', 'http://foo', 'http://,'],
+			['*foo*', 'foobar.is', ',bar.is'],
 			['*foo*', 'http://foobar.is', 'http://,bar.is'],
 			['http://foo.is', 'http://foo.is', ''],
 			['*', 'http://foo.is', 'http://foo.is'],
-			['*://foo.is', 'http://foo.is', 'http'],
-			['*://foo.is*', 'http://foo.is/bar/baz', 'http,/bar/baz'],
-			['*://*oo*bar*', 'http://foo.is/bar/baz', 'http,f,.is/,/baz']
+			['*://*oo*bar*', 'http://foo.is/bar/baz', 'http,f,.is/,/baz'],
+			['*://**oo*bar*', 'http://foo.is/bar/baz', 'http,,f,.is/,/baz'],
 		]
 	}
 };
