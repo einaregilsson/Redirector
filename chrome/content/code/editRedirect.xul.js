@@ -8,7 +8,7 @@ function $(id) {
     return document.getElementById(id);
 }
 
-var Redirect = {
+var EditRedirect = {
 
     onLoad : function() {
         var item = window.arguments[0];
@@ -17,7 +17,7 @@ var Redirect = {
         $('txtPattern').value = item.pattern;
         $('txtRedirectUrl').value = item.redirectUrl || '';
         $('txtExcludePattern').value = item.excludePattern || '';
-        $('chkUnescapeMatches').setAttribute('selected', !!item.unescapeMatches);
+        $('chkUnescapeMatches').setAttribute('checked', !!item.unescapeMatches);
 
         $('txtPattern').focus();
         this.strings = document.getElementById("redirector-strings");
@@ -37,10 +37,10 @@ var Redirect = {
         } else {
             item.patternType = kRedirectorWildcard;
         }
-        item.exampleUrl =$('txtExampleUrl').value;
+        item.exampleUrl = $('txtExampleUrl').value;
         item.redirectUrl = $('txtRedirectUrl').value;
         item.excludePattern = $('txtExcludePattern').value;
-        item.unescapeMatches = $('chkUnescapeMatches').selected;
+        item.unescapeMatches = $('chkUnescapeMatches').hasAttribute('checked') && $('chkUnescapeMatches').getAttribute('checked');
         item.saved = true;
 
         return true;

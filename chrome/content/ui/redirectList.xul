@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- $Id -->
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<!DOCTYPE dialog SYSTEM "chrome://redirector/locale/redirectList.dtd">
+<!DOCTYPE dialog SYSTEM "chrome://redirector/locale/redirectList.xul.dtd">
 <window title="&window.title;"
         orient="vertical"
         onload="RedirectList.onLoad();"
@@ -12,7 +12,7 @@
 		xmlns:nc="http://home.netscape.com/NC-rdf#"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-  <script type="application/x-javascript" src="redirectList.js"/>
+  <script type="application/x-javascript" src="../code/redirectList.xul.js"/>
 
   <vbox>
       <richlistbox seltype="single" id="lstRedirects" style="margin-bottom:5px; border:solid 1px grey;" height="330px" ondblclick="RedirectList.editRedirect();" onselect="RedirectList.selectionChange();">
@@ -41,10 +41,10 @@
         <button id="btnAdd" onclick="RedirectList.addRedirect();" label="&btnAdd.label;" disabled="false" />
         <button id="btnEdit" onclick="RedirectList.editRedirect();" label="&btnEdit.label;" disabled="true" />
         <button id="btnDelete" onclick="RedirectList.deleteRedirect();" label="&btnDelete.label;" disabled="true" />
-        <button id="btnClose" onclick="RedirectList.close();" label="&btnClose.label;"/>
-        <button id="btnHelp" onclick="RedirectList.openHelp();" label="&btnHelp.label;"/>
         <button id="btnImport" onclick="RedirectList.import();" label="&btnImport.label;"/>
         <button id="btnExport" onclick="RedirectList.export();" label="&btnExport.label;"/>
+        <button id="btnHelp" onclick="RedirectList.openHelp();" label="&btnHelp.label;"/>
+        <button id="btnClose" onclick="RedirectList.close();" label="&btnClose.label;"/>
         <!-- TODO: include in v2.0 
         <button id="btnUp" onclick="RedirectList.moveUp();" label="UP" disabled="false" />
         <button id="btnDown" onclick="RedirectList.moveDown();" label="Down" />

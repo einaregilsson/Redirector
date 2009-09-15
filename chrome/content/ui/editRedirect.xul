@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- $Id$ -->
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<!DOCTYPE dialog SYSTEM "chrome://redirector/locale/redirect.dtd">
+<!DOCTYPE dialog SYSTEM "chrome://redirector/locale/editRedirect.xul.dtd">
 <dialog title="&redirectWindow.title;"
         orient="vertical"
         autostretch="always"
-        onload="Redirect.onLoad();"
+        onload="EditRedirect.onLoad();"
         buttons="accept,cancel"
-        ondialogaccept="return Redirect.onAccept();"
+        ondialogaccept="return EditRedirect.onAccept();"
         xmlns:nc="http://home.netscape.com/NC-rdf#"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-  <script type="application/x-javascript" src="redirect.js"/>
+  <script type="application/x-javascript" src="../code/editRedirect.xul.js"/>
   <stringbundleset id="stringbundleset">
     <stringbundle id="redirector-strings" src="chrome://redirector/locale/redirector.properties"/>
   </stringbundleset>
@@ -25,7 +25,7 @@
       <row align="center">
         <text value="&txtPattern.label;" style="margin-top:6px;"/>
         <textbox id="txtPattern" taborder="1"/>
-        <button id="btnTestPattern" label="&btnTestPattern.label;" onclick="Redirect.testPattern();" taborder="2"/>
+        <button id="btnTestPattern" label="&btnTestPattern.label;" onclick="EditRedirect.testPattern();" taborder="2"/>
       </row>
       <row align="center">
         <text value="&txtExcludePattern.label;" style="margin-top:6px;"/>

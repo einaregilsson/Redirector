@@ -1,4 +1,4 @@
 # $Id$
 content redirector file:chrome/content/
 locale  redirector en-US   file:chrome/locale/en-US/
-overlay chrome://browser/content/browser.xul    chrome://redirector/content/overlay.xul
+overlay chrome://browser/content/browser.xul    chrome://redirector/content/ui/browserOverlay.xul

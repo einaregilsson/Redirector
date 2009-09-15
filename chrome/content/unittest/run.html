@@ -5,11 +5,12 @@
 		<style type="text/css">
 			body { font-family: Verdana, Arial; color:black; background-color:white; font-size:0.8em; width:800px; margin:auto; text-align:center;}
 			a { color:blue; }
-			h1 { text-align:center; margin:20px 0px; }
+			h1 { text-align:center; margin:10px 0px; }
 			table { margin:auto; border:solid 1px black; width:700px; border-collapse:collapse;}
 			td { border:solid 1px black; padding:3px; }
 			td.result { width:20px; height:20px; padding:0;}
 			td.result div { width:70%; height:70%; margin:auto;  }
+			button { margin:20px auto; }
 		</style>
 		<script type="text/javascript">
 
@@ -50,7 +51,7 @@
 				tables[i].parentNode.removeChild(tables[i]);
 			}
 			
-			subscriptLoader.loadSubScript('chrome://redirector/content/unittests.js');
+			subscriptLoader.loadSubScript('chrome://redirector/content/unittest/testcases.js');
 			redirector.reload();
 			
 			for (var name in tests) {

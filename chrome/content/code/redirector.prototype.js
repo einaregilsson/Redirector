@@ -56,13 +56,21 @@ Redirector.prototype = {
 	                redirectUrl         : arr[2],
 	                patternType         : arr[3],
 	                excludePattern      : arr[4],
-	                unescapeMatches		: !!arr[5] //This might be undefined for those upgrading from 1.7.1 but that's ok
+	                unescapeMatches		: arr[5] == 'true' //This might be undefined for those upgrading from 1.7.1 but that's ok
 	            });
 	        }
 	    }
 	    
     },
     
+    getDefaultDir : function() {
+		return this.prefBranch.getCharPref('defaultDir');    
+    },
+    
+    setDefaultDir : function(dir) {
+		this.prefBranch.setCharPref('defaultDir', dir.spec);
+    },
+
     loadStrings : function() {
         var src = 'chrome://redirector/locale/redirector.properties';
         var localeService = Cc["@mozilla.org/intl/nslocaleservice;1"].getService(Ci.nsILocaleService);
@@ -122,7 +130,7 @@ Redirector.prototype = {
     reload : function() {
 		Cc["@mozilla.org/moz/jssubscript-loader;1"]
 			.getService(Ci.mozIJSSubScriptLoader)
-				.loadSubScript('chrome://redirector/content/redirector.prototype.js');
+				.loadSubScript('chrome://redirector/content/code/redirector.prototype.js');
 		
 		for (var key in Redirector.prototype) {
 			this[key] = Redirector.prototype[key];
@@ -141,13 +149,18 @@ Redirector.prototype = {
     },
     
     save : function() {
+        this.prefBranch.setCharPref('redirects', this.redirectsAsStrings().join(':::'));
+    },
+    
+    redirectsAsStrings : function() {
         var r
           , tempList = [];
 
         for each (r in this.list) {
+	        this.debug(r.unescapeMatches);
             tempList.push([r.exampleUrl, r.pattern, r.redirectUrl, r.patternType, r.excludePattern, r.unescapeMatches].join(',,,'));
         }
-        this.prefBranch.setCharPref('redirects', tempList.join(':::'));
+        return tempList;
     },
     
     getBoolPref : function(name) {
@@ -182,6 +195,54 @@ Redirector.prototype = {
 
     },
 
+	exportRedirects : function(file) {
+		var fileStream = Cc["@mozilla.org/network/file-output-stream;1"].createInstance(Ci.nsIFileOutputStream);
+		const PR_WRONLY      = 0x02;
+		const PR_CREATE_FILE = 0x08;
+		const PR_TRUNCATE    = 0x20;
+
+		fileStream.init(file, PR_WRONLY | PR_CREATE_FILE | PR_TRUNCATE, 0644, 0);
+		//file.parent.QueryInterface(Ci.nsILocalFile)
+		var stream = Cc["@mozilla.org/intl/converter-output-stream;1"].createInstance(Ci.nsIConverterOutputStream);
+		stream.init(fileStream, "UTF-8", 16384, Ci.nsIConverterInputStream.DEFAULT_REPLACEMENT_CHARACTER);
+		stream.writeString(this.redirectsAsStrings().join('\n'));
+		stream.close();
+	},
+	
+	importRedirects : function(file) {
+		var fileStream = Cc["@mozilla.org/network/file-input-stream;1"].createInstance(Ci.nsIFileInputStream);
+		fileStream.init(file, 0x01, 0444, 0); //TODO: Find the actual constants for these magic numbers
+
+		var stream = Cc["@mozilla.org/intl/converter-input-stream;1"].createInstance(Ci.nsIConverterInputStream);
+		stream.init(fileStream, "UTF-8", 16384, Ci.nsIConverterInputStream.DEFAULT_REPLACEMENT_CHARACTER);
+		stream = stream.QueryInterface(Ci.nsIUnicharLineInputStream);
+
+		var importCount = 0, existsCount = 0;
+		var lines = [];
+		var line = {value: null};
+		while (stream.readLine(line)) {
+			var parts = line.replace('\n', '').split(',,,');
+			if (parts.length < 6) {
+				var redirect = {
+	                exampleUrl          : parts[0],
+	                pattern             : parts[1],
+	                redirectUrl         : parts[2],
+	                patternType         : parts[3],
+	                excludePattern      : parts[4],
+	                unescapeMatches		: parts[5] == 'true' ? true : false 
+                };
+                
+                
+			}
+		}
+		stream.close();
+		this.save();
+	},
+	
+    getString : function(name) {
+	    return this.strings.GetStringFromName(name);
+    },
+    
     msgBox : function(title, text) {
         Cc["@mozilla.org/embedcomp/prompt-service;1"]
             .getService(Ci.nsIPromptService)

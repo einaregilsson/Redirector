@@ -60,7 +60,7 @@ var RedirectList = {
                 return;
             }
         }
-        window.openDialog("chrome://redirector/content/help.html", windowName, "chrome,dialog,resizable=yes,location=0,toolbar=0,status=0,width=800px,height=600px,centerscreen", this);
+        window.openDialog("chrome://redirector/content/ui/help.html", windowName, "chrome,dialog,resizable=yes,location=0,toolbar=0,status=0,width=800px,height=600px,centerscreen", this);
     },
     
     close : function() {
@@ -100,9 +100,9 @@ var RedirectList = {
     
     addRedirect : function() {
 
-        var item = { pattern : '', exampleUrl : '', redirectUrl : '', patternType : 'W'};
+        var item = { pattern : '', exampleUrl : '', redirectUrl : '', patternType : 'W', unescapeMatches : false};
 
-        window.openDialog("chrome://redirector/content/redirect.xul",
+        window.openDialog("chrome://redirector/content/ui/editRedirect.xul",
                     "redirect",
                     "chrome,dialog,modal,centerscreen", item);
 
@@ -123,7 +123,7 @@ var RedirectList = {
 
         var item = listItem.item;
 
-        window.openDialog("chrome://redirector/content/redirect.xul",
+        window.openDialog("chrome://redirector/content/ui/editRedirect.xul",
                     "redirect",
                     "chrome,dialog,modal,centerscreen", item);
 
@@ -153,6 +153,41 @@ var RedirectList = {
 
         $('btnEdit').disabled = (index == -1);
         $('btnDelete').disabled = (index == -1);
+    },
+    
+    importExport : function(mode, captionKey, func) {
+	    //Mostly borrowed from Adblock Plus
+		var picker = Cc["@mozilla.org/filepicker;1"].createInstance(Ci.nsIFilePicker);
+		picker.init(window, Redirector.getString(captionKey), mode);
+		picker.defaultExtension = ".rdx";
+		var dir = Redirector.getDefaultDir();
+		if (dir) {
+			picker.displayDirectory = dir;
+		}
+		picker.appendFilter(Redirector.getString('redirectorFiles'), '*.rdx');
+	
+		if (picker.show() != picker.returnCancel)
+		{
+			try
+			{
+				func(picker.file);
+			}
+			catch (e)
+			{
+				alert(e);
+			}
+		}
+    },
+    
+    export : function() {
+	    this.importExport(Ci.nsIFilePicker.modeSave, 'exportCaption', function(file) {
+		    Redirector.exportRedirects(file);
+	    });
+    },
+    
+    import : function() {
+	    this.importExport(Ci.nsIFilePicker.modeOpen, 'importCaption', function(file) {
+		    Redirector.importRedirects(file);
+	    });
     }
-
 };

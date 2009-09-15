@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- $Id$ -->
-<!DOCTYPE overlay SYSTEM "chrome://redirector/locale/redirector.dtd">
+<!DOCTYPE overlay SYSTEM "chrome://redirector/locale/browserOverlay.xul.dtd">
 <overlay id="redirector-overlay"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-  <script src="overlay.js"/>
+  <script src="../code/browserOverlay.xul.js"/>
 
   <stringbundleset id="stringbundleset">
     <stringbundle id="redirector-strings" src="chrome://redirector/locale/redirector.properties"/>
@@ -28,7 +28,7 @@
         <menuitem label="&RedirectorHelp.label;" accesskey="&RedirectorHelp.accesskey;" oncommand="Redirector.openHelp();" />
       </menupopup>
       -->
-      <image id="redirector-statusbar-img" src="chrome://redirector/content/statusactive.PNG"
+      <image id="redirector-statusbar-img" src="chrome://redirector/content/images/statusactive.PNG"
              tooltiptext="Redirector is enabled;"
              style="width:16px; height:16px;"
              onclick="RedirectorOverlay.statusBarClick(event);" />
