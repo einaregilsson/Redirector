@@ -1,4 +1,6 @@
 //// $Id$
+var nsIContentPolicy = Components.interfaces.nsIContentPolicy;
+
 var tests = {
 	"Wildcard matches" : {
 		run : function(data,log) { 
@@ -39,7 +41,7 @@ var tests = {
 	},
 	
 	"Regex matches" : {
-		run : function(data,log) { 
+		run : function(data) { 
 			var pattern = data[0],
 				url = data[1],
 				expected = data[2];
@@ -74,6 +76,51 @@ var tests = {
 			['(.*)://(.*)oo(.*)bar(.*)', 'http://foo.is/bar/baz', 'http,f,.is/,/baz'],
 			['(.*)://(.*?)(.*)oo(.*)bar(.*)', 'http://foo.is/bar/baz', 'http,,f,.is/,/baz'],
 		]
-	}
+	},
 	
+	"nsIContentPolicy implementation" : {
+		run : function(data) {
+			var runTest = function() {
+				var args = {
+					contentType : nsIContentPolicy.TYPE_DOCUMENT, 
+					contentLocation : "http://foo.is", 
+					requestOrigin : null, 
+					aContext : { loadURI : function(){}}, 
+					mimeTypeGuess : null, 
+					extra : null
+				};
+				for (var key in data[1]) {
+					args[key] = data[1][key];
+				}
+				
+				var ioService = Components.classes["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService);  
+				args.contentLocation = ioService.newURI(args.contentLocation, null, null);
+				var result = redirector.shouldLoad(args.contentType, args.contentLocation, args.requestOrigin, args.aContext, args.mimeTypeGuess, args.extra);
+				return { passed: result == nsIContentPolicy.ACCEPT, message : "Expected nsIContentPolicy.ACCEPT, actual was " + result };
+			}
+			
+			if (typeof data[2] == "function") {
+				return data[2](runTest);
+			} else {
+				return runTest();
+			}
+		},
+		
+		describe : function(data) { return data[0]; },
+		tests : [
+			["Accepts if not TYPE_DOCUMENT", { contentType : nsIContentPolicy.TYPE_STYLESHEET}],
+			["Accepts if not http or https", { contentLocation : "resource://foo/bar"}],
+			["Accepts if no aContext", { aContext : null}],
+			["Accepts if aContext has no loadURI function", { aContext : { foo : function(){}}}],
+			["Accepts if Redirector is not enabled", {}, function(doFunc) {
+				try {
+					redirector.enabled = false;
+					return doFunc();
+				} catch(e) {
+					redirector.enabled = true;
+					throw e;	
+				}
+			}]
+		]		
+	}
 };

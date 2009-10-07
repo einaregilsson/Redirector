@@ -27,7 +27,7 @@
 			row.appendChild(cell);
 			table.appendChild(row);
 			cell.innerHTML = name;
-			document.getElementsByTagName('body')[0].appendChild(table);
+			document.getElementById('tests').appendChild(table);
 			for (var i = 0; i < testcase.tests.length; i++) {
 				var testdata = testcase.tests[i];
 				row = document.createElement('tr');
@@ -46,17 +46,21 @@
 		}
 		
 		function setup() {
-			var tables = document.getElementsByTagName('table');
-			for (var i = 0; i < tables.length; i++) {
-				tables[i].parentNode.removeChild(tables[i]);
-			}
+			//quick and dirty cleanup
+			document.getElementById('tests').innerHTML = '';
 			subscriptLoader.loadSubScript('chrome://redirector/content/code/redirect.js');
 			subscriptLoader.loadSubScript('chrome://redirector/content/unittest/testcases.js');
 			redirector.reload();
 			
+			var sorted = [];
 			for (var name in tests) {
-				setupTest(name, tests[name]);
+				sorted.push(name);
 			}	
+			
+			sorted.sort();			
+			for each(var name in sorted) {
+				setupTest(name, tests[name]);
+			}
 		}
 		
 		function runTests() {
@@ -89,5 +93,7 @@
 		<h1>Redirector Unit Tests</h1>
 		<button onclick="runTests();">Run tests</button>
 		<button onclick="setup();">Reload tests</button>
+		<div id="tests">
+		</div>
 	</body>
 </html>
