@@ -1,55 +1,50 @@
-//// $Id$ 
+//// document.getElementByIdId: redirectList.xul.js 249 2009-09-15 21:41:06Z einar@einaregilsson.com document.getElementById 
 
 var Redirector = Components.classes["@einaregilsson.com/redirector;1"].getService(Components.interfaces.nsISupports).wrappedJSObject;
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 
-function $(id) {
-    return document.getElementById(id);
-}
-
 var RedirectList = {
 
-    id          : "redirector@einaregilsson.com",
-    name        : "Redirector",
     lstRedirects: null,
     btnDelete   : null,
     btnEdit     : null,
+    btnDisable  : null,
 
     addItemsToListBox : function(items) {
 
-        var list = $('lstRedirects');
-        var item, row, value, newItem;
+	    var item, row, value, newItem;
         
         for each (item in items) {
             newItem = this.template.cloneNode(true);
 
-            newItem.getElementsByAttribute('name', 'dscrIncludePattern')[0].setAttribute('value', item.pattern);
+            newItem.getElementsByAttribute('name', 'dscrIncludePattern')[0].setAttribute('value', item.includePattern);
             newItem.getElementsByAttribute('name', 'dscrExcludePattern')[0].setAttribute('value', item.excludePattern);
             newItem.getElementsByAttribute('name', 'dscrRedirectTo')[0].setAttribute('value', item.redirectUrl);
             newItem.item = item;
-            list.appendChild(newItem);
-            newItem.setAttribute("selected", false);
+            this.lstRedirects.appendChild(newItem);
+            newItem.setAttribute('selected', false);
         }
-        
     },
 
     onLoad : function() {
         try {
-            this.lstRedirects = $('lstRedirects');
+            this.lstRedirects = document.getElementById('lstRedirects');
             this.lstRedirects.selType = 'single'; 
             this.template = document.getElementsByTagName('richlistitem')[0];
             this.lstRedirects.removeChild(this.template);
-            this.btnDelete = $('btnDelete');
-            this.btnEdit = $('btnEdit');
+            this.btnDelete = document.getElementById('btnDelete');
+            this.btnEdit = document.getElementById('btnEdit');
+            this.btnDisable = document.getElementById('btnDisable');
             this.addItemsToListBox(Redirector.list);
+	        this.strings = document.getElementById('redirector-strings');
         } catch(e) {
             alert(e);
         }
     },
 
     openHelp : function() {
-        var windowName = "redirectorHelp";
+        var windowName = 'redirectorHelp';
         var windowsMediator = Cc["@mozilla.org/appshell/window-mediator;1"].getService(Ci.nsIWindowMediator);
         var win;
         var iter = windowsMediator.getEnumerator(null);
@@ -93,42 +88,44 @@ var RedirectList = {
     }, 
     
     setListItemValues : function(listItem, item){
-        listItem.getElementsByAttribute('name', 'dscrIncludePattern')[0].setAttribute('value', item.pattern);
+        listItem.getElementsByAttribute('name', 'dscrIncludePattern')[0].setAttribute('value', item.includePattern);
         listItem.getElementsByAttribute('name', 'dscrExcludePattern')[0].setAttribute('value', item.excludePattern);
         listItem.getElementsByAttribute('name', 'dscrRedirectTo')[0].setAttribute('value', item.redirectUrl);
     },
     
     addRedirect : function() {
-
-        var item = { pattern : '', exampleUrl : '', redirectUrl : '', patternType : 'W', unescapeMatches : false};
-
-        window.openDialog("chrome://redirector/content/ui/editRedirect.xul",
-                    "redirect",
-                    "chrome,dialog,modal,centerscreen", item);
-
-        if (item.saved) {
-            this.addItemsToListBox([item]);
-            Redirector.addRedirect(item);
+		var args = { saved : false, redirect : new Redirect() };
+        window.openDialog("chrome://redirector/content/ui/editRedirect.xul", "redirect", "chrome,dialog,modal,centerscreen", args);
+        if (args.saved) {
+            this.addItemsToListBox([args.redirect]);
+            Redirector.addRedirect(args.redirect);
         }
-
     },
 
-    editRedirect : function() {
-
+    toggleDisabled : function() {
         var listItem = this.lstRedirects.selectedItem;
-
         if (!listItem) {
             return;
         }
+        var redirect = listItem.item;
+        redirect.disabled = !redirect.disabled;
+        Redirector.save();
+		this.btnDisable.setAttribute('label', this.strings.getString(redirect.disabled ? 'enable' : 'disable'));
+    },
+    
+    editRedirect : function() {
 
-        var item = listItem.item;
+        var listItem = this.lstRedirects.selectedItem;
+        if (!listItem) {
+            return;
+        }
+        var redirect = listItem.item;
+		var args = { saved: false, "redirect":redirect.clone()};
+        window.openDialog("chrome://redirector/content/ui/editRedirect.xul", "redirect", "chrome,dialog,modal,centerscreen", args);
 
-        window.openDialog("chrome://redirector/content/ui/editRedirect.xul",
-                    "redirect",
-                    "chrome,dialog,modal,centerscreen", item);
-
-        if (item.saved) {
-            this.setListItemValues(listItem, item);
+        if (args.saved) {
+	        redirect.copyValues(args.redirect);
+            this.setListItemValues(listItem, redirect);
             Redirector.save();
         }
     },
@@ -149,45 +146,50 @@ var RedirectList = {
     },
 
     selectionChange : function() {
-        var index = $('lstRedirects').selectedIndex;
+        var index = this.lstRedirects.selectedIndex;
 
-        $('btnEdit').disabled = (index == -1);
-        $('btnDelete').disabled = (index == -1);
+        this.btnEdit.disabled = (index == -1);
+        this.btnDelete.disabled = (index == -1);
+        this.btnDisable.disabled = (index == -1);
+        var redirect = this.lstRedirects.selectedItem.item;
+        try {
+        if (index != -1) {
+			this.btnDisable.setAttribute('label', this.strings.getString(redirect.disabled ? 'enable' : 'disable'));
+			this.lstRedirects.selectedItem.setAttribute('disabled', true);
+        }
+    }catch(e){alert(e);}
     },
     
     importExport : function(mode, captionKey, func) {
-	    //Mostly borrowed from Adblock Plus
+		//Mostly borrowed from Adblock Plus
 		var picker = Cc["@mozilla.org/filepicker;1"].createInstance(Ci.nsIFilePicker);
 		picker.init(window, Redirector.getString(captionKey), mode);
 		picker.defaultExtension = ".rdx";
 		var dir = Redirector.getDefaultDir();
 		if (dir) {
-			picker.displayDirectory = dir;
+		    picker.displayDirectory = dir;
 		}
 		picker.appendFilter(Redirector.getString('redirectorFiles'), '*.rdx');
-	
-		if (picker.show() != picker.returnCancel)
-		{
-			try
-			{
-				func(picker.file);
-			}
-			catch (e)
-			{
-				alert(e);
-			}
+		
+		if (picker.show() == picker.returnCancel) {
+		    return;
+		}
+		try {
+		    func(picker.file);
+		} catch (e) {
+		    alert(e);
 		}
     },
     
     export : function() {
-	    this.importExport(Ci.nsIFilePicker.modeSave, 'exportCaption', function(file) {
-		    Redirector.exportRedirects(file);
-	    });
+		this.importExport(Ci.nsIFilePicker.modeSave, 'exportCaption', function(file) {
+			Redirector.exportRedirects(file);
+		});
     },
     
     import : function() {
-	    this.importExport(Ci.nsIFilePicker.modeOpen, 'importCaption', function(file) {
-		    Redirector.importRedirects(file);
-	    });
+		this.importExport(Ci.nsIFilePicker.modeOpen, 'importCaption', function(file) {
+			Redirector.importRedirects(file);
+		});
     }
 };

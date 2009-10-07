@@ -5,20 +5,20 @@ const CSSB_CID = Components.ID("{b7a7a54f-0581-47ff-b086-d6920cb7a3f7}");
 var Cc = Components.classes;
 var Ci = Components.interfaces;
 var Cr = Components.results;
-var kRedirectorWildcard = 'W';
-var kRedirectorRegex= 'R';
 var nsIContentPolicy = Ci.nsIContentPolicy;
 
 function Redirector() {
 	this.init();
 }
 
+const loader = Cc["@mozilla.org/moz/jssubscript-loader;1"].getService(Ci.mozIJSSubScriptLoader);
+	
 try {
-	Cc["@mozilla.org/moz/jssubscript-loader;1"]
-		.getService(Ci.mozIJSSubScriptLoader)
-			.loadSubScript('chrome://redirector/content/code/redirector.prototype.js');
+	loader.loadSubScript('chrome://redirector/content/code/redirector.prototype.js');
+	loader.loadSubScript('chrome://redirector/content/code/redirect.js');
 } catch(e) {
-	Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService).logStringMessage('REDIRECTOR: Loading Redirector implementation failed: ' + e);
+	for (i in e) 
+		Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService).logStringMessage('REDIRECTOR: Loading Redirector implementation failed: ' + i + e[i]);
 }
 /*
  * Factory object

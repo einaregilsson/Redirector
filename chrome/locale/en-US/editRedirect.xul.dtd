@@ -1,7 +1,7 @@
 <!-- $Id$ -->
 <!ENTITY redirectWindow.title "Redirect">
 <!ENTITY txtExampleUrl.label "Example url">
-<!ENTITY txtPattern.label "Include Pattern">
+<!ENTITY txtIncludePattern.label "Include Pattern">
 <!ENTITY txtExcludePattern.label "Exclude Pattern">
 <!ENTITY txtRedirectUrl.label "Redirect to">
 <!ENTITY btnTestPattern.label "Test pattern">

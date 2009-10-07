@@ -12,7 +12,11 @@
 		xmlns:nc="http://home.netscape.com/NC-rdf#"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
+  <script type="application/x-javascript" src="../code/redirect.js"/>
   <script type="application/x-javascript" src="../code/redirectList.xul.js"/>
+  <stringbundleset id="stringbundleset">
+    <stringbundle id="redirector-strings" src="chrome://redirector/locale/redirector.properties"/>
+  </stringbundleset>
 
   <vbox>
       <richlistbox seltype="single" id="lstRedirects" style="margin-bottom:5px; border:solid 1px grey;" height="330px" ondblclick="RedirectList.editRedirect();" onselect="RedirectList.selectionChange();">
@@ -41,6 +45,7 @@
         <button id="btnAdd" onclick="RedirectList.addRedirect();" label="&btnAdd.label;" disabled="false" />
         <button id="btnEdit" onclick="RedirectList.editRedirect();" label="&btnEdit.label;" disabled="true" />
         <button id="btnDelete" onclick="RedirectList.deleteRedirect();" label="&btnDelete.label;" disabled="true" />
+        <button id="btnDisable" onclick="RedirectList.toggleDisabled();" label="&btnDisable.label;" disabled="true" />
         <button id="btnImport" onclick="RedirectList.import();" label="&btnImport.label;"/>
         <button id="btnExport" onclick="RedirectList.export();" label="&btnExport.label;"/>
         <button id="btnHelp" onclick="RedirectList.openHelp();" label="&btnHelp.label;"/>

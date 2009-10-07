@@ -1,0 +1,29 @@
+<html>
+	<head>
+		<title>Redirector Log Message Listener
+		<style type="text/css">
+			body { font-family:Arial, sans-serif; }
+		</style>
+	</head>
+	<body onunload="unload();" onload="load();">
+		<script>
+			var listener = {
+				observe : function(msg) {
+					var prefix = 'REDIRECTOR:';
+					if (msg.message.substr(0, prefix.length) == prefix)
+					{
+						document.body.innerHTML += msg.message.substr(prefix.length) + '<br>';
+					}
+				}
+			};
+			var consoleService = Components.classes["@mozilla.org/consoleservice;1"].getService(Components.interfaces.nsIConsoleService);	
+		
+			function load() {
+				consoleService.registerListener(listener);
+			}
+			function unload() {
+				consoleService.unregisterListener(listener);
+			}
+		</script>
+	</body>
+</html>

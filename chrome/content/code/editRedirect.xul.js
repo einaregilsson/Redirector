@@ -1,48 +1,43 @@
 //// $Id$
 
-const kRedirectorWildcard = 'W';
-const kRedirectorRegex= 'R';
 var Redirector = Components.classes["@einaregilsson.com/redirector;1"].getService(Components.interfaces.nsISupports).wrappedJSObject;
 
-function $(id) {
-    return document.getElementById(id);
-}
-
 var EditRedirect = {
-
+    txtExampleUrl : null,
+    txtIncludePattern : null,
+    txtRedirectUrl : null,
+    txtExcludePattern : null,
+    chkUnescapeMatches : null,
+    rdoRegex : null,
+    rdoWildcard : null, 
+    
     onLoad : function() {
-        var item = window.arguments[0];
-        item.saved = false;
-        $('txtExampleUrl').value = item.exampleUrl;
-        $('txtPattern').value = item.pattern;
-        $('txtRedirectUrl').value = item.redirectUrl || '';
-        $('txtExcludePattern').value = item.excludePattern || '';
-        $('chkUnescapeMatches').setAttribute('checked', !!item.unescapeMatches);
+        var args = window.arguments[0];
+		var redirect = args.redirect;
+		this.txtExampleUrl = document.getElementById('txtExampleUrl');
+		this.txtIncludePattern = document.getElementById('txtIncludePattern');
+		this.txtRedirectUrl= document.getElementById('txtRedirectUrl');
+		this.txtExcludePattern= document.getElementById('txtExcludePattern');
+		this.chkUnescapeMatches= document.getElementById('chkUnescapeMatches');
+		this.rdoWildcard= document.getElementById('rdoWildcard');
+		this.rdoRegex = document.getElementById('rdoRegex');
+	
+		this.txtExampleUrl.value = redirect.exampleUrl;
+		this.txtIncludePattern.value = redirect.includePattern;
+		this.txtExcludePattern.value = redirect.excludePattern;
+		this.txtRedirectUrl.value = redirect.redirectUrl;
+		this.chkUnescapeMatches.setAttribute('checked', redirect.unescapeMatches);
+        this.rdoRegex.setAttribute('selected', redirect.isRegex());
+        this.rdoWildcard.setAttribute('selected', redirect.isWildcard());
 
-        $('txtPattern').focus();
+        this.txtIncludePattern.focus();
         this.strings = document.getElementById("redirector-strings");
-
-        if (item.patternType == kRedirectorRegex) {
-            $('rdoRegex').setAttribute('selected', true);
-            $('rdoWildcard').setAttribute('selected', false);
-        }
     },
 
     onAccept : function() {
-        var item = window.arguments[0];
-
-        item.pattern = $('txtPattern').value;
-        if ($('rdoRegex').selected) {
-            item.patternType = kRedirectorRegex;
-        } else {
-            item.patternType = kRedirectorWildcard;
-        }
-        item.exampleUrl = $('txtExampleUrl').value;
-        item.redirectUrl = $('txtRedirectUrl').value;
-        item.excludePattern = $('txtExcludePattern').value;
-        item.unescapeMatches = $('chkUnescapeMatches').hasAttribute('checked') && $('chkUnescapeMatches').getAttribute('checked');
-        item.saved = true;
-
+		var args = window.arguments[0];
+		args.saved = true;
+		this.saveValues(args.redirect);
         return true;
     },
 
@@ -52,35 +47,29 @@ var EditRedirect = {
                 .alert(window, title, text);
     },
     
+    saveValues : function(redirect) {
+		redirect.exampleUrl = this.txtExampleUrl.value;
+		redirect.includePattern = this.txtIncludePattern.value;
+		redirect.excludePattern = this.txtExcludePattern.value;
+		redirect.redirectUrl = this.txtRedirectUrl.value;
+		redirect.patternType = this.rdoRegex.getAttribute('selected') == 'true' ? Redirect.REGEX : Redirect.WILDCARD;
+		redirect.unescapeMatches = this.chkUnescapeMatches.getAttribute('checked');
+		//Disabled cannot be set here
+    },
+    
     testPattern : function() {
-        var redirectUrl, pattern, excludePattern, example, extName, isExcluded, unescapeMatches;
-        redirectUrl = $('txtRedirectUrl').value;
-        pattern = $('txtPattern').value;
-        excludePattern = $('txtExcludePattern').value;
-        example = $('txtExampleUrl').value;
-		unescapeMatches = $('chkUnescapeMatches').checked;
-		
-        extName = this.strings.getString('extensionName');
-
-        if ($('rdoRegex').selected) {
-            redirectUrl = Redirector.regexMatch(pattern, example, redirectUrl, unescapeMatches);
-            if (excludePattern) {
-                isExcluded = Redirector.regexMatch(excludePattern, example, 'exclude');
-            }
-        } else {
-            redirectUrl = Redirector.wildcardMatch(pattern, example, redirectUrl, unescapeMatches);
-            if (excludePattern) {
-                isExcluded = Redirector.wildcardMatch(excludePattern, example, 'exclude');
-            }
-        }
-
-        var isRedirectMatch = redirectUrl || (redirectUrl === '' && $('txtRedirectUrl').value === '');
-        if (isRedirectMatch && !isExcluded) {
-            this.msgBox(extName, this.strings.getFormattedString('testPatternSuccess', [pattern, example, redirectUrl]));
-        } else if (isExcluded) {
-            this.msgBox(extName, this.strings.getFormattedString('testPatternExclude', [example, excludePattern]));
-        } else {
-            this.msgBox(extName, this.strings.getFormattedString('testPatternFailure', [pattern, example]));
-        }
+	    try {
+			var redirect = new Redirect();
+			this.saveValues(redirect);
+			var extName = this.strings.getString('extensionName');
+			var result = redirect.test();
+	        if (result.isMatch) {
+	            this.msgBox(extName, this.strings.getFormattedString('testPatternSuccess', [redirect.includePattern, redirect.exampleUrl, result.redirectTo]));
+	        } else if (result.isExcludeMatch) {
+	            this.msgBox(extName, this.strings.getFormattedString('testPatternExclude', [redirect.exampleUrl, redirect.excludePattern]));
+	        } else {
+	            this.msgBox(extName, this.strings.getFormattedString('testPatternFailure', [redirect.includePattern, redirect.exampleUrl]));
+	        }
+    	} catch(e) {alert(e);}
     }
 };

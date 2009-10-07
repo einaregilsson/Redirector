@@ -3,10 +3,7 @@
 Cc = Components.classes;
 Ci = Components.interfaces;
 Cr = Components.results;
-kRedirectorWildcard = 'W';
-kRedirectorRegex= 'R';
 nsIContentPolicy = Ci.nsIContentPolicy;
-
 
 Redirector.prototype = {
     prefBranch : null,
@@ -16,7 +13,6 @@ Redirector.prototype = {
 
     init : function() {
 	    this.prefBranch = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefService).getBranch("extensions.redirector.");
-	
 	    //Check if we need to update existing redirects
 	
 	    var data = this.prefBranch.getCharPref('redirects');
@@ -49,18 +45,11 @@ Redirector.prototype = {
 	    this.list = [];
 	    if (data != '') {
 	        for each (redirectString in data.split(':::')) {
-	            arr = redirectString.split(',,,');
-	            this.list.push({
-	                exampleUrl          : arr[0],
-	                pattern             : arr[1],
-	                redirectUrl         : arr[2],
-	                patternType         : arr[3],
-	                excludePattern      : arr[4],
-	                unescapeMatches		: arr[5] == 'true' //This might be undefined for those upgrading from 1.7.1 but that's ok
-	            });
+		        var redirect = new Redirect();
+		        redirect.deserialize(redirectString);
+		        this.list.push(redirect);
 	        }
 	    }
-	    
     },
     
     getDefaultDir : function() {
@@ -87,32 +76,41 @@ Redirector.prototype = {
     
     // nsIContentPolicy interface implementation
     shouldLoad: function(contentType, contentLocation, requestOrigin, aContext, mimeTypeGuess, extra) {
-        if (!this.enabled) {
-            return nsIContentPolicy.ACCEPT;
-        }
-        if (contentLocation.scheme != "http" && contentLocation.scheme != "https") {
-            return nsIContentPolicy.ACCEPT;
-        }
-
-        if (contentType != nsIContentPolicy.TYPE_DOCUMENT) {
-            return nsIContentPolicy.ACCEPT;
-        }
-        
-        if (!aContext || !aContext.loadURI) {
-            return nsIContentPolicy.ACCEPT;
-        }
-        this.debug("CHECK: " + contentLocation.spec);
-        
-        var url = contentLocation.spec;
-        
-        for each (var redirect in this.list) {
-            var redirectUrl = this.getRedirectUrl(url, redirect);
-            if (redirectUrl) {
-                redirectUrl = this.makeAbsoluteUrl(url, redirectUrl);
-                this.debug('Redirecting ' + url + ' to ' + redirectUrl);
-                aContext.loadURI(redirectUrl, requestOrigin, null);
-                return nsIContentPolicy.REJECT_REQUEST;
-            }
+	    try {
+		    if (!this.enabled) {
+	            return nsIContentPolicy.ACCEPT;
+	        }
+	        if (contentLocation.scheme != "http" && contentLocation.scheme != "https") {
+	            return nsIContentPolicy.ACCEPT;
+	        }
+	
+	        if (contentType != nsIContentPolicy.TYPE_DOCUMENT) {
+	            return nsIContentPolicy.ACCEPT;
+	        }
+	        
+	        if (!aContext || !aContext.loadURI) {
+	            return nsIContentPolicy.ACCEPT;
+	        }
+	        this.debug("Checking " + contentLocation.spec);
+	        
+	        var url = contentLocation.spec;
+	        
+	        for each (var redirect in this.list) {
+		        //this.debug(redirect);
+	            var result = redirect.getMatch(url);
+	            if (result.isExcludeMatch) {
+		        	this.debug(url + ' matched exclude pattern ' + redirect.excludePattern + ' so the redirect ' + redirect.includePattern + ' will not be used');
+	            } else if (result.isDisabledMatch) {
+		        	this.debug(url + ' matched pattern ' + redirect.includePattern + ' but the redirect is disabled');
+	            } else if (result.isMatch) {
+	                redirectUrl = this.makeAbsoluteUrl(url, result.redirectTo);
+	                this.debug('Redirecting ' + url + ' to ' + redirectUrl);
+	                aContext.loadURI(redirectUrl, requestOrigin, null);
+	                return nsIContentPolicy.REJECT_REQUEST;
+	            }
+	        }
+        } catch(e) {
+	    	this.debug(e);   
         }
         return nsIContentPolicy.ACCEPT;
     },
@@ -128,9 +126,8 @@ Redirector.prototype = {
     },
     
     reload : function() {
-		Cc["@mozilla.org/moz/jssubscript-loader;1"]
-			.getService(Ci.mozIJSSubScriptLoader)
-				.loadSubScript('chrome://redirector/content/code/redirector.prototype.js');
+		loader.loadSubScript('chrome://redirector/content/code/redirector.prototype.js');
+		loader.loadSubScript('chrome://redirector/content/code/redirect.js');
 		
 		for (var key in Redirector.prototype) {
 			this[key] = Redirector.prototype[key];
@@ -149,52 +146,17 @@ Redirector.prototype = {
     },
     
     save : function() {
-        this.prefBranch.setCharPref('redirects', this.redirectsAsStrings().join(':::'));
+        this.prefBranch.setCharPref('redirects', this.redirectsAsString(':::'));
     },
     
-    redirectsAsStrings : function() {
-        var r
-          , tempList = [];
-
-        for each (r in this.list) {
-	        this.debug(r.unescapeMatches);
-            tempList.push([r.exampleUrl, r.pattern, r.redirectUrl, r.patternType, r.excludePattern, r.unescapeMatches].join(',,,'));
-        }
-        return tempList;
+    redirectsAsString : function(seperator) {
+		return [r.serialize() for each (r in this.list)].join(seperator);
     },
     
     getBoolPref : function(name) {
         return this.prefBranch.getBoolPref(name);
     },
     
-    regexMatch : function(pattern, text, redirectUrl, unescapeMatches) {
-
-        if (!pattern) {
-            return null;
-        }
-        var strings, rx, match;
-        try {
-            rx = new RegExp(pattern, 'gi');
-            match = rx.exec(text);
-        } catch(e) {
-            this.msgBox(this.strings.GetStringFromName('extensionName'), this.strings.formatStringFromName('regexPatternError', [pattern, e.toString()],2));
-            return null;
-        }
-
-        var rxrepl;
-
-        if (match) {
-            for (var i = 1; i < match.length; i++) {
-                rxrepl = new RegExp('\\$' + i, 'gi');
-                redirectUrl = redirectUrl.replace(rxrepl, unescapeMatches ? unescape(match[i]) : match[i]);
-            }
-            return redirectUrl;
-        }
-
-        return null;
-
-    },
-
 	exportRedirects : function(file) {
 		var fileStream = Cc["@mozilla.org/network/file-output-stream;1"].createInstance(Ci.nsIFileOutputStream);
 		const PR_WRONLY      = 0x02;
@@ -205,7 +167,7 @@ Redirector.prototype = {
 		//file.parent.QueryInterface(Ci.nsILocalFile)
 		var stream = Cc["@mozilla.org/intl/converter-output-stream;1"].createInstance(Ci.nsIConverterOutputStream);
 		stream.init(fileStream, "UTF-8", 16384, Ci.nsIConverterInputStream.DEFAULT_REPLACEMENT_CHARACTER);
-		stream.writeString(this.redirectsAsStrings().join('\n'));
+		stream.writeString(this.redirectsAsString('\n'));
 		stream.close();
 	},
 	
@@ -221,22 +183,26 @@ Redirector.prototype = {
 		var lines = [];
 		var line = {value: null};
 		while (stream.readLine(line)) {
-			var parts = line.replace('\n', '').split(',,,');
-			if (parts.length < 6) {
-				var redirect = {
-	                exampleUrl          : parts[0],
-	                pattern             : parts[1],
-	                redirectUrl         : parts[2],
-	                patternType         : parts[3],
-	                excludePattern      : parts[4],
-	                unescapeMatches		: parts[5] == 'true' ? true : false 
-                };
-                
-                
+			var redirect = new Redirect();
+			redirect.deserialize(line.replace('\n', ''));
+			if (this.containsRedirect(redirect)) {
+				existsCount++;
+			} else {
+				this.list.push(redirect);
+				importCount++;
 			}
 		}
 		stream.close();
 		this.save();
+	},
+	
+	containsRedirect : function(redirect) {
+		for each (var existing in this.list) {
+			if (existing.equals(redirect)) {
+				return true;
+			}	
+		}
+		return false;
 	},
 	
     getString : function(name) {
@@ -247,24 +213,6 @@ Redirector.prototype = {
         Cc["@mozilla.org/embedcomp/prompt-service;1"]
             .getService(Ci.nsIPromptService)
                 .alert(null, title, text);
-    },
-
-    getRedirectUrl: function(url, redirect) {
-    
-        if (redirect.patternType == kRedirectorWildcard) {
-            if (this.wildcardMatch(redirect.excludePattern, url, 'whatever')) {
-                this.debug(url + ' matches exclude pattern ' + redirect.excludePattern);
-                return null;
-            }
-            return this.wildcardMatch(redirect.pattern, url, redirect.redirectUrl, redirect.unescapeMatches);
-        } else if (redirect.patternType == kRedirectorRegex) {
-            if (this.regexMatch(redirect.excludePattern, url, 'whatever')) {
-                this.debug(url + ' matches exclude pattern ' + redirect.excludePattern);
-                return null;
-            }
-            return this.regexMatch(redirect.pattern, url, redirect.redirectUrl, redirect.unescapeMatches);
-        }
-        return null;
     },
 
     makeAbsoluteUrl : function(currentUrl, relativeUrl) {
@@ -278,56 +226,5 @@ Redirector.prototype = {
         var uri = ioService.newURI(currentUrl, null, null); 
         
         return uri.resolve(relativeUrl);
-    },
-    
-    wildcardMatch : function(pattern, text, redirectUrl, unescapeMatches) {
-
-	    if (!pattern || !text) {
-	    	return null;
-		}
-		if (pattern.indexOf('*') == -1) {
-			return (pattern == text) ? redirectUrl : null;
-		}
-		
-		var parts = pattern.split('*');  
-		var first = parts[0], 
-		    last  = parts[parts.length-1];
-
-		if (first) {
-			if (text.substr(0, first.length) != first) {
-				return null;
-			}
-			text = text.substr(first.length);
-		}
-
-		if (last) {
-			if (text.substr(text.length-last.length) != last) {
-				return null;
-			}
-			text = text.substr(0, text.length-last.length);
-		}
-		
-		if ((first || last) && parts.length == 2) {
-			return redirectUrl.replace('$1', text);
-		}
-		parts.splice(0,1);
-		parts.splice(parts.length-1,1);
-		var pos = 0, lastPos = 0;
-    	var matches = [];
-		for each(part in parts) {
-            pos = text.indexOf(part, lastPos);
-            if (pos == -1) {
-                return null;
-            }
-            var match = text.substr(lastPos, pos-lastPos);
-            matches.push(match);
-            lastPos = pos + part.length;
-        }
-        matches.push(text.substr(lastPos));
-        for (var i = 1; i <= matches.length; i++) {
-            redirectUrl = redirectUrl.replace(new RegExp('\\$' + i, 'gi'), unescapeMatches ? unescape(matches[i-1]) : matches[i-1]);
-        }
-
-        return redirectUrl;
     }
 };

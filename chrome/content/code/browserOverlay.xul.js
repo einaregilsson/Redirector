@@ -4,7 +4,6 @@ var Redirector = Components.classes["@einaregilsson.com/redirector;1"].getServic
 
 var RedirectorOverlay = {
 
-    id          : "redirector@einaregilsson.com",
     name        : "Redirector",
     initialized : false,
     strings     : null,
@@ -29,10 +28,10 @@ var RedirectorOverlay = {
 
             Redirector.debug("Finished initialization");
             this.initialized = true;
-
+		
         } catch(e) {
             if (this.strings) {
-                alert(this.strings.getFormattedString("initError", [this.name]) + "\n\n" + e);
+                alert(this.strings.getString("initError") + "\n\n" + e);
             } else {
                 alert(e);
             }
@@ -53,21 +52,18 @@ var RedirectorOverlay = {
     },
 
     onContextMenuCommand: function(event) {
-
-        var item = { exampleUrl : window.content.location.href, pattern: window.content.location.href};
+		var redirect = new Redirect(window.content.location.href, window.content.location.href);
         if (gContextMenu.onLink) {
-            item.redirectUrl = gContextMenu.link.toString();
+            redirect.redirectUrl = gContextMenu.link.toString();
         }
 
-        window.openDialog("chrome://redirector/content/ui/editRedirect.xul",
-                    "redirect",
-                    "chrome,dialog,modal,centerscreen", item);
-
-        if (item.saved) {
-            Redirector.addRedirect(item);
+		var args = { saved : false, 'redirect' : redirect };
+        window.openDialog("chrome://redirector/content/ui/editRedirect.xul", "redirect", "chrome,dialog,modal,centerscreen", args);
+        if (args.saved) {
+            Redirector.addRedirect(args.redirect);
         }
     },
-
+        
     onMenuItemCommand: function(event) {
         this.openSettings();
     },

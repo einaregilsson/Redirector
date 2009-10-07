@@ -6,7 +6,7 @@
 			body { font-family: Verdana, Arial; color:black; background-color:white; font-size:0.8em; width:800px; margin:auto; text-align:center;}
 			a { color:blue; }
 			h1 { text-align:center; margin:10px 0px; }
-			table { margin:auto; border:solid 1px black; width:700px; border-collapse:collapse;}
+			table { margin:10px auto; border:solid 1px black; width:700px; border-collapse:collapse;}
 			td { border:solid 1px black; padding:3px; }
 			td.result { width:20px; height:20px; padding:0;}
 			td.result div { width:70%; height:70%; margin:auto;  }
@@ -50,7 +50,7 @@
 			for (var i = 0; i < tables.length; i++) {
 				tables[i].parentNode.removeChild(tables[i]);
 			}
-			
+			subscriptLoader.loadSubScript('chrome://redirector/content/code/redirect.js');
 			subscriptLoader.loadSubScript('chrome://redirector/content/unittest/testcases.js');
 			redirector.reload();
 			
@@ -64,14 +64,20 @@
 				var testcase = tests[testcaseName];
 				for (var i = 0; i < testcase.tests.length; i++) {
 					try {
+						var dot = document.getElementById(testcaseName + '_' + i);
 						var result = testcase.run(testcase.tests[i]);
-						if (result) {
-							document.getElementById(testcaseName + '_' + i).style.backgroundColor = '#17f816';
+						if (result && result.passed) {
+							dot.style.backgroundColor = '#17f816';
 						} else {
-							document.getElementById(testcaseName + '_' + i).style.backgroundColor = '#ff0000';
+							dot.style.backgroundColor = '#ff0000';
+							if (result && result.message) {
+								dot.parentNode.nextSibling.innerHTML += '<br/><span style="color:red;">' + result.message + '</span>';
+							}
 						}
 					} catch(e) {
-						document.getElementById(testcaseName + '_' + i).style.backgroundColor = '#ff0000';
+						dot.style.backgroundColor = '#ff0000';
+						dot.parentNode.nextSibling.innerHTML += '<br/><span style="color:red;">' + e + '</span>';
+						;
 					}
 				}
 			}	

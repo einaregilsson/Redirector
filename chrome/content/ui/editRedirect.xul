@@ -11,6 +11,7 @@
         xmlns:nc="http://home.netscape.com/NC-rdf#"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
+  <script type="application/x-javascript" src="../code/redirect.js"/>
   <script type="application/x-javascript" src="../code/editRedirect.xul.js"/>
   <stringbundleset id="stringbundleset">
     <stringbundle id="redirector-strings" src="chrome://redirector/locale/redirector.properties"/>
@@ -23,8 +24,8 @@
         <textbox id="txtExampleUrl" style="width:400px;"/>
       </row>
       <row align="center">
-        <text value="&txtPattern.label;" style="margin-top:6px;"/>
-        <textbox id="txtPattern" taborder="1"/>
+        <text value="&txtIncludePattern.label;" style="margin-top:6px;"/>
+        <textbox id="txtIncludePattern" taborder="1"/>
         <button id="btnTestPattern" label="&btnTestPattern.label;" onclick="EditRedirect.testPattern();" taborder="2"/>
       </row>
       <row align="center">
