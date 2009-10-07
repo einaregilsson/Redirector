@@ -47,7 +47,10 @@
       </row>
       <row align="center">
         <text value="&chkUnescapeMatches.label;" />
-        <checkbox id="chkUnescapeMatches" label="" taborder="7"/>
+        <hbox>
+          <checkbox id="chkUnescapeMatches" label="" taborder="7"/>
+          <spacer flex="1" />
+        </hbox>
       </row>
     </rows>
   </grid>

@@ -6,8 +6,8 @@
         orient="vertical"
         onload="RedirectList.onLoad();"
         buttons="accept"
-        width="600px"
-        height="400px"
+        width="650px"
+        height="500px"
         windowtype="redirectorSettings"
 		xmlns:nc="http://home.netscape.com/NC-rdf#"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
@@ -19,7 +19,7 @@
   </stringbundleset>
 
   <vbox>
-      <richlistbox seltype="single" id="lstRedirects" style="margin-bottom:5px; border:solid 1px grey;" height="330px" ondblclick="RedirectList.editRedirect();" onselect="RedirectList.selectionChange();">
+      <richlistbox seltype="single" id="lstRedirects" style="margin-bottom:5px; border:solid 1px grey;" height="430px" ondblclick="RedirectList.editRedirect();" onselect="RedirectList.selectionChange();">
         <richlistitem style="border-bottom:dotted 1px grey;" selected="false">
             <grid>
 			    <cols>
@@ -37,6 +37,10 @@
 		              <label style="font-weight:bold;" value="&colRedirectTo.label;:" />
 		              <description name="dscrRedirectTo" />
 				    </row>
+				    <row>
+		              <label style="font-weight:bold;" value="&colEnabled.label;:" />
+		              <hbox><checkbox checked="false" name="chkEnabled" label="" /> <spacer flex="1"/></hbox>
+				    </row>
 			    </rows>
             </grid>
         </richlistitem>
@@ -45,7 +49,6 @@
         <button id="btnAdd" onclick="RedirectList.addRedirect();" label="&btnAdd.label;" disabled="false" />
         <button id="btnEdit" onclick="RedirectList.editRedirect();" label="&btnEdit.label;" disabled="true" />
         <button id="btnDelete" onclick="RedirectList.deleteRedirect();" label="&btnDelete.label;" disabled="true" />
-        <button id="btnDisable" onclick="RedirectList.toggleDisabled();" label="&btnDisable.label;" disabled="true" />
         <button id="btnImport" onclick="RedirectList.import();" label="&btnImport.label;"/>
         <button id="btnExport" onclick="RedirectList.export();" label="&btnExport.label;"/>
         <button id="btnHelp" onclick="RedirectList.openHelp();" label="&btnHelp.label;"/>

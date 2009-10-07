@@ -3,6 +3,7 @@
 <!ENTITY colIncludePattern.label "Include pattern">
 <!ENTITY colExcludePattern.label "Exclude pattern">
 <!ENTITY colRedirectTo.label "Redirect to">
+<!ENTITY colEnabled.label "Enabled">
 <!ENTITY btnAdd.label "Add...">
 <!ENTITY btnEdit.label "Edit...">
 <!ENTITY btnDelete.label "Delete">

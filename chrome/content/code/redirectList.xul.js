@@ -9,7 +9,6 @@ var RedirectList = {
     lstRedirects: null,
     btnDelete   : null,
     btnEdit     : null,
-    btnDisable  : null,
 
     addItemsToListBox : function(items) {
 
@@ -21,10 +20,24 @@ var RedirectList = {
             newItem.getElementsByAttribute('name', 'dscrIncludePattern')[0].setAttribute('value', item.includePattern);
             newItem.getElementsByAttribute('name', 'dscrExcludePattern')[0].setAttribute('value', item.excludePattern);
             newItem.getElementsByAttribute('name', 'dscrRedirectTo')[0].setAttribute('value', item.redirectUrl);
+            var checkEnabled = newItem.getElementsByAttribute('name', 'chkEnabled')[0];
+            checkEnabled.setAttribute('checked', !item.disabled);
             newItem.item = item;
             this.lstRedirects.appendChild(newItem);
             newItem.setAttribute('selected', false);
         }
+        
+        //Enable, disable functionality
+        this.lstRedirects.addEventListener('click', function(ev) { 
+	        if (ev.originalTarget && ev.originalTarget.tagName == 'checkbox') {
+		        var parent = ev.originalTarget.parentNode;
+		        while (!parent.item) {
+			     	parent = parent.parentNode;   
+		        }
+		        parent.item.disabled = !ev.originalTarget.hasAttribute('checked');
+		        Redirector.save();
+	        }
+        },false);
     },
 
     onLoad : function() {
@@ -35,7 +48,6 @@ var RedirectList = {
             this.lstRedirects.removeChild(this.template);
             this.btnDelete = document.getElementById('btnDelete');
             this.btnEdit = document.getElementById('btnEdit');
-            this.btnDisable = document.getElementById('btnDisable');
             this.addItemsToListBox(Redirector.list);
 	        this.strings = document.getElementById('redirector-strings');
         } catch(e) {
@@ -102,19 +114,12 @@ var RedirectList = {
         }
     },
 
-    toggleDisabled : function() {
-        var listItem = this.lstRedirects.selectedItem;
-        if (!listItem) {
-            return;
-        }
-        var redirect = listItem.item;
-        redirect.disabled = !redirect.disabled;
-        Redirector.save();
-		this.btnDisable.setAttribute('label', this.strings.getString(redirect.disabled ? 'enable' : 'disable'));
-    },
-    
     editRedirect : function() {
 
+		if (this.lstRedirects.selectedIndex == -1) {
+			return;
+		}
+		//.selectedItem is still there after it has been removed, that's why we have the .selectedIndex check above as well
         var listItem = this.lstRedirects.selectedItem;
         if (!listItem) {
             return;
@@ -136,10 +141,18 @@ var RedirectList = {
         if (index == -1) {
             return;
         }
-
+        
+        var text = this.strings.getString("deleteConfirmationText");
+        var title = this.strings.getString("deleteConfirmationTitle");
+        var reallyDelete = Cc["@mozilla.org/embedcomp/prompt-service;1"].getService(Ci.nsIPromptService).confirm(null, title, text);
+		if (!reallyDelete) {
+			return;
+		}		
+		
         try {
             this.lstRedirects.removeChild(this.lstRedirects.children[index]);
             Redirector.deleteAt(index);
+            this.selectionChange();
         } catch(e) {
             alert(e);
         }
@@ -150,14 +163,6 @@ var RedirectList = {
 
         this.btnEdit.disabled = (index == -1);
         this.btnDelete.disabled = (index == -1);
-        this.btnDisable.disabled = (index == -1);
-        var redirect = this.lstRedirects.selectedItem.item;
-        try {
-        if (index != -1) {
-			this.btnDisable.setAttribute('label', this.strings.getString(redirect.disabled ? 'enable' : 'disable'));
-			this.lstRedirects.selectedItem.setAttribute('disabled', true);
-        }
-    }catch(e){alert(e);}
     },
     
     importExport : function(mode, captionKey, func) {
