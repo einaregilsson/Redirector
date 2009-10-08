@@ -4,30 +4,21 @@ var Redirector = Components.classes["@einaregilsson.com/redirector;1"].getServic
 
 var RedirectorOverlay = {
 
-    name        : "Redirector",
-    initialized : false,
     strings     : null,
 
     onLoad : function(event) {
         try {
 
             // initialization code
-            Redirector.debug("Initializing...");
             document.getElementById('contentAreaContextMenu')
                 .addEventListener("popupshowing", function(e) { RedirectorOverlay.showContextMenu(e); }, false);
             
-            if (!Redirector.getBoolPref('showContextMenu')) {
-                document.getElementById('redirector-context').hidden = true;
-            }
-            if (!Redirector.getBoolPref('showStatusBarIcon')) {
-                document.getElementById('redirector-status').hidden = true;
-            }
+			document.getElementById('redirector-status').hidden = !Redirector.getBoolPref('showStatusBarIcon');
+			document.getElementById('redirector-context').hidden = !Redirector.getBoolPref('showContextMenu');
+               
             this.strings = document.getElementById("redirector-strings");
             this.prefObserver.register();
             this.setStatusBarImg();
-
-            Redirector.debug("Finished initialization");
-            this.initialized = true;
 		
         } catch(e) {
             if (this.strings) {
@@ -123,8 +114,15 @@ var RedirectorOverlay = {
         },
 
         observe : function(subject, topic, data) {
-            if (topic == 'nsPref:changed' && data == 'extensions.redirector.enabled') {
+	        if (topic != 'nsPref:changed') {
+		        return;
+	        }
+            if (data == 'extensions.redirector.enabled') {
                 RedirectorOverlay.setStatusBarImg();
+            } else if (data == 'extensions.redirector.showStatusBarIcon') {
+				document.getElementById('redirector-status').hidden = !Redirector.getBoolPref('showStatusBarIcon');
+            } else if (data == 'extensions.redirector.showContextMenu') {
+				document.getElementById('redirector-context').hidden = !Redirector.getBoolPref('showContextMenu');
             }
         }
     }

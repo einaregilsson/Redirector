@@ -1,6 +1,7 @@
 /* $Id$ */
 
 .disabledRedirect { color:grey; }
-.redirectListItem { border-bottom:dotted 1px grey; }
+#lstRedirects richlistitem { border-bottom:dotted 1px grey; padding:3px; }
 .redirectRows > row > label { font-weight:bold;}
 .editRedirects > row > textbox { width: 350px; }
+#redirectorSettings > tabbox { margin:4px; }

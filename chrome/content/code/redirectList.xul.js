@@ -12,6 +12,23 @@ var RedirectList = {
     btnUp		: null,
     btnDown		: null,
 
+    onLoad : function() {
+        try {
+            this.lstRedirects = document.getElementById('lstRedirects');
+            this.lstRedirects.selType = 'single'; 
+            this.template = document.getElementsByTagName('richlistitem')[0];
+            this.lstRedirects.removeChild(this.template);
+            this.btnDelete = document.getElementById('btnDelete');
+            this.btnEdit = document.getElementById('btnEdit');
+            this.btnUp = document.getElementById('btnUp');
+            this.btnDown = document.getElementById('btnDown');
+            this.addItemsToListBox(Redirector.list);
+	        this.strings = document.getElementById('redirector-strings');
+        } catch(e) {
+            alert(e);
+        }
+    },
+
     addItemsToListBox : function(items) {
 
 	    var item, row, value, newItem;
@@ -44,23 +61,6 @@ var RedirectList = {
         },false);
     },
     
-    onLoad : function() {
-        try {
-            this.lstRedirects = document.getElementById('lstRedirects');
-            this.lstRedirects.selType = 'single'; 
-            this.template = document.getElementsByTagName('richlistitem')[0];
-            this.lstRedirects.removeChild(this.template);
-            this.btnDelete = document.getElementById('btnDelete');
-            this.btnEdit = document.getElementById('btnEdit');
-            this.btnUp = document.getElementById('btnUp');
-            this.btnDown = document.getElementById('btnDown');
-            this.addItemsToListBox(Redirector.list);
-	        this.strings = document.getElementById('redirector-strings');
-        } catch(e) {
-            alert(e);
-        }
-    },
-
     moveUp : function(){
         if (this.lstRedirects.selectedIndex <= 0) {
             return;
@@ -123,6 +123,12 @@ var RedirectList = {
             Redirector.save();
         }
     },
+    
+    buttonKeyPress : function(event) {
+		if (event.keyCode == 13 && !event.originalTarget.disabled) {
+			event.originalTarget.click();  
+		}
+    },
 
     deleteRedirect : function() {
         var index = this.lstRedirects.selectedIndex;
@@ -148,12 +154,23 @@ var RedirectList = {
     },
 
     selectionChange : function() {
+	    if (!this.lstRedirects) {
+		    return;
+		}
         var index = this.lstRedirects.selectedIndex;
 
         this.btnEdit.disabled = (index == -1);
         this.btnDelete.disabled = (index == -1);
         this.btnUp.disabled = (index <= 0);
         this.btnDown.disabled = (index == -1 || index >= Redirector.list.length-1);
+    },
+    
+    redirectListKeyDown : function(event) {
+	    if (event.keyCode == 46) { //Del key
+	    	this.deleteRedirect();
+    	} else if (event.keyCode == 13) { //Enter key
+	    	this.editRedirect();
+		}
     },
     
     importExport : function(mode, captionKey, func) {

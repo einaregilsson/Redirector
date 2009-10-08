@@ -10,6 +10,7 @@
         buttons="accept"
         width="650px"
         height="500px"
+        id="redirectorSettings"
         windowtype="redirectorSettings"
 		xmlns:nc="http://home.netscape.com/NC-rdf#"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
@@ -21,15 +22,15 @@
 	</stringbundleset>
 	<tabbox flex="1" >
 		<tabs>
-			<tab label="Redirects" />
-			<tab label="Preferences" />
-			<tab label="Import / Export" />
-			<tab label="Help" />
+			<tab label="&tabRedirects.label;" accesskey="&tabRedirects.accesskey;" />
+			<tab label="&tabPreferences.label;" accesskey="&tabPreferences.accesskey;" />
+			<tab label="&tabImportExport.label;" accesskey="&tabImportExport.accesskey;" />
+			<tab label="&tabHelp.label;" accesskey="&tabHelp.accesskey;" />
 		</tabs>
 		<tabpanels flex="1">
 			<tabpanel flex="1">
 				<vbox flex="1">
-					<richlistbox seltype="single" id="lstRedirects" flex="1" ondblclick="RedirectList.editRedirect();" onselect="RedirectList.selectionChange();">
+					<richlistbox seltype="single" id="lstRedirects" flex="1" ondblclick="RedirectList.editRedirect();" onselect="RedirectList.selectionChange();" onkeydown="RedirectList.redirectListKeyDown(event);">
 						<richlistitem class="redirectListItem" selected="false">
 							<grid>
 								<cols />
@@ -55,35 +56,35 @@
 						</richlistitem>
 					</richlistbox>
 					<hbox>
-						<button id="btnAdd" onclick="RedirectList.addRedirect();" label="&btnAdd.label;" disabled="false" />
-						<button id="btnEdit" onclick="RedirectList.editRedirect();" label="&btnEdit.label;" disabled="true" />
-						<button id="btnDelete" onclick="RedirectList.deleteRedirect();" label="&btnDelete.label;" disabled="true" />
-						<button id="btnUp" onclick="RedirectList.moveUp();" label="UP" disabled="false" />
-						<button id="btnDown" onclick="RedirectList.moveDown();" label="Down" />
+						<button id="btnAdd" onclick="RedirectList.addRedirect();" accesskey="&btnAdd.accesskey;" onkeypress="RedirectList.buttonKeyPress(event);" label="&btnAdd.label;" tooltiptext="&btnAdd.tooltip;" disabled="false" />
+						<button id="btnEdit" onclick="RedirectList.editRedirect();" accesskey="&btnEdit.accesskey;" onkeypress="RedirectList.buttonKeyPress(event);" label="&btnEdit.label;" tooltiptext="&btnEdit.tooltip;" disabled="true" />
+						<button id="btnDelete" onclick="RedirectList.deleteRedirect();" accesskey="&btnDelete.accesskey;" onkeypress="RedirectList.buttonKeyPress(event);" label="&btnDelete.label;" tooltiptext="&btnDelete.tooltip;" disabled="true" />
+						<button id="btnUp" onclick="RedirectList.moveUp();" onkeypress="RedirectList.buttonKeyPress(event);" label="&btnUp.label;" tooltiptext="&btnUp.tooltip;" disabled="false" />
+						<button id="btnDown" onclick="RedirectList.moveDown();" onkeypress="RedirectList.buttonKeyPress(event);" tooltiptext="&btnDown.tooltip;" label="&btnDown.label;" />
 					</hbox>
 				</vbox>
 			</tabpanel>
 			<tabpanel>
 				<vbox flex="1">
 					<groupbox>
-						<caption label="General" />
+						<caption label="&grpGeneralPreferences.label;" />
 						<hbox>
-							<checkbox label="Enable Redirector" />
+							<checkbox label="&chkEnableRedirector.label;" accesskey="&chkEnableRedirector.accesskey;" />
 							<spacer flex="1" />
 						</hbox>
 						<hbox>
-							<checkbox label="Show status bar icon" />
+							<checkbox label="&chkShowStatusBarIcon.label;" accesskey="&chkShowStatusBarIcon.accesskey;" />
 							<spacer flex="1" />
 						</hbox>
 						<hbox>
-							<checkbox label="Show context menu" />
+							<checkbox label="&chkShowContextMenu.label;" accesskey="&chkShowContextMenu.accesskey;" />
 							<spacer flex="1" />
 						</hbox>
 					</groupbox>
 					<groupbox>
-						<caption label="Debugging" />
+						<caption label="&grpDebuggingPreferences.label;" />
 						<hbox>
-							<checkbox label="Enable debug output" />
+							<checkbox label="&chkEnableDebugOutput.label;" accesskey="&chkEnableDebugOutput.accesskey;" />
 							<spacer flex="1" />
 						</hbox>
 					</groupbox>
@@ -92,8 +93,8 @@
 			</tabpanel>
 			<tabpanel>
 				<vbox>
-					<button id="btnImport" onclick="RedirectList.import();" label="&btnImport.label;"/>
-					<button id="btnExport" onclick="RedirectList.export();" label="&btnExport.label;"/>
+					<button id="btnImport" accesskey="&btnImport.accesskey;" onclick="RedirectList.import();" label="&btnImport.label;"/>
+					<button id="btnExport" accesskey="&btnExport.accesskey;" onclick="RedirectList.export();" label="&btnExport.label;"/>
 					<spacer flex="1" />
 				</vbox>
 			</tabpanel>
