@@ -81,7 +81,7 @@ var RedirectorOverlay = {
         } else {
             window.openDialog("chrome://redirector/content/ui/redirectList.xul",
                     windowName,
-                    "chrome,dialog,resizable=no,centerscreen", this);
+                    "chrome,dialog,resizable=yes,centerscreen", this);
         }
     
     },

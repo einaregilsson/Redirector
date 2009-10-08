@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- $Id$ -->
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://redirector/skin/redirector.css" type="text/css"?>
 <!DOCTYPE dialog SYSTEM "chrome://redirector/locale/editRedirect.xul.dtd">
 <dialog title="&redirectWindow.title;"
         orient="vertical"
@@ -18,22 +19,22 @@
   </stringbundleset>
 
   <grid>
-    <rows>
+    <rows class="editRedirects">
       <row align="center">
-        <text value="&txtExampleUrl.label;" style="margin-top:6px;"/>
-        <textbox id="txtExampleUrl" style="width:400px;"/>
+        <text value="&txtExampleUrl.label;" />
+        <textbox id="txtExampleUrl" />
       </row>
       <row align="center">
-        <text value="&txtIncludePattern.label;" style="margin-top:6px;"/>
+        <text value="&txtIncludePattern.label;" />
         <textbox id="txtIncludePattern" taborder="1"/>
         <button id="btnTestPattern" label="&btnTestPattern.label;" onclick="EditRedirect.testPattern();" taborder="2"/>
       </row>
       <row align="center">
-        <text value="&txtExcludePattern.label;" style="margin-top:6px;"/>
+        <text value="&txtExcludePattern.label;" />
         <textbox id="txtExcludePattern" taborder="3"/>
       </row>
       <row align="center">
-        <text value="&txtRedirectUrl.label;" style="margin-top:6px;"/>
+        <text value="&txtRedirectUrl.label;" />
         <textbox id="txtRedirectUrl" taborder="4"/>
       </row>
       <row align="center">

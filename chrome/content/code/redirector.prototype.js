@@ -91,6 +91,7 @@ Redirector.prototype = {
 	        if (!aContext || !aContext.loadURI) {
 	            return nsIContentPolicy.ACCEPT;
 	        }
+		    this.debug("START: " + new Date().getTime());
 	        this.debug("Checking " + contentLocation.spec);
 	        
 	        var url = contentLocation.spec;
@@ -112,6 +113,7 @@ Redirector.prototype = {
         } catch(e) {
 	    	this.debug(e);   
         }
+	    this.debug("END: " + new Date().getTime());
         return nsIContentPolicy.ACCEPT;
     },
 

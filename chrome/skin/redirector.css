@@ -1,0 +1,6 @@
+/* $Id$ */
+
+.disabledRedirect { color:grey; }
+.redirectListItem { border-bottom:dotted 1px grey; }
+.redirectRows > row > label { font-weight:bold;}
+.editRedirects > row > textbox { width: 350px; }

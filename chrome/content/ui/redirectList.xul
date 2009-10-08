@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- $Id -->
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://redirector/skin/redirector.css" type="text/css"?>
+
 <!DOCTYPE dialog SYSTEM "chrome://redirector/locale/redirectList.xul.dtd">
 <window title="&window.title;"
         orient="vertical"
@@ -12,51 +14,92 @@
 		xmlns:nc="http://home.netscape.com/NC-rdf#"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-  <script type="application/x-javascript" src="../code/redirect.js"/>
-  <script type="application/x-javascript" src="../code/redirectList.xul.js"/>
-  <stringbundleset id="stringbundleset">
-    <stringbundle id="redirector-strings" src="chrome://redirector/locale/redirector.properties"/>
-  </stringbundleset>
-
-  <vbox>
-      <richlistbox seltype="single" id="lstRedirects" style="margin-bottom:5px; border:solid 1px grey;" height="430px" ondblclick="RedirectList.editRedirect();" onselect="RedirectList.selectionChange();">
-        <richlistitem style="border-bottom:dotted 1px grey;" selected="false">
-            <grid>
-			    <cols>
-			    </cols>
-			    <rows>
-				    <row>
-		              <label style="font-weight:bold;" value="&colIncludePattern.label;:" />
-		              <description name="dscrIncludePattern" />
-				    </row>
-				    <row>
-		              <label style="font-weight:bold;" value="&colExcludePattern.label;:" />
-		              <description name="dscrExcludePattern" />
-				    </row>
-				    <row>
-		              <label style="font-weight:bold;" value="&colRedirectTo.label;:" />
-		              <description name="dscrRedirectTo" />
-				    </row>
-				    <row>
-		              <label style="font-weight:bold;" value="&colEnabled.label;:" />
-		              <hbox><checkbox checked="false" name="chkEnabled" label="" /> <spacer flex="1"/></hbox>
-				    </row>
-			    </rows>
-            </grid>
-        </richlistitem>
-      </richlistbox>
-      <hbox style="align:right;">
-        <button id="btnAdd" onclick="RedirectList.addRedirect();" label="&btnAdd.label;" disabled="false" />
-        <button id="btnEdit" onclick="RedirectList.editRedirect();" label="&btnEdit.label;" disabled="true" />
-        <button id="btnDelete" onclick="RedirectList.deleteRedirect();" label="&btnDelete.label;" disabled="true" />
-        <button id="btnImport" onclick="RedirectList.import();" label="&btnImport.label;"/>
-        <button id="btnExport" onclick="RedirectList.export();" label="&btnExport.label;"/>
-        <button id="btnHelp" onclick="RedirectList.openHelp();" label="&btnHelp.label;"/>
-        <button id="btnClose" onclick="RedirectList.close();" label="&btnClose.label;"/>
-        <!-- TODO: include in v2.0 
-        <button id="btnUp" onclick="RedirectList.moveUp();" label="UP" disabled="false" />
-        <button id="btnDown" onclick="RedirectList.moveDown();" label="Down" />
-        -->
-      </hbox>
-  </vbox>
+	<script type="application/x-javascript" src="../code/redirect.js"/>
+	<script type="application/x-javascript" src="../code/redirectList.xul.js"/>
+	<stringbundleset id="stringbundleset">
+		<stringbundle id="redirector-strings" src="chrome://redirector/locale/redirector.properties"/>
+	</stringbundleset>
+	<tabbox flex="1" >
+		<tabs>
+			<tab label="Redirects" />
+			<tab label="Preferences" />
+			<tab label="Import / Export" />
+			<tab label="Help" />
+		</tabs>
+		<tabpanels flex="1">
+			<tabpanel flex="1">
+				<vbox flex="1">
+					<richlistbox seltype="single" id="lstRedirects" flex="1" ondblclick="RedirectList.editRedirect();" onselect="RedirectList.selectionChange();">
+						<richlistitem class="redirectListItem" selected="false">
+							<grid>
+								<cols />
+								<rows class="redirectRows">
+									<row>
+										<label value="&colIncludePattern.label;:" />
+										<description name="dscrIncludePattern" />
+									</row>
+									<row>
+										<label value="&colExcludePattern.label;:" />
+										<description name="dscrExcludePattern" />
+									</row>
+									<row>
+										<label value="&colRedirectTo.label;:" />
+										<description name="dscrRedirectTo" />
+									</row>
+									<row>
+										<label value="&colEnabled.label;:" />
+										<hbox><checkbox checked="false" name="chkEnabled" label="" /> <spacer flex="1"/></hbox>
+									</row>
+								</rows>
+							</grid>
+						</richlistitem>
+					</richlistbox>
+					<hbox>
+						<button id="btnAdd" onclick="RedirectList.addRedirect();" label="&btnAdd.label;" disabled="false" />
+						<button id="btnEdit" onclick="RedirectList.editRedirect();" label="&btnEdit.label;" disabled="true" />
+						<button id="btnDelete" onclick="RedirectList.deleteRedirect();" label="&btnDelete.label;" disabled="true" />
+						<button id="btnUp" onclick="RedirectList.moveUp();" label="UP" disabled="false" />
+						<button id="btnDown" onclick="RedirectList.moveDown();" label="Down" />
+					</hbox>
+				</vbox>
+			</tabpanel>
+			<tabpanel>
+				<vbox flex="1">
+					<groupbox>
+						<caption label="General" />
+						<hbox>
+							<checkbox label="Enable Redirector" />
+							<spacer flex="1" />
+						</hbox>
+						<hbox>
+							<checkbox label="Show status bar icon" />
+							<spacer flex="1" />
+						</hbox>
+						<hbox>
+							<checkbox label="Show context menu" />
+							<spacer flex="1" />
+						</hbox>
+					</groupbox>
+					<groupbox>
+						<caption label="Debugging" />
+						<hbox>
+							<checkbox label="Enable debug output" />
+							<spacer flex="1" />
+						</hbox>
+					</groupbox>
+					<spacer flex="1" />
+				</vbox>
+			</tabpanel>
+			<tabpanel>
+				<vbox>
+					<button id="btnImport" onclick="RedirectList.import();" label="&btnImport.label;"/>
+					<button id="btnExport" onclick="RedirectList.export();" label="&btnExport.label;"/>
+					<spacer flex="1" />
+				</vbox>
+			</tabpanel>
+			<tabpanel>
+				<browser type="content" src="chrome://redirector/content/ui/help.html" flex="1" />
+			</tabpanel>
+		</tabpanels>
+	</tabbox>
 </window>

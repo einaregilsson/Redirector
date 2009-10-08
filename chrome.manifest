@@ -1,4 +1,6 @@
 # $Id$
 content redirector file:chrome/content/
 locale  redirector en-US   file:chrome/locale/en-US/
+skin    redirector classic/1.0 file:chrome/skin/
+
 overlay chrome://browser/content/browser.xul    chrome://redirector/content/ui/browserOverlay.xul

@@ -9,6 +9,8 @@ var RedirectList = {
     lstRedirects: null,
     btnDelete   : null,
     btnEdit     : null,
+    btnUp		: null,
+    btnDown		: null,
 
     addItemsToListBox : function(items) {
 
@@ -22,9 +24,10 @@ var RedirectList = {
             newItem.getElementsByAttribute('name', 'dscrRedirectTo')[0].setAttribute('value', item.redirectUrl);
             var checkEnabled = newItem.getElementsByAttribute('name', 'chkEnabled')[0];
             checkEnabled.setAttribute('checked', !item.disabled);
+            newItem.setAttribute('class', item.disabled ? 'disabledRedirect' : '');
             newItem.item = item;
             this.lstRedirects.appendChild(newItem);
-            newItem.setAttribute('selected', false);
+            newItem.setAttribute('selected', false)
         }
         
         //Enable, disable functionality
@@ -35,11 +38,12 @@ var RedirectList = {
 			     	parent = parent.parentNode;   
 		        }
 		        parent.item.disabled = !ev.originalTarget.hasAttribute('checked');
+	            parent.setAttribute('class', parent.item.disabled ? 'disabledRedirect' : '');
 		        Redirector.save();
 	        }
         },false);
     },
-
+    
     onLoad : function() {
         try {
             this.lstRedirects = document.getElementById('lstRedirects');
@@ -48,6 +52,8 @@ var RedirectList = {
             this.lstRedirects.removeChild(this.template);
             this.btnDelete = document.getElementById('btnDelete');
             this.btnEdit = document.getElementById('btnEdit');
+            this.btnUp = document.getElementById('btnUp');
+            this.btnDown = document.getElementById('btnDown');
             this.addItemsToListBox(Redirector.list);
 	        this.strings = document.getElementById('redirector-strings');
         } catch(e) {
@@ -55,25 +61,6 @@ var RedirectList = {
         }
     },
 
-    openHelp : function() {
-        var windowName = 'redirectorHelp';
-        var windowsMediator = Cc["@mozilla.org/appshell/window-mediator;1"].getService(Ci.nsIWindowMediator);
-        var win;
-        var iter = windowsMediator.getEnumerator(null);
-        while (iter.hasMoreElements()) {
-            win = iter.getNext();
-            if (win.name == windowName) {
-                win.focus();
-                return;
-            }
-        }
-        window.openDialog("chrome://redirector/content/ui/help.html", windowName, "chrome,dialog,resizable=yes,location=0,toolbar=0,status=0,width=800px,height=600px,centerscreen", this);
-    },
-    
-    close : function() {
-        window.close();
-    },
-    
     moveUp : function(){
         if (this.lstRedirects.selectedIndex <= 0) {
             return;
@@ -89,14 +76,16 @@ var RedirectList = {
     },
 
     switchItems : function(firstIndex) {
-        var first = Redirector.list[firstIndex];
-        var second = Redirector.list[firstIndex+1];
-        Redirector.list[firstIndex] = second;
-        Redirector.list[firstIndex+1] = first;
-        this.setListItemValues(this.lstRedirects.children[firstIndex+1], first);
-        this.setListItemValues(this.lstRedirects.children[firstIndex], second);
-        this.lstRedirects.selectedIndex -= 1;
+        var firstRedirect = Redirector.list[firstIndex];
+        var secondRedirect = Redirector.list[firstIndex+1];
+        Redirector.list[firstIndex] = secondRedirect;
+        Redirector.list[firstIndex+1] = firstRedirect;
+        var firstItem = this.lstRedirects.children[firstIndex];
+        var secondItem = this.lstRedirects.children[firstIndex+1];
+        this.lstRedirects.removeChild(secondItem);
+        this.lstRedirects.insertBefore(secondItem, firstItem);
         Redirector.save();
+        this.selectionChange();
     }, 
     
     setListItemValues : function(listItem, item){
@@ -163,6 +152,8 @@ var RedirectList = {
 
         this.btnEdit.disabled = (index == -1);
         this.btnDelete.disabled = (index == -1);
+        this.btnUp.disabled = (index <= 0);
+        this.btnDown.disabled = (index == -1 || index >= Redirector.list.length-1);
     },
     
     importExport : function(mode, captionKey, func) {

@@ -7,8 +7,5 @@
 <!ENTITY btnAdd.label "Add...">
 <!ENTITY btnEdit.label "Edit...">
 <!ENTITY btnDelete.label "Delete">
-<!ENTITY btnDisable.label "Disable">
-<!ENTITY btnClose.label "Close">
-<!ENTITY btnHelp.label "Help">
 <!ENTITY btnImport.label "Import...">
 <!ENTITY btnExport.label "Export...">
