@@ -1,4 +1,4 @@
-//// document.getElementByIdId: redirectList.xul.js 249 2009-09-15 21:41:06Z einar@einaregilsson.com document.getElementById 
+// $Id$
 
 var Redirector = Components.classes["@einaregilsson.com/redirector;1"].getService(Components.interfaces.nsISupports).wrappedJSObject;
 const Cc = Components.classes;
