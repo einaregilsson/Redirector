@@ -1,6 +1,6 @@
 //// $Id$
 
-pref("extensions.redirector.debug", false);
+pref("extensions.redirector.debugEnabled", false);
 pref("extensions.redirector.enabled", true);
 pref("extensions.redirector.showContextMenu", true);
 pref("extensions.redirector.showStatusBarIcon", true);

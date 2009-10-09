@@ -7,6 +7,7 @@
 <window title="&window.title;"
         orient="vertical"
         onload="RedirectList.onLoad();"
+        onunload="RedirectList.onUnload();"
         buttons="accept"
         width="650px"
         height="500px"
@@ -29,8 +30,12 @@
 		</tabs>
 		<tabpanels flex="1">
 			<tabpanel flex="1">
+				<keyset>
+					<key oncommand="RedirectList.moveUp();" keycode="VK_UP" modifiers="control" />
+					<key oncommand="RedirectList.moveDown();" keycode="VK_DOWN" modifiers="control" />
+				</keyset>
 				<vbox flex="1">
-					<richlistbox seltype="single" id="lstRedirects" flex="1" ondblclick="RedirectList.editRedirect();" onselect="RedirectList.selectionChange();" onkeydown="RedirectList.redirectListKeyDown(event);">
+					<richlistbox seltype="single" id="lstRedirects" flex="1" ondblclick="RedirectList.editRedirect();" onselect="RedirectList.selectionChange();">
 						<richlistitem class="redirectListItem" selected="false">
 							<grid>
 								<cols />
@@ -56,11 +61,11 @@
 						</richlistitem>
 					</richlistbox>
 					<hbox>
-						<button id="btnAdd" onclick="RedirectList.addRedirect();" accesskey="&btnAdd.accesskey;" onkeypress="RedirectList.buttonKeyPress(event);" label="&btnAdd.label;" tooltiptext="&btnAdd.tooltip;" disabled="false" />
-						<button id="btnEdit" onclick="RedirectList.editRedirect();" accesskey="&btnEdit.accesskey;" onkeypress="RedirectList.buttonKeyPress(event);" label="&btnEdit.label;" tooltiptext="&btnEdit.tooltip;" disabled="true" />
-						<button id="btnDelete" onclick="RedirectList.deleteRedirect();" accesskey="&btnDelete.accesskey;" onkeypress="RedirectList.buttonKeyPress(event);" label="&btnDelete.label;" tooltiptext="&btnDelete.tooltip;" disabled="true" />
-						<button id="btnUp" onclick="RedirectList.moveUp();" onkeypress="RedirectList.buttonKeyPress(event);" label="&btnUp.label;" tooltiptext="&btnUp.tooltip;" disabled="false" />
-						<button id="btnDown" onclick="RedirectList.moveDown();" onkeypress="RedirectList.buttonKeyPress(event);" tooltiptext="&btnDown.tooltip;" label="&btnDown.label;" />
+						<button id="btnAdd" oncommand="RedirectList.addRedirect();" accesskey="&btnAdd.accesskey;" label="&btnAdd.label;" tooltiptext="&btnAdd.tooltip;" disabled="false" />
+						<button id="btnEdit" oncommand="RedirectList.editRedirect();" accesskey="&btnEdit.accesskey;" label="&btnEdit.label;" tooltiptext="&btnEdit.tooltip;" disabled="true" />
+						<button id="btnDelete" oncommand="RedirectList.deleteRedirect();" accesskey="&btnDelete.accesskey;" label="&btnDelete.label;" tooltiptext="&btnDelete.tooltip;" disabled="true" />
+						<button id="btnUp" oncommand="RedirectList.moveUp();" label="&btnUp.label;" tooltiptext="&btnUp.tooltip;" disabled="false" />
+						<button id="btnDown" oncommand="RedirectList.moveDown();" tooltiptext="&btnDown.tooltip;" label="&btnDown.label;" />
 					</hbox>
 				</vbox>
 			</tabpanel>
@@ -69,22 +74,22 @@
 					<groupbox>
 						<caption label="&grpGeneralPreferences.label;" />
 						<hbox>
-							<checkbox label="&chkEnableRedirector.label;" accesskey="&chkEnableRedirector.accesskey;" />
+							<checkbox id="chkEnableRedirector" label="&chkEnableRedirector.label;" oncommand="RedirectList.preferenceChange(event);" accesskey="&chkEnableRedirector.accesskey;" preference="enabled" />
 							<spacer flex="1" />
 						</hbox>
 						<hbox>
-							<checkbox label="&chkShowStatusBarIcon.label;" accesskey="&chkShowStatusBarIcon.accesskey;" />
+							<checkbox id="chkShowStatusBarIcon" label="&chkShowStatusBarIcon.label;" oncommand="RedirectList.preferenceChange(event);" accesskey="&chkShowStatusBarIcon.accesskey;" preference="showStatusBarIcon" />
 							<spacer flex="1" />
 						</hbox>
 						<hbox>
-							<checkbox label="&chkShowContextMenu.label;" accesskey="&chkShowContextMenu.accesskey;" />
+							<checkbox id="chkShowContextMenu" label="&chkShowContextMenu.label;" oncommand="RedirectList.preferenceChange(event);" accesskey="&chkShowContextMenu.accesskey;" preference="showContextMenu" />
 							<spacer flex="1" />
 						</hbox>
 					</groupbox>
 					<groupbox>
 						<caption label="&grpDebuggingPreferences.label;" />
 						<hbox>
-							<checkbox label="&chkEnableDebugOutput.label;" accesskey="&chkEnableDebugOutput.accesskey;" />
+							<checkbox id="chkEnableDebugOutput" label="&chkEnableDebugOutput.label;" oncommand="RedirectList.preferenceChange(event);" accesskey="&chkEnableDebugOutput.accesskey;" preference="debugEnabled" />
 							<spacer flex="1" />
 						</hbox>
 					</groupbox>

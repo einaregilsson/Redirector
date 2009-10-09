@@ -13,12 +13,9 @@ var RedirectorOverlay = {
             document.getElementById('contentAreaContextMenu')
                 .addEventListener("popupshowing", function(e) { RedirectorOverlay.showContextMenu(e); }, false);
             
-			document.getElementById('redirector-status').hidden = !Redirector.getBoolPref('showStatusBarIcon');
-			document.getElementById('redirector-context').hidden = !Redirector.getBoolPref('showContextMenu');
-               
             this.strings = document.getElementById("redirector-strings");
-            this.prefObserver.register();
-            this.setStatusBarImg();
+            this.changedPrefs(Redirector.prefs);
+            Redirector.prefs.addListener(this);
 		
         } catch(e) {
             if (this.strings) {
@@ -30,10 +27,25 @@ var RedirectorOverlay = {
     },
     
     onUnload : function(event) {
-        RedirectorOverlay.prefObserver.unregister();
+        Redirector.prefs.removeListener(this);
         Redirector.debug("Finished cleanup");
     },
 
+    changedPrefs : function(prefs) {
+        var statusImg = document.getElementById('redirector-statusbar-img');
+
+        if (prefs.enabled) {
+            statusImg.src = 'chrome://redirector/content/images/statusactive.PNG'
+            statusImg.setAttribute('tooltiptext', this.strings.getString('enabledTooltip'));
+        } else {
+            statusImg.src = 'chrome://redirector/content/images/statusinactive.PNG'
+            statusImg.setAttribute('tooltiptext', this.strings.getString('disabledTooltip'));
+        }
+
+        document.getElementById('redirector-status').hidden = !prefs.showStatusBarIcon;
+		document.getElementById('redirector-context').hidden = !prefs.showContextMenu;
+    },
+    
     showContextMenu : function(event) {
         if (gContextMenu.onLink) {
             document.getElementById("redirector-context").label = this.strings.getString('addLinkUrl');
@@ -60,7 +72,7 @@ var RedirectorOverlay = {
     },
 
     toggleEnabled : function(event) {
-        Redirector.setEnabled(!Redirector.enabled);
+        Redirector.prefs.enabled = !Redirector.prefs.enabled;
     },
 
     openSettings : function() {
@@ -85,47 +97,8 @@ var RedirectorOverlay = {
         } else if (event.button == RIGHT) {
             this.openSettings();
         }
-    },
-
-    setStatusBarImg : function() {
-        var statusImg = document.getElementById('redirector-statusbar-img');
-
-        if (Redirector.enabled) {
-            statusImg.src = 'chrome://redirector/content/images/statusactive.PNG'
-            statusImg.setAttribute('tooltiptext', this.strings.getString('enabledTooltip'));
-        } else {
-            statusImg.src = 'chrome://redirector/content/images/statusinactive.PNG'
-            statusImg.setAttribute('tooltiptext', this.strings.getString('disabledTooltip'));
-        }
-    },
-    
-    prefObserver : {
-
-        getService : function() {
-            return Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranchInternal);
-        },
-
-        register: function() {
-            this.getService().addObserver('extensions.redirector', this, false);
-        },
-
-        unregister: function() {
-            this.getService().removeObserver('extensions.redirector', this);
-        },
-
-        observe : function(subject, topic, data) {
-	        if (topic != 'nsPref:changed') {
-		        return;
-	        }
-            if (data == 'extensions.redirector.enabled') {
-                RedirectorOverlay.setStatusBarImg();
-            } else if (data == 'extensions.redirector.showStatusBarIcon') {
-				document.getElementById('redirector-status').hidden = !Redirector.getBoolPref('showStatusBarIcon');
-            } else if (data == 'extensions.redirector.showContextMenu') {
-				document.getElementById('redirector-context').hidden = !Redirector.getBoolPref('showContextMenu');
-            }
-        }
     }
+
 };
 window.addEventListener("load", function(event) { RedirectorOverlay.onLoad(event); }, false);
 window.addEventListener("unload", function(event) { RedirectorOverlay.onUnload(event); }, false);

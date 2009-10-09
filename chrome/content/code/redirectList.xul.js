@@ -11,24 +11,55 @@ var RedirectList = {
     btnEdit     : null,
     btnUp		: null,
     btnDown		: null,
-
+	chkEnableRedirector : null,
+	chkShowStatusBarIcon : null,
+	chkShowContextMenu : null,
+	chkEnableDebugOutput : null,
+	
     onLoad : function() {
         try {
+	        //Get references to controls
             this.lstRedirects = document.getElementById('lstRedirects');
-            this.lstRedirects.selType = 'single'; 
-            this.template = document.getElementsByTagName('richlistitem')[0];
-            this.lstRedirects.removeChild(this.template);
             this.btnDelete = document.getElementById('btnDelete');
             this.btnEdit = document.getElementById('btnEdit');
             this.btnUp = document.getElementById('btnUp');
             this.btnDown = document.getElementById('btnDown');
+            this.chkEnableRedirector = document.getElementById('chkEnableRedirector');
+            this.chkShowStatusBarIcon = document.getElementById('chkShowStatusBarIcon');
+            this.chkShowContextMenu = document.getElementById('chkShowContextMenu');
+            this.chkEnableDebugOutput = document.getElementById('chkEnableDebugOutput');
+            
+            //Preferences
+            this.setPrefs(Redirector.prefs);
+            Redirector.prefs.addListener(this);
+
+            //Redirect list
+            this.lstRedirects.selType = 'single'; 
+            this.template = document.getElementsByTagName('richlistitem')[0];
+            this.lstRedirects.removeChild(this.template);
             this.addItemsToListBox(Redirector.list);
-	        this.strings = document.getElementById('redirector-strings');
+
+            this.strings = document.getElementById('redirector-strings');
         } catch(e) {
             alert(e);
         }
     },
+    
+    onUnload : function() {
+		Redirector.prefs.removeListener(this);    
+    },
 
+    changedPrefs : function(prefs) {
+    	this.setPrefs(prefs);
+	},
+	
+	setPrefs : function(prefs) {
+        this.chkEnableRedirector.setAttribute('checked', prefs.enabled);
+        this.chkShowStatusBarIcon.setAttribute('checked', prefs.showStatusBarIcon);
+        this.chkShowContextMenu.setAttribute('checked', prefs.showContextMenu);
+        this.chkEnableDebugOutput.setAttribute('checked', prefs.debugEnabled);
+	},
+	
     addItemsToListBox : function(items) {
 
 	    var item, row, value, newItem;
@@ -94,6 +125,10 @@ var RedirectList = {
         listItem.getElementsByAttribute('name', 'dscrRedirectTo')[0].setAttribute('value', item.redirectUrl);
     },
     
+    preferenceChange : function(event) {
+	    Redirector.prefs[event.originalTarget.getAttribute('preference')] = event.originalTarget.hasAttribute('checked');
+    },
+    
     addRedirect : function() {
 		var args = { saved : false, redirect : new Redirect() };
         window.openDialog("chrome://redirector/content/ui/editRedirect.xul", "redirect", "chrome,dialog,modal,centerscreen", args);
@@ -124,12 +159,6 @@ var RedirectList = {
         }
     },
     
-    buttonKeyPress : function(event) {
-		if (event.keyCode == 13 && !event.originalTarget.disabled) {
-			event.originalTarget.click();  
-		}
-    },
-
     deleteRedirect : function() {
         var index = this.lstRedirects.selectedIndex;
 
@@ -163,14 +192,6 @@ var RedirectList = {
         this.btnDelete.disabled = (index == -1);
         this.btnUp.disabled = (index <= 0);
         this.btnDown.disabled = (index == -1 || index >= Redirector.list.length-1);
-    },
-    
-    redirectListKeyDown : function(event) {
-	    if (event.keyCode == 46) { //Del key
-	    	this.deleteRedirect();
-    	} else if (event.keyCode == 13) { //Enter key
-	    	this.editRedirect();
-		}
     },
     
     importExport : function(mode, captionKey, func) {

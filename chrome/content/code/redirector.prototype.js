@@ -6,19 +6,20 @@ Cr = Components.results;
 nsIContentPolicy = Ci.nsIContentPolicy;
 
 Redirector.prototype = {
-    prefBranch : null,
-    list : null,
+
+	prefs : null,
+	list : null,
     strings : null,
     cout : Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService),
+    
+    
 
     init : function() {
-	    this.prefBranch = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefService).getBranch("extensions.redirector.");
+	    this.prefs = new Prefs();
 	    //Check if we need to update existing redirects
 	
-	    var data = this.prefBranch.getCharPref('redirects');
-	    var version = this.prefBranch.getCharPref('version');
-	    this.debugEnabled = this.prefBranch.getBoolPref('debug');
-	    this.enabled = this.prefBranch.getBoolPref('enabled');
+	    var data = this.prefs.redirects;
+	    var version = this.prefs.version;
 	    this.loadStrings();
 	    //Here update checks are handled
 	    if (version == 'undefined') { //Either a fresh install of Redirector, or first time install of v2.0
@@ -33,14 +34,14 @@ Redirector.prototype = {
 	                arr.splice(3,1); //Remove the "only if link exists" data
 	                newArr.push(arr.join(',,,'));
 	            }
-	            this.prefBranch.setCharPref('redirects', newArr.join(':::'));
+	            this.prefs.redirects = newArr.join(':::');
 	        }
-	        this.prefBranch.setCharPref('version', '2.0');
+	        this.prefs.version = '2.0';
 	    }
 	    //Update finished
 	    
 	    //Now get from the new format
-	    data = this.prefBranch.getCharPref('redirects');
+	    data = this.prefs.redirects;
 	    var arr;
 	    this.list = [];
 	    if (data != '') {
@@ -52,14 +53,6 @@ Redirector.prototype = {
 	    }
     },
     
-    getDefaultDir : function() {
-		return this.prefBranch.getCharPref('defaultDir');    
-    },
-    
-    setDefaultDir : function(dir) {
-		this.prefBranch.setCharPref('defaultDir', dir.spec);
-    },
-
     loadStrings : function() {
         var src = 'chrome://redirector/locale/redirector.properties';
         var localeService = Cc["@mozilla.org/intl/nslocaleservice;1"].getService(Ci.nsILocaleService);
@@ -69,7 +62,7 @@ Redirector.prototype = {
     },    
     
     debug : function(msg) {
-        if (this.debugEnabled) {
+        if (this.prefs.debugEnabled) {
             this.cout.logStringMessage('REDIRECTOR: ' + msg);
         }
     },
@@ -77,14 +70,15 @@ Redirector.prototype = {
     // nsIContentPolicy interface implementation
     shouldLoad: function(contentType, contentLocation, requestOrigin, aContext, mimeTypeGuess, extra) {
 	    try {
-		    if (!this.enabled) {
+		    if (!this.prefs.enabled) {
 	            return nsIContentPolicy.ACCEPT;
 	        }
-	        if (contentLocation.scheme != "http" && contentLocation.scheme != "https") {
-	            return nsIContentPolicy.ACCEPT;
-	        }
-	
+	        
 	        if (contentType != nsIContentPolicy.TYPE_DOCUMENT) {
+	            return nsIContentPolicy.ACCEPT;
+	        }
+
+	        if (contentLocation.scheme != "http" && contentLocation.scheme != "https") {
 	            return nsIContentPolicy.ACCEPT;
 	        }
 	        
@@ -122,11 +116,6 @@ Redirector.prototype = {
         return nsIContentPolicy.ACCEPT;
     },
 
-    setEnabled : function(val) {
-        this.enabled = val;
-        this.prefBranch.setBoolPref('enabled', val);
-    },
-    
     reload : function() {
 		loader.loadSubScript('chrome://redirector/content/code/redirector.prototype.js');
 		loader.loadSubScript('chrome://redirector/content/code/redirect.js');
@@ -148,15 +137,11 @@ Redirector.prototype = {
     },
     
     save : function() {
-        this.prefBranch.setCharPref('redirects', this.redirectsAsString(':::'));
+        this.prefs.redirects = this.redirectsAsString(':::');
     },
     
     redirectsAsString : function(seperator) {
 		return [r.serialize() for each (r in this.list)].join(seperator);
-    },
-    
-    getBoolPref : function(name) {
-        return this.prefBranch.getBoolPref(name);
     },
     
 	exportRedirects : function(file) {
@@ -166,7 +151,6 @@ Redirector.prototype = {
 		const PR_TRUNCATE    = 0x20;
 
 		fileStream.init(file, PR_WRONLY | PR_CREATE_FILE | PR_TRUNCATE, 0644, 0);
-		//file.parent.QueryInterface(Ci.nsILocalFile)
 		var stream = Cc["@mozilla.org/intl/converter-output-stream;1"].createInstance(Ci.nsIConverterOutputStream);
 		stream.init(fileStream, "UTF-8", 16384, Ci.nsIConverterInputStream.DEFAULT_REPLACEMENT_CHARACTER);
 		stream.writeString(this.redirectsAsString('\n'));

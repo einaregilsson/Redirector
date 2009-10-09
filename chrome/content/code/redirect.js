@@ -9,6 +9,65 @@ Redirect.WILDCARD = 'W';
 Redirect.REGEX = 'R';
 
 Redirect.prototype = {
+	
+	//These are the only ones that are necessary to have as properties for now
+	//The others can be changed to properties later as neccessary
+	_includePattern : null,
+	_excludePattern : null,
+	_patternType : null,
+	_rxInclude : null,
+	_rxExclude : null,
+
+	get patternType() { return this._patternType; },
+	set patternType(value) { 
+		this._patternType = value;
+		this.compile();
+	},
+
+	get includePattern() { return this._includePattern; },
+	set includePattern(value) { 
+		this._includePattern = value;
+		this._rxInclude = this._compile(value); 
+	},
+
+	get excludePattern() { return this._excludePattern; },
+	set excludePattern(value) { 
+		this._excludePattern = value; 
+		this._rxExclude = this._compile(value); 
+	},
+	
+	_preparePattern : function(pattern) {
+		if (this.patternType == Redirect.REGEX) {
+			return pattern;	
+		} else { //Convert wildcard to regex pattern
+			var converted = '^';
+			for (var i = 0; i < pattern.length; i++) {
+				var ch = pattern.charAt(i);
+				if ('()[]{}?.^$\\+'.indexOf(ch) != -1) {
+					converted += '\\' + ch;
+				} else if (ch == '*') {
+					converted += '(.*?)';
+				} else {
+					converted += ch;
+				}
+			}
+			converted += '$';
+			return converted;
+		}
+	},
+	
+	compile : function() {
+		this._rxInclude = this._compile(this._includePattern); 
+		this._rxExclude = this._compile(this._excludePattern); 
+	},
+	
+	_compile : function(pattern) {
+		if (!pattern) {
+			return null;
+		}
+		return new RegExp(this._preparePattern(pattern),"gi");
+	},
+	
 	_init : function(exampleUrl, includePattern, excludePattern, redirectUrl, patternType, unescapeMatches, disabled) {
 		this.exampleUrl = exampleUrl || '';
 		this.includePattern = includePattern || '';
@@ -78,11 +137,11 @@ Redirect.prototype = {
 		};
 		var redirectTo = null;
 
-		redirectTo = this._match(url, this.includePattern, this.redirectUrl);
+		redirectTo = this._includeMatch(url);
         if (redirectTo !== null) {
 	        if (this.disabled) {
 				result.isDisabledMatch = true;
-			} else if (this._match(url, this.excludePattern, 'exclude') == 'exclude') {
+			} else if (this._excludeMatch(url)) {
 	            result.isExcludeMatch = true;
 		  	} else {
 	         	result.isMatch = true;
@@ -92,95 +151,24 @@ Redirect.prototype = {
      	return result;   
 	},
 	
-	_match : function(url, pattern, redirectUrl) {
-		if (this.isWildcard()) {
-			return this._wildcardMatch(url, pattern, redirectUrl);	
-		} else {
-			return this._regexMatch(url, pattern, redirectUrl);	
+	_includeMatch : function(url) {
+		if (!this._rxInclude) {
+			return null;
 		}	
+		var matches = this._rxInclude.exec(url);
+		if (!matches) {
+			return null;
+		}
+		var resultUrl = this.redirectUrl;
+        for (var i = 1; i < matches.length; i++) {
+            resultUrl = resultUrl.replace(new RegExp('\\$' + i, 'gi'), this.unescapeMatches ? unescape(matches[i]) : matches[i]);
+        }
+        return resultUrl;
 	},
 	
-    _wildcardMatch : function(url, pattern, redirectUrl) {
-
-	    if (!pattern || !url) {
-	    	return null;
-		}
-		if (pattern.indexOf('*') == -1) {
-			return (pattern == url) ? redirectUrl : null;
-		}
-		
-		var parts = pattern.split('*');  
-		var first = parts[0], 
-		    last  = parts[parts.length-1];
-
-		if (first) {
-			if (url.substr(0, first.length) != first) {
-				return null;
-			}
-			url = url.substr(first.length);
-		}
-
-		if (last) {
-			if (url.substr(url.length-last.length) != last) {
-				return null;
-			}
-			url = url.substr(0, url.length-last.length);
-		}
-		
-		if ((first || last) && parts.length == 2) {
-			return redirectUrl.replace('$1', url);
-		}
-		parts.splice(0,1);
-		parts.splice(parts.length-1,1);
-		var pos = 0, lastPos = 0;
-    	var matches = [];
-		for each(part in parts) {
-            pos = url.indexOf(part, lastPos);
-            if (pos == -1) {
-                return null;
-            }
-            var match = url.substr(lastPos, pos-lastPos);
-            matches.push(match);
-            lastPos = pos + part.length;
-        }
-        matches.push(url.substr(lastPos));
-        
-        return this._replaceCaptures(redirectUrl, matches);
-    },
-    
-    _regexMatch : function(url, pattern, redirectUrl, unescapeMatches) {
-
-        if (!pattern) {
-            return null;
-        }
-        var strings, rx, match;
-        try {
-            rx = new RegExp(pattern, 'gi');
-            match = rx.exec(url);
-        } catch(e) {
-	        //External users can display this to the user if they want
-	        throw { type : 'regexPatternError', 
-	        		'pattern' : pattern, 
-	        		message : "The pattern '" + pattern + "' is not a valid regular expression",
-	        		toString : function() { return this.message; }
-	        };
-        }
-
-        var rxrepl;
-
-        if (!match) {
-	    	return null;   
-        }
-        match.splice(0,1); //First element in regex match is the whole match
-        return this._replaceCaptures(redirectUrl, match);
-    },
-    
-    _replaceCaptures : function(redirectUrl, captures) {
-        for (var i = 1; i <= captures.length; i++) {
-            redirectUrl = redirectUrl.replace(new RegExp('\\$' + i, 'gi'), this.unescapeMatches ? unescape(captures[i-1]) : captures[i-1]);
-        }
-        return redirectUrl;
-    },
+	_excludeMatch : function(url) {
+		return !!(this._rxExclude && this._rxExclude.exec(url));	
+	},
     
     clone : function() {
 		return new Redirect(this.exampleUrl, this.includePattern, 
