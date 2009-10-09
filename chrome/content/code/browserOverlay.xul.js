@@ -16,7 +16,6 @@ var RedirectorOverlay = {
             this.strings = document.getElementById("redirector-strings");
             this.changedPrefs(Redirector.prefs);
             Redirector.prefs.addListener(this);
-		
         } catch(e) {
             if (this.strings) {
                 alert(this.strings.getString("initError") + "\n\n" + e);
@@ -35,10 +34,10 @@ var RedirectorOverlay = {
         var statusImg = document.getElementById('redirector-statusbar-img');
 
         if (prefs.enabled) {
-            statusImg.src = 'chrome://redirector/content/images/statusactive.PNG'
+            statusImg.src = 'chrome://redirector/skin/statusactive.png'
             statusImg.setAttribute('tooltiptext', this.strings.getString('enabledTooltip'));
         } else {
-            statusImg.src = 'chrome://redirector/content/images/statusinactive.PNG'
+            statusImg.src = 'chrome://redirector/skin/statusinactive.png'
             statusImg.setAttribute('tooltiptext', this.strings.getString('disabledTooltip'));
         }
 
@@ -82,7 +81,7 @@ var RedirectorOverlay = {
         if (win) {
             win.focus();
         } else {
-            window.openDialog("chrome://redirector/content/ui/redirectList.xul",
+            window.openDialog("chrome://redirector/content/ui/settings.xul",
                     windowName,
                     "chrome,dialog,resizable=yes,centerscreen", this);
         }

@@ -9,8 +9,8 @@
     <em:creator>Einar Egilsson</em:creator>
     <em:description>Automatically redirects to user-defined urls on certain pages</em:description>
     <em:homepageURL>http://tech.einaregilsson.com/projects/redirector/</em:homepageURL>
-    <em:optionsURL>chrome://redirector/content/ui/redirectList.xul</em:optionsURL>
-    <em:iconURL>chrome://redirector/content/images/redirector.png</em:iconURL>
+    <em:optionsURL>chrome://redirector/content/ui/settings.xul</em:optionsURL>
+    <em:iconURL>chrome://redirector/skin/redirector.png</em:iconURL>
     <em:targetApplication>
       <Description>
         <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id> <!-- firefox -->

@@ -17,7 +17,7 @@
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
 	<script type="application/x-javascript" src="../code/redirect.js"/>
-	<script type="application/x-javascript" src="../code/redirectList.xul.js"/>
+	<script type="application/x-javascript" src="../code/settings.xul.js"/>
 	<stringbundleset id="stringbundleset">
 		<stringbundle id="redirector-strings" src="chrome://redirector/locale/redirector.properties"/>
 	</stringbundleset>
