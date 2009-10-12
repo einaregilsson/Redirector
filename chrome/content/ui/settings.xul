@@ -6,8 +6,8 @@
 <!DOCTYPE dialog SYSTEM "chrome://redirector/locale/settings.xul.dtd">
 <window title="&window.title;"
         orient="vertical"
-        onload="RedirectList.onLoad();"
-        onunload="RedirectList.onUnload();"
+        onload="Settings.onLoad();"
+        onunload="Settings.onUnload();"
         buttons="accept"
         width="650px"
         height="500px"
@@ -31,8 +31,8 @@
 		<tabpanels flex="1">
 			<tabpanel flex="1">
 				<vbox flex="1">
-					<richlistbox seltype="single" id="lstRedirects" flex="1" ondblclick="RedirectList.editRedirect();" onselect="RedirectList.selectionChange();">
-						<richlistitem class="redirectListItem" selected="false">
+					<richlistbox seltype="single" id="lstRedirects" flex="1" ondblclick="Settings.editRedirect();" onselect="Settings.selectionChange();">
+						<richlistitem class="SettingsItem" selected="false">
 							<grid>
 								<cols />
 								<rows class="redirectRows">
@@ -57,11 +57,11 @@
 						</richlistitem>
 					</richlistbox>
 					<hbox>
-						<button id="btnAdd" oncommand="RedirectList.addRedirect();" accesskey="&btnAdd.accesskey;" label="&btnAdd.label;" tooltiptext="&btnAdd.tooltip;" disabled="false" />
-						<button id="btnEdit" oncommand="RedirectList.editRedirect();" accesskey="&btnEdit.accesskey;" label="&btnEdit.label;" tooltiptext="&btnEdit.tooltip;" disabled="true" />
-						<button id="btnDelete" oncommand="RedirectList.deleteRedirect();" accesskey="&btnDelete.accesskey;" label="&btnDelete.label;" tooltiptext="&btnDelete.tooltip;" disabled="true" />
-						<button id="btnUp" oncommand="RedirectList.moveUp();" tooltiptext="&btnUp.tooltip;" disabled="true" />
-						<button id="btnDown" oncommand="RedirectList.moveDown();" tooltiptext="&btnDown.tooltip;" disabled="true" />
+						<button id="btnAdd" oncommand="Settings.addRedirect();" accesskey="&btnAdd.accesskey;" label="&btnAdd.label;" tooltiptext="&btnAdd.tooltip;" disabled="false" />
+						<button id="btnEdit" oncommand="Settings.editRedirect();" accesskey="&btnEdit.accesskey;" label="&btnEdit.label;" tooltiptext="&btnEdit.tooltip;" disabled="true" />
+						<button id="btnDelete" oncommand="Settings.deleteRedirect();" accesskey="&btnDelete.accesskey;" label="&btnDelete.label;" tooltiptext="&btnDelete.tooltip;" disabled="true" />
+						<button id="btnUp" oncommand="Settings.moveUp();" tooltiptext="&btnUp.tooltip;" disabled="true" />
+						<button id="btnDown" oncommand="Settings.moveDown();" tooltiptext="&btnDown.tooltip;" disabled="true" />
 					</hbox>
 				</vbox>
 			</tabpanel>
@@ -70,22 +70,22 @@
 					<groupbox>
 						<caption label="&grpGeneralPreferences.label;" />
 						<hbox>
-							<checkbox id="chkEnableRedirector" label="&chkEnableRedirector.label;" oncommand="RedirectList.preferenceChange(event);" accesskey="&chkEnableRedirector.accesskey;" preference="enabled" />
+							<checkbox id="chkEnableRedirector" label="&chkEnableRedirector.label;" oncommand="Settings.preferenceChange(event);" accesskey="&chkEnableRedirector.accesskey;" preference="enabled" />
 							<spacer flex="1" />
 						</hbox>
 						<hbox>
-							<checkbox id="chkShowStatusBarIcon" label="&chkShowStatusBarIcon.label;" oncommand="RedirectList.preferenceChange(event);" accesskey="&chkShowStatusBarIcon.accesskey;" preference="showStatusBarIcon" />
+							<checkbox id="chkShowStatusBarIcon" label="&chkShowStatusBarIcon.label;" oncommand="Settings.preferenceChange(event);" accesskey="&chkShowStatusBarIcon.accesskey;" preference="showStatusBarIcon" />
 							<spacer flex="1" />
 						</hbox>
 						<hbox>
-							<checkbox id="chkShowContextMenu" label="&chkShowContextMenu.label;" oncommand="RedirectList.preferenceChange(event);" accesskey="&chkShowContextMenu.accesskey;" preference="showContextMenu" />
+							<checkbox id="chkShowContextMenu" label="&chkShowContextMenu.label;" oncommand="Settings.preferenceChange(event);" accesskey="&chkShowContextMenu.accesskey;" preference="showContextMenu" />
 							<spacer flex="1" />
 						</hbox>
 					</groupbox>
 					<groupbox>
 						<caption label="&grpDebuggingPreferences.label;" />
 						<hbox>
-							<checkbox id="chkEnableDebugOutput" label="&chkEnableDebugOutput.label;" oncommand="RedirectList.preferenceChange(event);" accesskey="&chkEnableDebugOutput.accesskey;" preference="debugEnabled" />
+							<checkbox id="chkEnableDebugOutput" label="&chkEnableDebugOutput.label;" oncommand="Settings.preferenceChange(event);" accesskey="&chkEnableDebugOutput.accesskey;" preference="debugEnabled" />
 							<spacer flex="1" />
 						</hbox>
 					</groupbox>
@@ -93,11 +93,18 @@
 				</vbox>
 			</tabpanel>
 			<tabpanel>
-				<vbox>
-					<button id="btnImport" accesskey="&btnImport.accesskey;" onclick="RedirectList.import();" label="&btnImport.label;"/>
-					<button id="btnExport" accesskey="&btnExport.accesskey;" onclick="RedirectList.export();" label="&btnExport.label;"/>
-					<spacer flex="1" />
-				</vbox>
+				<groupbox flex="1">
+					<caption label="&grpImportExportDescription.label;" />
+					<vbox>
+						<hbox align="middle">
+							<button id="btnImport" accesskey="&btnImport.accesskey;" onclick="Settings.import();" label="&btnImport.label;"/>
+							<label value="Import redirects from a .rdx file" />
+						</hbox>
+						
+						<button id="btnExport" accesskey="&btnExport.accesskey;" onclick="Settings.export();" label="&btnExport.label;"/>
+						<spacer flex="1" />
+					</vbox>
+				</groupbox>
 			</tabpanel>
 			<tabpanel>
 				<browser type="content" src="chrome://redirector/content/ui/help.html" flex="1" />

@@ -4,7 +4,7 @@ var Redirector = Components.classes["@einaregilsson.com/redirector;1"].getServic
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 
-var RedirectList = {
+var Settings = {
 
     lstRedirects: null,
     btnDelete   : null,
@@ -135,6 +135,7 @@ var RedirectList = {
         if (args.saved) {
             this.addItemsToListBox([args.redirect]);
             Redirector.addRedirect(args.redirect);
+            this.selectionChange();
         }
     },
 
@@ -156,6 +157,7 @@ var RedirectList = {
 	        redirect.copyValues(args.redirect);
             this.setListItemValues(listItem, redirect);
             Redirector.save();
+            this.selectionChange();            
         }
     },
     

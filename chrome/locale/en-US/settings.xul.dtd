@@ -46,6 +46,7 @@
 <!-- Preferences -->
 <!ENTITY grpGeneralPreferences.label "General">
 <!ENTITY grpDebuggingPreferences.label "Debugging">
+<!ENTITY grpImportExportDescription.label "Import / export redirects to file">
 
 <!ENTITY chkEnableRedirector.label "Enable Redirector">
 <!ENTITY chkEnableRedirector.accesskey "E">
