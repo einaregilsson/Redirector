@@ -3,7 +3,7 @@
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <?xml-stylesheet href="chrome://redirector/skin/redirector.css" type="text/css"?>
 
-<!DOCTYPE dialog SYSTEM "chrome://redirector/locale/redirectList.xul.dtd">
+<!DOCTYPE dialog SYSTEM "chrome://redirector/locale/settings.xul.dtd">
 <window title="&window.title;"
         orient="vertical"
         onload="RedirectList.onLoad();"
@@ -30,10 +30,6 @@
 		</tabs>
 		<tabpanels flex="1">
 			<tabpanel flex="1">
-				<keyset>
-					<key oncommand="RedirectList.moveUp();" keycode="VK_UP" modifiers="control" />
-					<key oncommand="RedirectList.moveDown();" keycode="VK_DOWN" modifiers="control" />
-				</keyset>
 				<vbox flex="1">
 					<richlistbox seltype="single" id="lstRedirects" flex="1" ondblclick="RedirectList.editRedirect();" onselect="RedirectList.selectionChange();">
 						<richlistitem class="redirectListItem" selected="false">
@@ -64,8 +60,8 @@
 						<button id="btnAdd" oncommand="RedirectList.addRedirect();" accesskey="&btnAdd.accesskey;" label="&btnAdd.label;" tooltiptext="&btnAdd.tooltip;" disabled="false" />
 						<button id="btnEdit" oncommand="RedirectList.editRedirect();" accesskey="&btnEdit.accesskey;" label="&btnEdit.label;" tooltiptext="&btnEdit.tooltip;" disabled="true" />
 						<button id="btnDelete" oncommand="RedirectList.deleteRedirect();" accesskey="&btnDelete.accesskey;" label="&btnDelete.label;" tooltiptext="&btnDelete.tooltip;" disabled="true" />
-						<button id="btnUp" oncommand="RedirectList.moveUp();" label="&btnUp.label;" tooltiptext="&btnUp.tooltip;" disabled="false" />
-						<button id="btnDown" oncommand="RedirectList.moveDown();" tooltiptext="&btnDown.tooltip;" label="&btnDown.label;" />
+						<button id="btnUp" oncommand="RedirectList.moveUp();" tooltiptext="&btnUp.tooltip;" disabled="true" />
+						<button id="btnDown" oncommand="RedirectList.moveDown();" tooltiptext="&btnDown.tooltip;" disabled="true" />
 					</hbox>
 				</vbox>
 			</tabpanel>

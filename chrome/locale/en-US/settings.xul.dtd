@@ -20,10 +20,8 @@
 <!ENTITY btnDelete.accesskey "D">
 <!ENTITY btnDelete.tooltip "Delete the selected redirect">
 
-<!ENTITY btnUp.label "Up">
 <!ENTITY btnUp.tooltip "Move the selected redirect up">
 
-<!ENTITY btnDown.label "Down">
 <!ENTITY btnDown.tooltip "Move the selected redirect down">
 
 <!ENTITY btnImport.label "Import...">

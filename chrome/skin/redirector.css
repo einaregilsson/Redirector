@@ -5,3 +5,9 @@
 .redirectRows > row > label { font-weight:bold;}
 .editRedirects > row > textbox { width: 350px; }
 #redirectorSettings > tabbox { margin:4px; }
+#btnUp { list-style-image: url('chrome://redirector/skin/moveup.png'); }
+#btnDown { list-style-image: url('chrome://redirector/skin/movedown.png'); }
+#btnUp[disabled=true] { list-style-image: url('chrome://redirector/skin/moveupdisabled.png'); }
+#btnDown[disabled=true] { list-style-image: url('chrome://redirector/skin/movedowndisabled.png'); }
+
+#btnUp, #btnDown { width:25px; min-width:25px; }
