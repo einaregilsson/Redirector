@@ -41,6 +41,10 @@ var Settings = {
             this.addItemsToListBox(Redirector.list);
 
             this.strings = document.getElementById('redirector-strings');
+            this.strings.getPluralized = function(id, number) {
+				id += number == 1 ? 'Singular' : '';
+				return this.getFormattedString(id, [number]);	
+            };
         } catch(e) {
             alert(e);
         }
@@ -230,13 +234,17 @@ var Settings = {
 			return Redirector.importRedirects(file);
 		});
 
-		var msg;
-		if (result.imported > 0 && result.existed == 0) {
-			msg = this.strings.getFormattedString('importedMessage', [result.imported]);
-		} else if (result.imported > 0 && result.existed > 0) {
-			msg = this.strings.getFormattedString('importedAndExistedMessage', [result.imported, result.existed]);
+		var msg
+		
+		if (result.imported > 0) {
+			msg = this.strings.getPluralized('importedMessage', result.imported);
+			if (result.existed > 0) {
+				msg += ', ' + this.strings.getPluralized('existedMessage',result.existed);	
+			} else {
+				msg += '.';	
+			}
 		} else if (result.imported == 0 && result.existed > 0) {
-			msg = this.strings.getFormattedString('importedNoneAllExisted', [result.existed]);
+			msg = this.strings.getPluralized('allExistedMessage', result.existed);
 		} else { //Both 0
 			msg = this.strings.getString('importedNone');
 		}
