@@ -46,7 +46,6 @@
 <!-- Preferences -->
 <!ENTITY grpGeneralPreferences.label "General">
 <!ENTITY grpDebuggingPreferences.label "Debugging">
-<!ENTITY grpImportExportDescription.label "Import / export redirects to file">
 
 <!ENTITY chkEnableRedirector.label "Enable Redirector">
 <!ENTITY chkEnableRedirector.accesskey "E">
@@ -61,4 +60,6 @@
 <!ENTITY chkEnableDebugOutput.accesskey "d">
 
 
-
+<!-- Import / Export -->
+<!ENTITY lblExport.label "Export your redirects to a file">
+<!ENTITY lblImport.label "Import new redirects from a file">

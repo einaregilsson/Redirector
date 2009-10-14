@@ -11,3 +11,4 @@
 #btnDown[disabled=true] { list-style-image: url('chrome://redirector/skin/movedowndisabled.png'); }
 
 #btnUp, #btnDown { width:25px; min-width:25px; }
+#lblExport, #lblImport { padding-top:5px; }

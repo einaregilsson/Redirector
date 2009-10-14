@@ -94,14 +94,17 @@
 			</tabpanel>
 			<tabpanel>
 				<groupbox flex="1">
-					<caption label="&grpImportExportDescription.label;" />
 					<vbox>
 						<hbox align="middle">
-							<button id="btnImport" accesskey="&btnImport.accesskey;" onclick="Settings.import();" label="&btnImport.label;"/>
-							<label value="Import redirects from a .rdx file" />
+							<button id="btnImport" accesskey="&btnImport.accesskey;" oncommand="Settings.import();" label="&btnImport.label;"/>
+							<label id="lblImport" value="&lblImport.label;" />
+							<spacer flex="1" />
 						</hbox>
-						
-						<button id="btnExport" accesskey="&btnExport.accesskey;" onclick="Settings.export();" label="&btnExport.label;"/>
+						<hbox>
+							<button id="btnExport" accesskey="&btnExport.accesskey;" oncommand="Settings.export();" label="&btnExport.label;"/>
+							<label id="lblExport" value="&lblExport.label;" />
+							<spacer flex="1" />
+						</hbox>
 						<spacer flex="1" />
 					</vbox>
 				</groupbox>

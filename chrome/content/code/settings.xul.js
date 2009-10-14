@@ -3,6 +3,7 @@
 var Redirector = Components.classes["@einaregilsson.com/redirector;1"].getService(Components.interfaces.nsISupports).wrappedJSObject;
 const Cc = Components.classes;
 const Ci = Components.interfaces;
+const nsLocalFile = Components.Constructor("@mozilla.org/file/local;1", "nsILocalFile", "initWithPath");
 
 var Settings = {
 
@@ -201,9 +202,9 @@ var Settings = {
 		var picker = Cc["@mozilla.org/filepicker;1"].createInstance(Ci.nsIFilePicker);
 		picker.init(window, Redirector.getString(captionKey), mode);
 		picker.defaultExtension = ".rdx";
-		var dir = Redirector.getDefaultDir();
+		var dir = Redirector.prefs.defaultDir;
 		if (dir) {
-		    picker.displayDirectory = dir;
+		    picker.displayDirectory = new nsLocalFile(dir);
 		}
 		picker.appendFilter(Redirector.getString('redirectorFiles'), '*.rdx');
 		
@@ -211,7 +212,8 @@ var Settings = {
 		    return;
 		}
 		try {
-		    func(picker.file);
+			Redirector.prefs.defaultDir = picker.displayDirectory.path;
+		    return func(picker.file);
 		} catch (e) {
 		    alert(e);
 		}
@@ -224,8 +226,30 @@ var Settings = {
     },
     
     import : function() {
-		this.importExport(Ci.nsIFilePicker.modeOpen, 'importCaption', function(file) {
-			Redirector.importRedirects(file);
+		var result = this.importExport(Ci.nsIFilePicker.modeOpen, 'importCaption', function(file) {
+			return Redirector.importRedirects(file);
 		});
+
+		var msg;
+		if (result.imported > 0 && result.existed == 0) {
+			msg = this.strings.getFormattedString('importedMessage', [result.imported]);
+		} else if (result.imported > 0 && result.existed > 0) {
+			msg = this.strings.getFormattedString('importedAndExistedMessage', [result.imported, result.existed]);
+		} else if (result.imported == 0 && result.existed > 0) {
+			msg = this.strings.getFormattedString('importedNoneAllExisted', [result.existed]);
+		} else { //Both 0
+			msg = this.strings.getString('importedNone');
+		}
+
+		var title = this.strings.getString("importResult");
+        Cc["@mozilla.org/embedcomp/prompt-service;1"].getService(Ci.nsIPromptService).alert(null, title, msg);
+
+		if (result.imported > 0) {
+			var newlist = [];
+			for (var i = Redirector.list.length-result.imported; i < Redirector.list.length; i++) {
+				newlist.push(Redirector.list[i]);
+			}				
+        	this.addItemsToListBox(newlist);
+		}
     }
 };
