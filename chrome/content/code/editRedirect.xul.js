@@ -53,7 +53,8 @@ var EditRedirect = {
 		redirect.excludePattern = this.txtExcludePattern.value;
 		redirect.redirectUrl = this.txtRedirectUrl.value;
 		redirect.patternType = this.rdoRegex.getAttribute('selected') == 'true' ? Redirect.REGEX : Redirect.WILDCARD;
-		redirect.unescapeMatches = this.chkUnescapeMatches.getAttribute('checked');
+		var val = this.chkUnescapeMatches.getAttribute('checked');
+		redirect.unescapeMatches = val === 'true' || val === true;
 		//Disabled cannot be set here
     },
     

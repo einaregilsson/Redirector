@@ -166,7 +166,8 @@ Redirector.prototype = {
 		var importCount = 0, existsCount = 0;
 		var lines = [];
 		var line = {value: null};
-		while (stream.readLine(line)) {
+		stream.readLine(line);
+		while (line.value) {
 			var redirect = new Redirect();
 			redirect.deserialize(line.value.replace('\n', ''));
 			if (this.containsRedirect(redirect)) {
@@ -175,6 +176,7 @@ Redirector.prototype = {
 				this.list.push(redirect);
 				importCount++;
 			}
+			stream.readLine(line);
 		}
 		stream.close();
 		this.save();
@@ -183,6 +185,12 @@ Redirector.prototype = {
 	
 	containsRedirect : function(redirect) {
 		for each (var existing in this.list) {
+			this.debug("EXAMPLEURL: " + (redirect.exampleUrl == existing.exampleUrl));
+			this.debug("INCLUDEPATTERN: " + (redirect.includePattern == existing.includePattern));
+			this.debug("EXCLUDEPATTERN: " + (redirect.excludePattern == existing.excludePattern));
+			this.debug("unescape: " + (redirect.unescapeMatches == existing.unescapeMatches));
+			this.debug("REDIRECTTO: " + (redirect.redirectUrl == existing.redirectUrl));
+			this.debug("PATTERNTYPE: " + (redirect.patternType == existing.patternType));
 			if (existing.equals(redirect)) {
 				return true;
 			}	
@@ -207,7 +215,6 @@ Redirector.prototype = {
         } 
         
         var ioService = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
-        //this.debug(currentUrl);
         var uri = ioService.newURI(currentUrl, null, null); 
         
         return uri.resolve(relativeUrl);

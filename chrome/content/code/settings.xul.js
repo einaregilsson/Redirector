@@ -12,6 +12,8 @@ var Settings = {
     btnEdit     : null,
     btnUp		: null,
     btnDown		: null,
+    btnExport   : null,
+    btnImport   : null,
 	chkEnableRedirector : null,
 	chkShowStatusBarIcon : null,
 	chkShowContextMenu : null,
@@ -25,6 +27,8 @@ var Settings = {
             this.btnEdit = document.getElementById('btnEdit');
             this.btnUp = document.getElementById('btnUp');
             this.btnDown = document.getElementById('btnDown');
+            this.btnExport = document.getElementById('btnExport');
+            this.btnImport = document.getElementById('btnImport');
             this.chkEnableRedirector = document.getElementById('chkEnableRedirector');
             this.chkShowStatusBarIcon = document.getElementById('chkShowStatusBarIcon');
             this.chkShowContextMenu = document.getElementById('chkShowContextMenu');
@@ -39,7 +43,8 @@ var Settings = {
             this.template = document.getElementsByTagName('richlistitem')[0];
             this.lstRedirects.removeChild(this.template);
             this.addItemsToListBox(Redirector.list);
-
+			this.selectionChange();
+			
             this.strings = document.getElementById('redirector-strings');
             this.strings.getPluralized = function(id, number) {
 				id += number == 1 ? 'Singular' : '';
@@ -188,6 +193,14 @@ var Settings = {
             alert(e);
         }
     },
+    
+    listKeypress : function(event) {
+	    if (event.keyCode == 13) { //Enter button
+			this.editRedirect();   
+	    } else if (event.keyCode == 46) { //Del button
+		 	this.deleteRedirect();   
+	    }
+    },
 
     selectionChange : function() {
 	    if (!this.lstRedirects) {
@@ -199,6 +212,7 @@ var Settings = {
         this.btnDelete.disabled = (index == -1);
         this.btnUp.disabled = (index <= 0);
         this.btnDown.disabled = (index == -1 || index >= Redirector.list.length-1);
+        this.btnExport.disabled = (Redirector.list.length == 0);
     },
     
     importExport : function(mode, captionKey, func) {

@@ -31,7 +31,7 @@
 		<tabpanels flex="1">
 			<tabpanel flex="1">
 				<vbox flex="1">
-					<richlistbox seltype="single" id="lstRedirects" flex="1" ondblclick="Settings.editRedirect();" onselect="Settings.selectionChange();">
+					<richlistbox seltype="single" id="lstRedirects" flex="1" onkeypress="Settings.listKeypress(event);" ondblclick="Settings.editRedirect();" onselect="Settings.selectionChange();">
 						<richlistitem class="SettingsItem" selected="false">
 							<grid>
 								<cols />
@@ -93,7 +93,7 @@
 				</vbox>
 			</tabpanel>
 			<tabpanel>
-				<groupbox flex="1">
+				<groupbox flex="1" id="grpImportExport">
 					<vbox>
 						<hbox align="middle">
 							<button id="btnImport" accesskey="&btnImport.accesskey;" oncommand="Settings.import();" label="&btnImport.label;"/>
