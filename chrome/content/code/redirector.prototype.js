@@ -63,7 +63,7 @@ Redirector.prototype = {
     // nsIContentPolicy interface implementation
     shouldLoad: function(contentType, contentLocation, requestOrigin, aContext, mimeTypeGuess, extra) {
 	    try {
-	    
+	    	//This is also done in getRedirectUrl, but we want to exit as quickly as possible for performance
 		    if (!this.prefs.enabled) {
 	            return Ci.nsIContentPolicy.ACCEPT;
 	        }
@@ -79,27 +79,40 @@ Redirector.prototype = {
 	        if (!aContext || !aContext.loadURI) {
 	            return Ci.nsIContentPolicy.ACCEPT;
 	        }
-	        this.debug("Checking " + contentLocation.spec);
 	        
-	        var url = contentLocation.spec;
-	        
-	        for each (var redirect in this.list) {
-	            var result = redirect.getMatch(url);
-	            if (result.isExcludeMatch) {
-		        	this.debug(url + ' matched exclude pattern ' + redirect.excludePattern + ' so the redirect ' + redirect.includePattern + ' will not be used');
-	            } else if (result.isDisabledMatch) {
-		        	this.debug(url + ' matched pattern ' + redirect.includePattern + ' but the redirect is disabled');
-	            } else if (result.isMatch) {
-	                redirectUrl = this.makeAbsoluteUrl(url, result.redirectTo);
-	                this.debug('Redirecting ' + url + ' to ' + redirectUrl);
-	                aContext.loadURI(redirectUrl, requestOrigin, null);
-	                return Ci.nsIContentPolicy.REJECT_REQUEST;
-	            }
-	        }
+	        var redirectUrl = this.getRedirectUrl(contentLocation.spec);
+
+	        if (!redirectUrl) {
+		    	return Ci.nsIContentPolicy.ACCEPT;
+	        }	        
+
+	        aContext.loadURI(redirectUrl, requestOrigin, null);
+	        return Ci.nsIContentPolicy.REJECT_REQUEST;
         } catch(e) {
 	    	this.debug(e);   
         }
-        return Ci.nsIContentPolicy.ACCEPT;
+        
+    },
+    
+    //Get the redirect url for the given url. This will not check if we are enabled, and
+    //not do any verification on the url, just assume that it is a good string url that is for http/s
+    getRedirectUrl : function(url) {
+    	//This is also done in getRedirectUrl, but we want to exit as quickly as possible for performance
+        this.debug("Checking " + url);
+        
+        for each (var redirect in this.list) {
+            var result = redirect.getMatch(url);
+            if (result.isExcludeMatch) {
+	        	this.debug(url + ' matched exclude pattern ' + redirect.excludePattern + ' so the redirect ' + redirect.includePattern + ' will not be used');
+            } else if (result.isDisabledMatch) {
+	        	this.debug(url + ' matched pattern ' + redirect.includePattern + ' but the redirect is disabled');
+            } else if (result.isMatch) {
+                redirectUrl = this.makeAbsoluteUrl(url, result.redirectTo);
+                this.debug('Redirecting ' + url + ' to ' + redirectUrl);
+                return redirectUrl;
+            }
+        }
+        return null;
     },
 
     // nsIContentPolicy interface implementation
@@ -110,55 +123,24 @@ Redirector.prototype = {
     //nsIChannelEventSink interface implementation
 	onChannelRedirect: function(oldChannel, newChannel, flags)
 	{
-		dump("****************** HI THERE ****************************");
-		//throw Cr.NS_BASE_STREAM_WOULD_BLOCK;
-/*
 		try {
-			let oldLocation = null;
-			let newLocation = null;
-			try {
-				oldLocation = oldChannel.originalURI.spec;
-				newLocation = newChannel.URI.spec;
-			}
-			catch(e2) {}
-
-			if (!oldLocation || !newLocation || oldLocation == newLocation)
+			let newLocation = newChannel.URI.spec;
+			
+			if (!newLocation) {
 				return;
-
-			// Look for the request both in the origin window and in its parent (for frames)
-			let contexts = [getRequestWindow(newChannel)];
-			if (!contexts[0])
-				contexts.pop();
-			else if (contexts[0] && contexts[0].parent != contexts[0])
-				contexts.push(contexts[0].parent);
-
-			let info = null;
-			for each (let context in contexts)
-			{
-				// Did we record the original request in its own window?
-				let data = RequestList.getDataForWindow(context, true);
-				if (data)
-					info = data.getURLInfo(oldLocation);
-
-				if (info)
-				{
-					let nodes = info.nodes;
-					let node = (nodes.length > 0 ? nodes[nodes.length - 1] : context.document);
-
-					// HACK: NS_BINDING_ABORTED would be proper error code to throw but this will show up in error console (bug 287107)
-					if (!this.processNode(context, node, info.type, newChannel.URI))
-						throw Cr.NS_BASE_STREAM_WOULD_BLOCK;
-					else
-						return;
-				}
 			}
-		}
-		catch (e if (e != Cr.NS_BASE_STREAM_WOULD_BLOCK))
-		{
+
+			var redirectUrl = this.getRedirectUrl(newLocation);
+
+	        if (redirectUrl) {
+		        throw Cr.NS_BASE_STREAM_WOULD_BLOCK;
+		        //TODO: Get window
+	        }	        
+			
+		} catch (e if (e != Cr.NS_BASE_STREAM_WOULD_BLOCK)) {
 			// We shouldn't throw exceptions here - this will prevent the redirect.
-			dump("Adblock Plus: Unexpected error in policy.onChannelRedirect: " + e + "\n");
+			dump("Redirector: Unexpected error in onChannelRedirect: " + e + "\n");
 		}
-		*/
 	},
 		
     reload : function() {
