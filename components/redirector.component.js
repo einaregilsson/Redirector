@@ -30,17 +30,21 @@ var redirectorInstance = null;
 const factory = {
     // nsIFactory interface implementation
     createInstance: function(outer, iid) {
-        if (outer != null) {
-           Components.returnCode = Cr.NS_ERROR_NO_AGGREGATION;
-           return null;
-       }
 
-        if (!iid.equals(Ci.nsIContentPolicy) &&
-                !iid.equals(Ci.nsISupports)) {
+		if (outer != null) {
+			Components.returnCode = Cr.NS_ERROR_NO_AGGREGATION;
+			return null;
+		}
+	    dump("\n\nCreateInstance:\n");
+        if (!(iid.equals(Ci.nsIContentPolicy) || iid.equals(Ci.nsISupports) || iid.equals(Ci.nsIChannelEventSink))) {
             Components.returnCode = Cr.NS_ERROR_NO_INTERFACE;          
             return null;
         }
-
+        dump("\n  IID: " + iid);
+        dump("\n");
+        dump("\n  nsIContentPolicy: " + iid.equals(Ci.nsIContentPolicy));
+        dump("\n  nsISupports: " + iid.equals(Ci.nsISupports));
+        dump("\n  nsIChannelEventSink: " + iid.equals(Ci.nsIChannelEventSink));
         if(!redirectorInstance) {
             redirectorInstance = new Redirector();
             redirectorInstance.wrappedJSObject = redirectorInstance;
@@ -51,9 +55,7 @@ const factory = {
 
     // nsISupports interface implementation
     QueryInterface: function(iid) {
-        if (iid.equals(Ci.nsISupports) ||
-                iid.equals(Ci.nsIModule) ||
-                iid.equals(Ci.nsIFactory)) {
+        if (iid.equals(Ci.nsISupports) || iid.equals(Ci.nsIModule) || iid.equals(Ci.nsIFactory)) {
             return this;
         }
         Components.returnCode = Cr.NS_ERROR_NO_INTERFACE;          
@@ -61,28 +63,37 @@ const factory = {
     }
 }
 
+Redirector.prototype.QueryInterface = function(iid) {
+    if (iid.equals(Ci.nsISupports) || iid.equals(Ci.nsIChannelEventSink) || iid.equals(Ci.nsIContentPolicy)) {
+        return this;
+    }
+    Components.returnCode = Cr.NS_ERROR_NO_INTERFACE;          
+    return null;   
+}
 
 /*
  * Module object
  */
 const module = {
-    registerSelf: function(compMgr, fileSpec, location, type) {
+    registerSelf : function(compMgr, fileSpec, location, type) {
         compMgr = compMgr.QueryInterface(Ci.nsIComponentRegistrar);
         compMgr.registerFactoryLocation(CSSB_CID, 
                                         "Redirector content policy",
                                         CSSB_CONTRACTID,
                                         fileSpec, location, type);
-
         var catman = Cc["@mozilla.org/categorymanager;1"].getService(Ci.nsICategoryManager);
+        catman.addCategoryEntry("net-channel-event-sinks", CSSB_CONTRACTID, CSSB_CONTRACTID, true, true);
         catman.addCategoryEntry("content-policy", CSSB_CONTRACTID, CSSB_CONTRACTID, true, true);
     },
 
     unregisterSelf: function(compMgr, fileSpec, location) {
         compMgr.QueryInterface(Ci.nsIComponentRegistrar).unregisterFactoryLocation(CSSB_CID, fileSpec);
         Cc["@mozilla.org/categorymanager;1"].getService(Ci.nsICategoryManager).deleteCategoryEntry("content-policy", CSSB_CONTRACTID, true);
+        Cc["@mozilla.org/categorymanager;1"].getService(Ci.nsICategoryManager).deleteCategoryEntry("net-channel-event-sinks", CSSB_CONTRACTID, true);
     },
 
     getClassObject: function(compMgr, cid, iid) {
+	    dump("\nGetClassObject: " + cid + ", iid: " + iid);
         if (cid.equals(CSSB_CID)) {
             return factory;
         }

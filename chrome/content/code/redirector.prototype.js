@@ -70,6 +70,7 @@ Redirector.prototype = {
     // nsIContentPolicy interface implementation
     shouldLoad: function(contentType, contentLocation, requestOrigin, aContext, mimeTypeGuess, extra) {
 	    try {
+	    
 		    if (!this.prefs.enabled) {
 	            return nsIContentPolicy.ACCEPT;
 	        }
@@ -90,7 +91,6 @@ Redirector.prototype = {
 	        var url = contentLocation.spec;
 	        
 	        for each (var redirect in this.list) {
-		        //this.debug(redirect);
 	            var result = redirect.getMatch(url);
 	            if (result.isExcludeMatch) {
 		        	this.debug(url + ' matched exclude pattern ' + redirect.excludePattern + ' so the redirect ' + redirect.includePattern + ' will not be used');
@@ -114,6 +114,60 @@ Redirector.prototype = {
         return nsIContentPolicy.ACCEPT;
     },
 
+    //nsIChannelEventSink interface implementation
+	onChannelRedirect: function(oldChannel, newChannel, flags)
+	{
+		dump("****************** HI THERE ****************************");
+		//throw Cr.NS_BASE_STREAM_WOULD_BLOCK;
+/*
+		try {
+			let oldLocation = null;
+			let newLocation = null;
+			try {
+				oldLocation = oldChannel.originalURI.spec;
+				newLocation = newChannel.URI.spec;
+			}
+			catch(e2) {}
+
+			if (!oldLocation || !newLocation || oldLocation == newLocation)
+				return;
+
+			// Look for the request both in the origin window and in its parent (for frames)
+			let contexts = [getRequestWindow(newChannel)];
+			if (!contexts[0])
+				contexts.pop();
+			else if (contexts[0] && contexts[0].parent != contexts[0])
+				contexts.push(contexts[0].parent);
+
+			let info = null;
+			for each (let context in contexts)
+			{
+				// Did we record the original request in its own window?
+				let data = RequestList.getDataForWindow(context, true);
+				if (data)
+					info = data.getURLInfo(oldLocation);
+
+				if (info)
+				{
+					let nodes = info.nodes;
+					let node = (nodes.length > 0 ? nodes[nodes.length - 1] : context.document);
+
+					// HACK: NS_BINDING_ABORTED would be proper error code to throw but this will show up in error console (bug 287107)
+					if (!this.processNode(context, node, info.type, newChannel.URI))
+						throw Cr.NS_BASE_STREAM_WOULD_BLOCK;
+					else
+						return;
+				}
+			}
+		}
+		catch (e if (e != Cr.NS_BASE_STREAM_WOULD_BLOCK))
+		{
+			// We shouldn't throw exceptions here - this will prevent the redirect.
+			dump("Adblock Plus: Unexpected error in policy.onChannelRedirect: " + e + "\n");
+		}
+		*/
+	},
+		
     reload : function() {
 		loader.loadSubScript('chrome://redirector/content/code/redirector.prototype.js');
 		loader.loadSubScript('chrome://redirector/content/code/redirect.js');
@@ -185,12 +239,6 @@ Redirector.prototype = {
 	
 	containsRedirect : function(redirect) {
 		for each (var existing in this.list) {
-			this.debug("EXAMPLEURL: " + (redirect.exampleUrl == existing.exampleUrl));
-			this.debug("INCLUDEPATTERN: " + (redirect.includePattern == existing.includePattern));
-			this.debug("EXCLUDEPATTERN: " + (redirect.excludePattern == existing.excludePattern));
-			this.debug("unescape: " + (redirect.unescapeMatches == existing.unescapeMatches));
-			this.debug("REDIRECTTO: " + (redirect.redirectUrl == existing.redirectUrl));
-			this.debug("PATTERNTYPE: " + (redirect.patternType == existing.patternType));
 			if (existing.equals(redirect)) {
 				return true;
 			}	

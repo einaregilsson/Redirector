@@ -13,7 +13,12 @@
 					var prefix = 'REDIRECTOR:';
 					if (msg.message.substr(0, prefix.length) == prefix)
 					{
-						document.body.innerHTML += msg.message.substr(prefix.length) + '<br>';
+						if (document) {
+							document.body.innerHTML += msg.message.substr(prefix.length) + '<br>';
+						} else {
+							//Been destroyed and we're still getting message, lets try to unsubscribe...
+							try { unload(); } catch(e) {}	
+						}
 					}
 				}
 			};
