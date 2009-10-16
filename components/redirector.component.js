@@ -6,6 +6,7 @@ Cr = Components.results;
 Cc = Components.classes;
 const loader = Cc["@mozilla.org/moz/jssubscript-loader;1"].getService(Ci.mozIJSSubScriptLoader);
 
+var redirector = null;
 function Redirector() {
 	this.init();
 	this.wrappedJSObject = this;
@@ -31,6 +32,9 @@ xpcomInfo.QueryInterface 	= XPCOMUtils.generateQI([Ci.nsIContentPolicy, Ci.nsICh
 xpcomInfo._xpcom_factory 	= {
 	createInstance: function(outer, iid) {
 		if (outer) throw Cr.NS_ERROR_NO_AGGREGATION;
+		if (redirector == null) {
+			redirector = new Redirector();	
+		}
 		return redirector.QueryInterface(iid);
 	}
 };
@@ -38,5 +42,3 @@ xpcomInfo._xpcom_factory 	= {
 function NSGetModule(compMgr, fileSpec) {
 	return XPCOMUtils.generateModule([Redirector]);
 }
-
-const redirector = new Redirector();

@@ -10,10 +10,10 @@ Redirector.prototype = {
     init : function() {
 	    this.prefs = new Prefs();
 	    //Check if we need to update existing redirects
-	
-	    var data = this.prefs.redirects;
+		var data = this.prefs.redirects;
 	    var version = this.prefs.version;
 	    this.loadStrings();
+	    
 	    //Here update checks are handled
 	    if (version == 'undefined') { //Either a fresh install of Redirector, or first time install of v2.0
 	        if (data) { //There is some data in redirects, we are upgrading from a previous version, need to upgrade data
@@ -44,6 +44,10 @@ Redirector.prototype = {
 		        this.list.push(redirect);
 	        }
 	    }
+    },
+    
+    observe : function(topic, subject, data) {
+		dump("HEEEEEEEEEEEEEEEEEEEEE");    
     },
     
     loadStrings : function() {
