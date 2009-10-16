@@ -19,6 +19,7 @@
 					<li><a href="#excludepattern">Exclude pattern</a></li>
 					<li><a href="#redirectto">Redirect to</a></li>
 					<li><a href="#patterntype">Pattern type</a></li>
+					<li><a href="#unescapematches">Unescape matches</a></li>
 				</ul>
 			</li>
 			<li><a href="#wildcards">Wildcards</a></li>
@@ -74,6 +75,14 @@
 		
             <li><a name="patterntype"></a><strong>Pattern type:</strong> This specifies how Redirector should interpret the patterns, either as
             <a href="#wildcards">wildcards</a> or <a href="#regularexpressions#">regular expressions</a>.</li>
+
+            <li><a name="unescapematches"></a><strong>Unescape matches:</strong> A common usage of Redirector is to catch urls like
+            <em>http://foo.com/redirect.php?url=http%3A%2F%2Fbar%2Ecom%2Fpath</em> and try to catch the url parameter and redirect to it. A pattern
+            like <em>http://foo.com/redirect.php?url=*</em> might be used for that purpose. However, if the url parameter is <em>escaped</em> (also known
+            as <em>urlencoded</em>) then that won't work. In the url above we see that it starts with <em>http%3A%2F%2F</em> instead of <em>http://</em>, and Firefox
+            won't accept this as a new url to redirect to. So, in cases like these you can check the <em>Unescape matches</em> option and then all
+            matches will be unescaped (turned from e.g. <em>http%3A%2F%2Fbar%2Ecom</em> to <em>http://bar.com</em>) before being inserted into the target url.
+            </li>
             
 		</ul>
 		</p>
