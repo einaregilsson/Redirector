@@ -1,18 +1,11 @@
 //// $Id$
 
-Cc = Components.classes;
-Ci = Components.interfaces;
-Cr = Components.results;
-nsIContentPolicy = Ci.nsIContentPolicy;
-
 Redirector.prototype = {
 
 	prefs : null,
 	list : null,
     strings : null,
     cout : Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService),
-    
-    
 
     init : function() {
 	    this.prefs = new Prefs();
@@ -72,19 +65,19 @@ Redirector.prototype = {
 	    try {
 	    
 		    if (!this.prefs.enabled) {
-	            return nsIContentPolicy.ACCEPT;
+	            return Ci.nsIContentPolicy.ACCEPT;
 	        }
 	        
-	        if (contentType != nsIContentPolicy.TYPE_DOCUMENT) {
-	            return nsIContentPolicy.ACCEPT;
+	        if (contentType != Ci.nsIContentPolicy.TYPE_DOCUMENT) {
+	            return Ci.nsIContentPolicy.ACCEPT;
 	        }
 
 	        if (contentLocation.scheme != "http" && contentLocation.scheme != "https") {
-	            return nsIContentPolicy.ACCEPT;
+	            return Ci.nsIContentPolicy.ACCEPT;
 	        }
 	        
 	        if (!aContext || !aContext.loadURI) {
-	            return nsIContentPolicy.ACCEPT;
+	            return Ci.nsIContentPolicy.ACCEPT;
 	        }
 	        this.debug("Checking " + contentLocation.spec);
 	        
@@ -100,18 +93,18 @@ Redirector.prototype = {
 	                redirectUrl = this.makeAbsoluteUrl(url, result.redirectTo);
 	                this.debug('Redirecting ' + url + ' to ' + redirectUrl);
 	                aContext.loadURI(redirectUrl, requestOrigin, null);
-	                return nsIContentPolicy.REJECT_REQUEST;
+	                return Ci.nsIContentPolicy.REJECT_REQUEST;
 	            }
 	        }
         } catch(e) {
 	    	this.debug(e);   
         }
-        return nsIContentPolicy.ACCEPT;
+        return Ci.nsIContentPolicy.ACCEPT;
     },
 
     // nsIContentPolicy interface implementation
     shouldProcess: function(contentType, contentLocation, requestOrigin, insecNode, mimeType, extra) {
-        return nsIContentPolicy.ACCEPT;
+        return Ci.nsIContentPolicy.ACCEPT;
     },
 
     //nsIChannelEventSink interface implementation
