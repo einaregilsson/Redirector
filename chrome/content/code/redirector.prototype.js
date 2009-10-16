@@ -121,20 +121,44 @@ Redirector.prototype = {
     },
 
     //nsIChannelEventSink interface implementation
+    //Mostly borrowed from the excellent Adblock Plus extension
 	onChannelRedirect: function(oldChannel, newChannel, flags)
 	{
 		try {
 			let newLocation = newChannel.URI.spec;
+			if (!(newChannel.loadFlags & Ci.nsIChannel.LOAD_DOCUMENT_URI)) {
+				//We only redirect documents...
+				return;	
+			}
 			
 			if (!newLocation) {
 				return;
 			}
-
+			let callbacks = [];
+			if (newChannel.notificationCallbacks) {
+				callbacks.push(newChannel.notificationCallbacks);
+			}
+			if (newChannel.loadGroup && newChannel.loadGroup.notificationCallbacks) {
+				callbacks.push(newChannel.loadGroup.notificationCallbacks);
+			}
+			var win;
+			var webNav;
+			for each (let callback in callbacks)
+			{
+				try {
+					win = callback.getInterface(Ci.nsILoadContext).associatedWindow;
+					webNav = win.QueryInterface(Ci.nsIInterfaceRequestor).getInterface(Ci.nsIWebNavigation);
+					break;
+				} catch(e) {}
+			}
+			if (!webNav) {
+				return;	
+			}
 			var redirectUrl = this.getRedirectUrl(newLocation);
 
 	        if (redirectUrl) {
-		        throw Cr.NS_BASE_STREAM_WOULD_BLOCK;
-		        //TODO: Get window
+		        webNav.loadURI(redirectUrl,null,null,null,null);
+		        throw Cr.NS_BASE_STREAM_WOULD_BLOCK; //Throw this because the real error we should throw shows up in console...
 	        }	        
 			
 		} catch (e if (e != Cr.NS_BASE_STREAM_WOULD_BLOCK)) {
