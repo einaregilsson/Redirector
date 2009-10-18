@@ -103,7 +103,6 @@ Redirect.prototype = {
 	test : function() {
 		return this.getMatch(this.exampleUrl);	
 	},
-                exampleUrl,pattern,redirectUrl,patternType,excludePattern
 
 	serialize : function() {
 		return [ this.exampleUrl
