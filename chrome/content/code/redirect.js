@@ -1,7 +1,5 @@
 //// $Id$
 
-                exampleUrl,pattern,redirectUrl,patternType,excludePattern
-
 function Redirect(exampleUrl, includePattern, redirectUrl, patternType, excludePattern, unescapeMatches, disabled) {
 	this._init(exampleUrl, includePattern, redirectUrl, patternType, excludePattern, unescapeMatches, disabled);
 }
