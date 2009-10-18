@@ -1,7 +1,9 @@
 //// $Id$
 
-function Redirect(exampleUrl, includePattern, excludePattern, patternType, unescapeMatches, disabled) {
-	this._init(exampleUrl, includePattern, excludePattern, patternType, unescapeMatches, disabled);
+                exampleUrl,pattern,redirectUrl,patternType,excludePattern
+
+function Redirect(exampleUrl, includePattern, redirectUrl, patternType, excludePattern, unescapeMatches, disabled) {
+	this._init(exampleUrl, includePattern, redirectUrl, patternType, excludePattern, unescapeMatches, disabled);
 }
 
 //Static
@@ -68,7 +70,7 @@ Redirect.prototype = {
 		return new RegExp(this._preparePattern(pattern),"gi");
 	},
 	
-	_init : function(exampleUrl, includePattern, excludePattern, redirectUrl, patternType, unescapeMatches, disabled) {
+	_init : function(exampleUrl, includePattern, redirectUrl, patternType, excludePattern, unescapeMatches, disabled) {
 		this.exampleUrl = exampleUrl || '';
 		this.includePattern = includePattern || '';
 		this.excludePattern = excludePattern || '';
@@ -101,24 +103,25 @@ Redirect.prototype = {
 	test : function() {
 		return this.getMatch(this.exampleUrl);	
 	},
+                exampleUrl,pattern,redirectUrl,patternType,excludePattern
 
 	serialize : function() {
 		return [ this.exampleUrl
 			   , this.includePattern
-			   , this.excludePattern
 			   , this.redirectUrl
 			   , this.patternType
+			   , this.excludePattern
 			   , this.unescapeMatches
 			   , this.disabled ].join(',,,');
 	},
 	
 	deserialize : function(str) {
 		if (!str || !str.split) {
-			//TODO: THROW ERROR	
+			throw Error("Invalid serialized redirect: " + str);
 		}	
 		var parts = str.split(',,,');
 		if (parts.length < 5) {
-			///TODO: throw
+			throw Error("Invalid serialized redirect, too few fields: " + str);
 		}
 		this._init.apply(this, parts);
 	},
@@ -172,8 +175,8 @@ Redirect.prototype = {
     
     clone : function() {
 		return new Redirect(this.exampleUrl, this.includePattern, 
-							this.excludePattern, this.redirectUrl, 
-							this.patternType, this.unescapeMatches,
+							this.redirectUrl, this.patternType, 
+							this.excludePattern, this.unescapeMatches,
 							this.disabled);    
     },
     

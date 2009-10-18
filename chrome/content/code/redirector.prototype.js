@@ -46,10 +46,6 @@ Redirector.prototype = {
 	    }
     },
     
-    observe : function(topic, subject, data) {
-		dump("HEEEEEEEEEEEEEEEEEEEEE");    
-    },
-    
     loadStrings : function() {
         var src = 'chrome://redirector/locale/redirector.properties';
         var localeService = Cc["@mozilla.org/intl/nslocaleservice;1"].getService(Ci.nsILocaleService);

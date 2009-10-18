@@ -15,7 +15,7 @@ var tests = {
 				}
 				redirectUrl = redirectUrl.substr(0, redirectUrl.length-1);
 			}
-			var redirect = new Redirect(null, pattern, null, redirectUrl, Redirect.WILDCARD, null);
+			var redirect = new Redirect(null, pattern, redirectUrl, Redirect.WILDCARD);
 			var result = redirect.getMatch(url);
 			return { passed: result.isMatch && (result.redirectTo == expected), message : "Expected '" + expected + "', actual was '" + result.redirectTo + "'"};
 		},
@@ -53,7 +53,7 @@ var tests = {
 				}
 				redirectUrl = redirectUrl.substr(0, redirectUrl.length-1);
 			}
-			var redirect = new Redirect(null, pattern, null, redirectUrl, Redirect.REGEX, null);
+			var redirect = new Redirect(null, pattern, redirectUrl, Redirect.REGEX, null, null);
 			var result = redirect.getMatch(url);
 			return { passed: result.isMatch && result.redirectTo == expected, message : "Expected '" + expected + "', actual was '" + result.redirectTo + "'"};
 		},
