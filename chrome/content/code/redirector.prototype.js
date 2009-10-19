@@ -97,7 +97,6 @@ Redirector.prototype = {
     //Get the redirect url for the given url. This will not check if we are enabled, and
     //not do any verification on the url, just assume that it is a good string url that is for http/s
     getRedirectUrl : function(url) {
-    	//This is also done in getRedirectUrl, but we want to exit as quickly as possible for performance
         this.debug("Checking " + url);
         
         for each (var redirect in this.list) {
@@ -108,8 +107,20 @@ Redirector.prototype = {
 	        	this.debug(url + ' matched pattern ' + redirect.includePattern + ' but the redirect is disabled');
             } else if (result.isMatch) {
                 redirectUrl = this.makeAbsoluteUrl(url, result.redirectTo);
-                this.debug('Redirecting ' + url + ' to ' + redirectUrl);
-                return redirectUrl;
+				
+                //check for loops...
+                result = redirect.getMatch(redirectUrl);
+                if (result.isMatch) {
+	                var title = this.getString('invalidRedirectTitle');
+	                var msg = this.getFormattedString('invalidRedirectText', [redirect.includePattern, url, redirectUrl]);
+	                this.debug(msg);
+					redirect.disabled = true;
+					this.save();	                
+					this.msgBox(title, msg);
+                } else {
+	                this.debug('Redirecting ' + url + ' to ' + redirectUrl);
+	                return redirectUrl;
+                }
             }
         }
         return null;
@@ -247,6 +258,10 @@ Redirector.prototype = {
 	
     getString : function(name) {
 	    return this.strings.GetStringFromName(name);
+    },
+    
+    getFormattedString : function(name, params) {
+		return this.strings.formatStringFromName(name, params, params.length);
     },
     
     msgBox : function(title, text) {

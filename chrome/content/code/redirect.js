@@ -163,11 +163,14 @@ Redirect.prototype = {
         for (var i = 1; i < matches.length; i++) {
             resultUrl = resultUrl.replace(new RegExp('\\$' + i, 'gi'), this.unescapeMatches ? unescape(matches[i]) : matches[i]);
         }
+        this._rxInclude.lastIndex = 0;
         return resultUrl;
 	},
 	
 	_excludeMatch : function(url) {
-		return !!(this._rxExclude && this._rxExclude.exec(url));	
+		var shouldExclude = !!(this._rxExclude && this._rxExclude.exec(url));	
+		this._rxExclude.lastIndex = 0;
+		return shouldExclude;
 	},
     
     clone : function() {
