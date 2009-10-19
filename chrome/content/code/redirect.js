@@ -168,7 +168,10 @@ Redirect.prototype = {
 	},
 	
 	_excludeMatch : function(url) {
-		var shouldExclude = !!(this._rxExclude && this._rxExclude.exec(url));	
+		if (!this._rxExclude) {
+			return false;	
+		}
+		var shouldExclude = !!this._rxExclude.exec(url);	
 		this._rxExclude.lastIndex = 0;
 		return shouldExclude;
 	},
