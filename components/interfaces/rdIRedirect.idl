@@ -1,0 +1,8 @@
+/* $Id */
+#include "nsISupports.idl"
+
+[scriptable, uuid(12300000-0000-0000-c000-000000000046)]
+interface rdIRedirect {
+	void test();
+};
+

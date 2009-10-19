@@ -38,6 +38,21 @@ var EditRedirect = {
 		var args = window.arguments[0];
 		args.saved = true;
 		this.saveValues(args.redirect);
+		
+		var oldDisabled = args.redirect.disabled;
+		args.redirect.disabled = false;
+		if (!/^\s*$/.test(args.redirect.exampleUrl)) {
+			var result = args.redirect.getMatch(args.redirect.exampleUrl);
+			if (!result.isMatch) {
+				//TODO: warn about match	
+			} else {
+				var resultUrl = '';
+				var secondResult = args.redirect.getMatch(resultUrl);
+				if (secondResult.isMatch) {
+					//TODO: Warn about recursive match...	
+				}
+			}
+		}
         return true;
     },
 
