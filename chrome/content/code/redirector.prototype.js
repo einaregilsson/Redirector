@@ -17,7 +17,7 @@ Redirector.prototype = {
 	    //Here update checks are handled
 	    if (version == 'undefined') { //Either a fresh install of Redirector, or first time install of v2.0
 	        if (data) { //There is some data in redirects, we are upgrading from a previous version, need to upgrade data
-	            var tempList = eval(data);
+	            var tempList = JSON.parse(data);
 	            var arr;
 	            var newArr = []
 	            for each (arr in tempList) {
