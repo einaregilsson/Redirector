@@ -2,7 +2,6 @@ import os, os.path, zipfile
 
 os.chdir(r'components\interfaces')
 for f in os.listdir('.'):
-	print f
 	if f.startswith('rdI') and f.endswith('.idl'):
 		os.system(r'xpidl -m typelib -e ..\%s %s' % (f[:-3] + 'xpt',f))
 os.chdir(r'..\..')

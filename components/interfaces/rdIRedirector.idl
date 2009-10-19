@@ -2,8 +2,8 @@
 #include "nsISupports.idl"
 #include "rdIRedirect.idl"
 
-[scriptable, uuid(12300000-0000-0000-c000-000000000046)]
-interface rdIRedirector {
+[scriptable, uuid(cdf25d91-bce1-11de-aee1-028037ec0200)]
+interface rdIRedirector : nsISupports {
 	void test();
 };
 
