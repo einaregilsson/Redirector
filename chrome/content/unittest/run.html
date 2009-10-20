@@ -16,7 +16,7 @@
 
 		//Global variables
 		var subscriptLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
-		var redirector = Components.classes["@einaregilsson.com/redirector;1"].getService(Components.interfaces.nsISupports).wrappedJSObject;
+		var redirector = Components.classes["@einaregilsson.com/redirector;1"].getService(Components.interfaces.rdIRedirector);
 		
 		function setupTest(name, testcase) {
 			var table = document.createElement('table');

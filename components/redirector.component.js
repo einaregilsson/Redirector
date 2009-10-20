@@ -8,8 +8,7 @@ const loader = Cc["@mozilla.org/moz/jssubscript-loader;1"].getService(Ci.mozIJSS
 
 var redirector = null;
 function Redirector() {
-	this.init();
-	this.wrappedJSObject = this;
+	this._init();
 }
 
 try {
@@ -28,7 +27,7 @@ xpcomInfo.classDescription 	= "Redirector Component";
 xpcomInfo.classID 			= Components.ID("{b7a7a54f-0581-47ff-b086-d6920cb7a3f7}");
 xpcomInfo.contractID 		= "@einaregilsson.com/redirector;1";
 xpcomInfo._xpcom_categories = [{category:'content-policy'},{category:'net-channel-event-sinks'}];
-xpcomInfo.QueryInterface 	= XPCOMUtils.generateQI([Ci.nsIContentPolicy, Ci.nsIChannelEventSink]);
+xpcomInfo.QueryInterface 	= XPCOMUtils.generateQI([Ci.nsIContentPolicy, Ci.nsIChannelEventSink, Ci.rdIRedirector]);
 xpcomInfo._xpcom_factory 	= {
 	createInstance: function(outer, iid) {
 		if (outer) throw Cr.NS_ERROR_NO_AGGREGATION;

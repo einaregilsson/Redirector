@@ -95,7 +95,8 @@ var tests = {
 				
 				var ioService = Components.classes["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService);  
 				args.contentLocation = ioService.newURI(args.contentLocation, null, null);
-				var result = redirector.shouldLoad(args.contentType, args.contentLocation, args.requestOrigin, args.aContext, args.mimeTypeGuess, args.extra);
+				var contentPolicy = redirector.QueryInterface(nsIContentPolicy);
+				var result = contentPolicy.shouldLoad(args.contentType, args.contentLocation, args.requestOrigin, args.aContext, args.mimeTypeGuess, args.extra);
 				return { passed: result == nsIContentPolicy.ACCEPT, message : "Expected nsIContentPolicy.ACCEPT, actual was " + result };
 			}
 			
@@ -116,6 +117,8 @@ var tests = {
 				try {
 					redirector.enabled = false;
 					return doFunc();
+					redirector.enabled = true;
+
 				} catch(e) {
 					redirector.enabled = true;
 					throw e;	

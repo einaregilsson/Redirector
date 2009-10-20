@@ -4,6 +4,7 @@
 <overlay id="redirector-overlay"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
   <script src="../code/redirect.js"/>
+  <script src="../code/prefs.js"/>
   <script src="../code/browserOverlay.xul.js"/>
 
   <stringbundleset id="stringbundleset">

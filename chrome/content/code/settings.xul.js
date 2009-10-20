@@ -1,6 +1,6 @@
 // $Id$
 
-var Redirector = Components.classes["@einaregilsson.com/redirector;1"].getService(Components.interfaces.nsISupports).wrappedJSObject;
+var Redirector = Components.classes["@einaregilsson.com/redirector;1"].getService(Components.interfaces.rdIRedirector);
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 const nsLocalFile = Components.Constructor("@mozilla.org/file/local;1", "nsILocalFile", "initWithPath");
@@ -18,6 +18,7 @@ var Settings = {
 	chkShowStatusBarIcon : null,
 	chkShowContextMenu : null,
 	chkEnableDebugOutput : null,
+	prefs : null,
 	
     onLoad : function() {
         try {
@@ -34,15 +35,20 @@ var Settings = {
             this.chkShowContextMenu = document.getElementById('chkShowContextMenu');
             this.chkEnableDebugOutput = document.getElementById('chkEnableDebugOutput');
             
+            this.prefs = new Prefs();
             //Preferences
-            this.setPrefs(Redirector.prefs);
-            Redirector.prefs.addListener(this);
+            this.changedPrefs(this.prefs);
+            this.prefs.addListener(this);
 
             //Redirect list
             this.lstRedirects.selType = 'single'; 
             this.template = document.getElementsByTagName('richlistitem')[0];
             this.lstRedirects.removeChild(this.template);
-            this.addItemsToListBox(Redirector.list);
+            var list = [];
+            for (var i = 0; i < Redirector.redirectCount; i++) {
+	            list.push(Redirector.getRedirectAt(i));
+            }
+            this.addItemsToListBox(list);
 			this.selectionChange();
 			
             this.strings = document.getElementById('redirector-strings');
@@ -56,14 +62,10 @@ var Settings = {
     },
     
     onUnload : function() {
-		Redirector.prefs.removeListener(this);    
+		this.prefs.dispose();
     },
 
-    changedPrefs : function(prefs) {
-    	this.setPrefs(prefs);
-	},
-	
-	setPrefs : function(prefs) {
+	changedPrefs : function(prefs) {
         this.chkEnableRedirector.setAttribute('checked', prefs.enabled);
         this.chkShowStatusBarIcon.setAttribute('checked', prefs.showStatusBarIcon);
         this.chkShowContextMenu.setAttribute('checked', prefs.showContextMenu);
@@ -110,22 +112,18 @@ var Settings = {
     },
 
     moveDown : function() {
-        if (this.lstRedirects.selectedIndex == Redirector.list.length-1) {
+        if (this.lstRedirects.selectedIndex == Redirector.redirectCount-1) {
             return;
         }
         this.switchItems(this.lstRedirects.selectedIndex);
     },
 
     switchItems : function(firstIndex) {
-        var firstRedirect = Redirector.list[firstIndex];
-        var secondRedirect = Redirector.list[firstIndex+1];
-        Redirector.list[firstIndex] = secondRedirect;
-        Redirector.list[firstIndex+1] = firstRedirect;
+	    Redirector.switchItems(firstIndex, firstIndex+1);
         var firstItem = this.lstRedirects.children[firstIndex];
         var secondItem = this.lstRedirects.children[firstIndex+1];
         this.lstRedirects.removeChild(secondItem);
         this.lstRedirects.insertBefore(secondItem, firstItem);
-        Redirector.save();
         this.selectionChange();
     }, 
     
@@ -136,7 +134,7 @@ var Settings = {
     },
     
     preferenceChange : function(event) {
-	    Redirector.prefs[event.originalTarget.getAttribute('preference')] = event.originalTarget.hasAttribute('checked');
+	    this.prefs[event.originalTarget.getAttribute('preference')] = event.originalTarget.hasAttribute('checked');
     },
     
     addRedirect : function() {
@@ -187,7 +185,7 @@ var Settings = {
 		
         try {
             this.lstRedirects.removeChild(this.lstRedirects.children[index]);
-            Redirector.deleteAt(index);
+            Redirector.deleteRedirectAt(index);
             this.selectionChange();
         } catch(e) {
             alert(e);
@@ -211,54 +209,55 @@ var Settings = {
         this.btnEdit.disabled = (index == -1);
         this.btnDelete.disabled = (index == -1);
         this.btnUp.disabled = (index <= 0);
-        this.btnDown.disabled = (index == -1 || index >= Redirector.list.length-1);
-        this.btnExport.disabled = (Redirector.list.length == 0);
+        this.btnDown.disabled = (index == -1 || index >= Redirector.redirectCount-1);
+        this.btnExport.disabled = (Redirector.redirectCount== 0);
     },
-    
-    importExport : function(mode, captionKey, func) {
+
+    getFile : function(captionKey, mode) {
 		//Mostly borrowed from Adblock Plus
 		var picker = Cc["@mozilla.org/filepicker;1"].createInstance(Ci.nsIFilePicker);
-		picker.init(window, Redirector.getString(captionKey), mode);
+		picker.init(window, this.strings.getString(captionKey), mode);
 		picker.defaultExtension = ".rdx";
-		var dir = Redirector.prefs.defaultDir;
+		var dir = this.prefs.defaultDir;
 		if (dir) {
 		    picker.displayDirectory = new nsLocalFile(dir);
 		}
-		picker.appendFilter(Redirector.getString('redirectorFiles'), '*.rdx');
+		picker.appendFilter(this.strings.getString('redirectorFiles'), '*.rdx');
 		
 		if (picker.show() == picker.returnCancel) {
-		    return;
+		    return null;
 		}
-		try {
-			Redirector.prefs.defaultDir = picker.displayDirectory.path;
-		    return func(picker.file);
-		} catch (e) {
-		    alert(e);
-		}
+		this.prefs.defaultDir = picker.displayDirectory.path;
+		return picker.file;
     },
     
     export : function() {
-		this.importExport(Ci.nsIFilePicker.modeSave, 'exportCaption', function(file) {
+	    var file = this.getFile('exportCaption', Ci.nsIFilePicker.modeSave);
+	    if (file) {
 			Redirector.exportRedirects(file);
-		});
+	    }
     },
     
     import : function() {
-		var result = this.importExport(Ci.nsIFilePicker.modeOpen, 'importCaption', function(file) {
-			return Redirector.importRedirects(file);
-		});
-
-		var msg
+	    var file = this.getFile('importCaption', Ci.nsIFilePicker.modeOpen);
+	    var result;
+	    if (file) {
+			result = Redirector.importRedirects(file);
+	    }
+	    
+		var msg, imported, existed;
+		imported = result & 0xFFFF;
+		existed = result >> 16;
 		
-		if (result.imported > 0) {
-			msg = this.strings.getPluralized('importedMessage', result.imported);
-			if (result.existed > 0) {
-				msg += ', ' + this.strings.getPluralized('existedMessage',result.existed);	
+		if (imported > 0) {
+			msg = this.strings.getPluralized('importedMessage', imported);
+			if (existed > 0) {
+				msg += ', ' + this.strings.getPluralized('existedMessage',existed);	
 			} else {
 				msg += '.';	
 			}
-		} else if (result.imported == 0 && result.existed > 0) {
-			msg = this.strings.getPluralized('allExistedMessage', result.existed);
+		} else if (imported == 0 && existed > 0) {
+			msg = this.strings.getPluralized('allExistedMessage', existed);
 		} else { //Both 0
 			msg = this.strings.getString('importedNone');
 		}
@@ -266,10 +265,10 @@ var Settings = {
 		var title = this.strings.getString("importResult");
         Cc["@mozilla.org/embedcomp/prompt-service;1"].getService(Ci.nsIPromptService).alert(null, title, msg);
 
-		if (result.imported > 0) {
+		if (imported > 0) {
 			var newlist = [];
-			for (var i = Redirector.list.length-result.imported; i < Redirector.list.length; i++) {
-				newlist.push(Redirector.list[i]);
+			for (var i = Redirector.redirectCount-result.imported; i < Redirector.redirectCount; i++) {
+				newlist.push(Redirector.getRedirectAt(i));
 			}				
         	this.addItemsToListBox(newlist);
 		}

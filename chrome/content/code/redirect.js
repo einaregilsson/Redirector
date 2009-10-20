@@ -1,5 +1,7 @@
 //// $Id$
 
+Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
+
 function Redirect(exampleUrl, includePattern, redirectUrl, patternType, excludePattern, unescapeMatches, disabled) {
 	this._init(exampleUrl, includePattern, redirectUrl, patternType, excludePattern, unescapeMatches, disabled);
 }
@@ -9,109 +11,59 @@ Redirect.WILDCARD = 'W';
 Redirect.REGEX = 'R';
 
 Redirect.prototype = {
+
+	// rdIRedirect implementation
 	
-	//These are the only ones that are necessary to have as properties for now
-	//The others can be changed to properties later as neccessary
-	_includePattern : null,
-	_excludePattern : null,
-	_patternType : null,
-	_rxInclude : null,
-	_rxExclude : null,
-
-	get patternType() { return this._patternType; },
-	set patternType(value) { 
-		this._patternType = value;
-		this.compile();
-	},
-
+	//attributes
+	exampleUrl : null,
+			
 	get includePattern() { return this._includePattern; },
 	set includePattern(value) { 
 		this._includePattern = value;
 		this._rxInclude = this._compile(value); 
 	},
-
+	
 	get excludePattern() { return this._excludePattern; },
 	set excludePattern(value) { 
 		this._excludePattern = value; 
 		this._rxExclude = this._compile(value); 
 	},
 	
-	_preparePattern : function(pattern) {
-		if (this.patternType == Redirect.REGEX) {
-			return pattern;	
-		} else { //Convert wildcard to regex pattern
-			var converted = '^';
-			for (var i = 0; i < pattern.length; i++) {
-				var ch = pattern.charAt(i);
-				if ('()[]{}?.^$\\+'.indexOf(ch) != -1) {
-					converted += '\\' + ch;
-				} else if (ch == '*') {
-					converted += '(.*?)';
-				} else {
-					converted += ch;
-				}
-			}
-			converted += '$';
-			return converted;
-		}
-	},
+	redirectTo : null,
 	
+	get patternType() { return this._patternType; },
+	set patternType(value) { 
+		this._patternType = value;
+		this.compile();
+	},
+
+	unescapeMatches : false,
+	
+	disabled : false,
+	
+	//Functions
+    clone : function() {
+		return new Redirect(this.exampleUrl, this.includePattern, 
+							this.redirectUrl, this.patternType, 
+							this.excludePattern, this.unescapeMatches,
+							this.disabled);    
+    },
+    
 	compile : function() {
 		this._rxInclude = this._compile(this._includePattern); 
 		this._rxExclude = this._compile(this._excludePattern); 
 	},
-	
-	_compile : function(pattern) {
-		if (!pattern) {
-			return null;
-		}
-		return new RegExp(this._preparePattern(pattern),"gi");
-	},
-	
-	_init : function(exampleUrl, includePattern, redirectUrl, patternType, excludePattern, unescapeMatches, disabled) {
-		this.exampleUrl = exampleUrl || '';
-		this.includePattern = includePattern || '';
-		this.excludePattern = excludePattern || '';
-		this.redirectUrl = redirectUrl || '';
-		this.patternType = patternType || Redirect.WILDCARD;
-		this.unescapeMatches = (unescapeMatches === 'true' || unescapeMatches === true);
-		this.disabled = (disabled === 'true' || disabled === true);
-	},
-	
-	toString : function() {
-		return 'REDIRECT: {'
-			+  '\n\tExample url      : ' + this.exampleUrl
-			+  '\n\tInclude pattern  : ' + this.includePattern
-			+  '\n\tExclude pattern  : ' + this.excludePattern
-			+  '\n\tRedirect url     : ' + this.redirectUrl
-			+  '\n\tPattern type     : ' + this.patternType
-			+  '\n\tUnescape matches : ' + this.unescapeMatches
-			+  '\n\tDisabled         : ' + this.disabled
-			+  '\n}\n';
-	},
-	
-	isWildcard : function() {
-		return this.patternType == Redirect.WILDCARD;	
-	},
-	
-	isRegex: function() {
-		return this.patternType == Redirect.REGEX;
-	},
-	
-	test : function() {
-		return this.getMatch(this.exampleUrl);	
-	},
 
-	serialize : function() {
-		return [ this.exampleUrl
-			   , this.includePattern
-			   , this.redirectUrl
-			   , this.patternType
-			   , this.excludePattern
-			   , this.unescapeMatches
-			   , this.disabled ].join(',,,');
-	},
-	
+	copyValues : function(other) {
+		this.exampleUrl = other.exampleUrl;
+		this.includePattern = other.includePattern;
+		this.excludePattern = other.excludePattern;
+		this.redirectUrl = other.redirectUrl;
+		this.patternType = other.patternType;
+		this.unescapeMatches = other.unescapeMatches;
+		this.disabled = other.disabled;
+    },
+
 	deserialize : function(str) {
 		if (!str || !str.split) {
 			throw Error("Invalid serialized redirect: " + str);
@@ -122,6 +74,16 @@ Redirect.prototype = {
 		}
 		this._init.apply(this, parts);
 	},
+	
+    equals : function(redirect) {
+		return this.exampleUrl == redirect.exampleUrl
+			&& this.includePattern == redirect.includePattern
+			&& this.excludePattern == redirect.excludePattern
+			&& this.redirectUrl == redirect.redirectUrl
+			&& this.patternType == redirect.patternType
+			&& this.unescapeMatches == redirect.unescapeMatches
+		;
+    },
 	
 	getMatch: function(url) {
 		var result = { 
@@ -151,6 +113,92 @@ Redirect.prototype = {
      	return result;   
 	},
 	
+	isRegex: function() {
+		return this.patternType == Redirect.REGEX;
+	},
+	
+	isWildcard : function() {
+		return this.patternType == Redirect.WILDCARD;	
+	},
+
+	serialize : function() {
+		return [ this.exampleUrl
+			   , this.includePattern
+			   , this.redirectUrl
+			   , this.patternType
+			   , this.excludePattern
+			   , this.unescapeMatches
+			   , this.disabled ].join(',,,');
+	},
+	
+	test : function() {
+		return this.getMatch(this.exampleUrl);	
+	},
+
+	//end rdIRedirect
+	
+	//nsISupports
+	QueryInterface : XPCOMUtils.generateQI([Components.interfaces.rdIRedirect]),
+	
+	//end nsISupports
+	
+	//Private functions below	
+
+	_includePattern : null,
+	_excludePattern : null,
+	_patternType : null,
+	_rxInclude : null,
+	_rxExclude : null,
+	
+	_preparePattern : function(pattern) {
+		if (this.patternType == Redirect.REGEX) {
+			return pattern;	
+		} else { //Convert wildcard to regex pattern
+			var converted = '^';
+			for (var i = 0; i < pattern.length; i++) {
+				var ch = pattern.charAt(i);
+				if ('()[]{}?.^$\\+'.indexOf(ch) != -1) {
+					converted += '\\' + ch;
+				} else if (ch == '*') {
+					converted += '(.*?)';
+				} else {
+					converted += ch;
+				}
+			}
+			converted += '$';
+			return converted;
+		}
+	},
+
+	_compile : function(pattern) {
+		if (!pattern) {
+			return null;
+		}
+		return new RegExp(this._preparePattern(pattern),"gi");
+	},
+	
+	_init : function(exampleUrl, includePattern, redirectUrl, patternType, excludePattern, unescapeMatches, disabled) {
+		this.exampleUrl = exampleUrl || '';
+		this.includePattern = includePattern || '';
+		this.excludePattern = excludePattern || '';
+		this.redirectUrl = redirectUrl || '';
+		this.patternType = patternType || Redirect.WILDCARD;
+		this.unescapeMatches = (unescapeMatches === 'true' || unescapeMatches === true);
+		this.disabled = (disabled === 'true' || disabled === true);
+	},
+	
+	toString : function() {
+		return 'REDIRECT: {'
+			+  '\n\tExample url      : ' + this.exampleUrl
+			+  '\n\tInclude pattern  : ' + this.includePattern
+			+  '\n\tExclude pattern  : ' + this.excludePattern
+			+  '\n\tRedirect url     : ' + this.redirectUrl
+			+  '\n\tPattern type     : ' + this.patternType
+			+  '\n\tUnescape matches : ' + this.unescapeMatches
+			+  '\n\tDisabled         : ' + this.disabled
+			+  '\n}\n';
+	},
+	
 	_includeMatch : function(url) {
 		if (!this._rxInclude) {
 			return null;
@@ -174,32 +222,5 @@ Redirect.prototype = {
 		var shouldExclude = !!this._rxExclude.exec(url);	
 		this._rxExclude.lastIndex = 0;
 		return shouldExclude;
-	},
-    
-    clone : function() {
-		return new Redirect(this.exampleUrl, this.includePattern, 
-							this.redirectUrl, this.patternType, 
-							this.excludePattern, this.unescapeMatches,
-							this.disabled);    
-    },
-    
-    copyValues : function(other) {
-		this.exampleUrl = other.exampleUrl;
-		this.includePattern = other.includePattern;
-		this.excludePattern = other.excludePattern;
-		this.redirectUrl = other.redirectUrl;
-		this.patternType = other.patternType;
-		this.unescapeMatches = other.unescapeMatches;
-		this.disabled = other.disabled;
-    },
-    
-    equals : function(redirect) {
-		return this.exampleUrl == redirect.exampleUrl
-			&& this.includePattern == redirect.includePattern
-			&& this.excludePattern == redirect.excludePattern
-			&& this.redirectUrl == redirect.redirectUrl
-			&& this.patternType == redirect.patternType
-			&& this.unescapeMatches == redirect.unescapeMatches
-		;
-    }    
+	}
 };

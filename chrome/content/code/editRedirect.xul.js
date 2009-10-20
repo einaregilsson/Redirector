@@ -1,7 +1,5 @@
 //// $Id$
 
-var Redirector = Components.classes["@einaregilsson.com/redirector;1"].getService(Components.interfaces.nsISupports).wrappedJSObject;
-
 var EditRedirect = {
     txtExampleUrl : null,
     txtIncludePattern : null,

@@ -1,10 +1,11 @@
 //// $Id$
 
-var Redirector = Components.classes["@einaregilsson.com/redirector;1"].getService(Components.interfaces.nsISupports).wrappedJSObject;
+var Redirector = Components.classes["@einaregilsson.com/redirector;1"].getService(Components.interfaces.rdIRedirector);
 
 var RedirectorOverlay = {
 
     strings     : null,
+    prefs		: null,
 
     onLoad : function(event) {
         try {
@@ -14,8 +15,9 @@ var RedirectorOverlay = {
                 .addEventListener("popupshowing", function(e) { RedirectorOverlay.showContextMenu(e); }, false);
             
             this.strings = document.getElementById("redirector-strings");
-            this.changedPrefs(Redirector.prefs);
-            Redirector.prefs.addListener(this);
+            this.prefs = new Prefs();
+            this.changedPrefs(this.prefs);
+            this.prefs.addListener(this);
         } catch(e) {
             if (this.strings) {
                 alert(this.strings.getString("initError") + "\n\n" + e);
@@ -26,7 +28,7 @@ var RedirectorOverlay = {
     },
     
     onUnload : function(event) {
-        Redirector.prefs.removeListener(this);
+        this.prefs.dispose();
         Redirector.debug("Finished cleanup");
     },
 
@@ -71,7 +73,7 @@ var RedirectorOverlay = {
     },
 
     toggleEnabled : function(event) {
-        Redirector.prefs.enabled = !Redirector.prefs.enabled;
+        this.prefs.enabled = !this.prefs.enabled;
     },
 
     openSettings : function() {

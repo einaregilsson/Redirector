@@ -49,7 +49,8 @@ Prefs.prototype = {
         this.service.addObserver('extensions.redirector', this, false);
     },
 
-    destroy : function() {
+    dispose : function() {
+	    this._listeners = null;
         this.service.removeObserver('extensions.redirector', this);
 	},
 	
