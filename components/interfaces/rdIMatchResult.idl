@@ -1,4 +1,4 @@
-/* $Id */
+/* $Id$ */
 #include "nsISupports.idl"
 
 [scriptable, uuid(cf89b480-bce3-11de-a0dd-028037ec0200)]
