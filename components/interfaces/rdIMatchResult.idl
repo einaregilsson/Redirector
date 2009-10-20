@@ -4,14 +4,10 @@
 [scriptable, uuid(cf89b480-bce3-11de-a0dd-028037ec0200)]
 interface rdIMatchResult : nsISupports {
 	
-	/* Result constants */
-	const short NO_MATCH = 0;
-	const short MATCH = 1;
-	const short DISABLED_MATCH = 2;
-	const short EXCLUDED_MATCH = 3;
-
 	/* Attributes */
-	attribute wstring redirectTo;	
-	attribute short result;
+	readonly attribute wstring redirectTo;	
+	readonly attribute boolean isMatch;
+	readonly attribute boolean isExcludeMatch;
+	readonly attribute boolean isDisabledMatch;
 };
 

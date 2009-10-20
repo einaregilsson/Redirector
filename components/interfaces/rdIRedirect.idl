@@ -9,7 +9,7 @@ interface rdIRedirect : nsISupports {
 	attribute wstring exampleUrl;	
 	attribute wstring includePattern;
 	attribute wstring excludePattern;
-	attribute wstring redirectTo;
+	attribute wstring redirectUrl;
 	attribute wchar patternType;
 	attribute boolean unescapeMatches;
 	attribute boolean disabled;

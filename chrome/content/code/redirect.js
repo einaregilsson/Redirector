@@ -2,6 +2,7 @@
 
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 
+
 function Redirect(exampleUrl, includePattern, redirectUrl, patternType, excludePattern, unescapeMatches, disabled) {
 	this._init(exampleUrl, includePattern, redirectUrl, patternType, excludePattern, unescapeMatches, disabled);
 }
@@ -29,7 +30,7 @@ Redirect.prototype = {
 		this._rxExclude = this._compile(value); 
 	},
 	
-	redirectTo : null,
+	redirectUrl : null,
 	
 	get patternType() { return this._patternType; },
 	set patternType(value) { 
