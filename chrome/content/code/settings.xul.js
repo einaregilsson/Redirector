@@ -267,7 +267,7 @@ var Settings = {
 
 		if (imported > 0) {
 			var newlist = [];
-			for (var i = Redirector.redirectCount-result.imported; i < Redirector.redirectCount; i++) {
+			for (var i = Redirector.redirectCount-imported; i < Redirector.redirectCount; i++) {
 				newlist.push(Redirector.getRedirectAt(i));
 			}				
         	this.addItemsToListBox(newlist);
