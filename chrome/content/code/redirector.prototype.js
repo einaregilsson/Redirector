@@ -184,6 +184,10 @@ Redirector.prototype = {
 				//We only redirect documents...
 				return;	
 			}
+
+			if (!this._prefs.enabled) {
+	            return;
+	        }
 			
 			if (!newLocation) {
 				return;
