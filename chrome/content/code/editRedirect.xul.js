@@ -34,6 +34,7 @@ var EditRedirect = {
 
     onAccept : function() {
 		var args = window.arguments[0];
+		var msg, title;
 		args.saved = true;
 		this.saveValues(args.redirect);
 		
@@ -42,12 +43,25 @@ var EditRedirect = {
 		if (!/^\s*$/.test(args.redirect.exampleUrl)) {
 			var result = args.redirect.getMatch(args.redirect.exampleUrl);
 			if (!result.isMatch) {
-				//TODO: warn about match	
+				title = this.strings.getString('warningExampleUrlDoesntMatchPatternTitle');
+				msg = this.strings.getString('warningExampleUrlDoesntMatchPattern');
+				var ps = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Components.interfaces.nsIPromptService);
+				var rv = ps.confirmEx(window, title, msg, ps.STD_YES_NO_BUTTONS, ps.BUTTON_TITLE_YES, ps.BUTTON_TITLE_NO, null, null, {});				
+				return rv == 0;
 			} else {
-				var resultUrl = '';
+				var resultUrl = result.redirectTo;
+        		if (!resultUrl.match(/https?:/)) {
+		        	var ioService = Components.classes["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService);
+	    	    	var uri = ioService.newURI(args.redirect.exampleUrl, null, null); 
+	        		resultUrl = uri.resolve(resultUrl);
+        		} 
+        
 				var secondResult = args.redirect.getMatch(resultUrl);
 				if (secondResult.isMatch) {
-					//TODO: Warn about recursive match...	
+					title = this.strings.getString('errorExampleUrlMatchesRecursiveTitle');
+					msg = this.strings.getFormattedString('errorExampleUrlMatchesRecursive', [args.redirect.exampleUrl, resultUrl]);
+					this.msgBox(title, msg);
+					return false;
 				}
 			}
 		}
