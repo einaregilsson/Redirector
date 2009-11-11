@@ -43,13 +43,13 @@ Redirect.prototype = {
 	disabled : false,
 	
 	//Functions
-    clone : function() {
+	clone : function() {
 		return new Redirect(this.exampleUrl, this.includePattern, 
 							this.redirectUrl, this.patternType, 
 							this.excludePattern, this.unescapeMatches,
 							this.disabled);    
-    },
-    
+	},
+	
 	compile : function() {
 		this._rxInclude = this._compile(this._includePattern); 
 		this._rxExclude = this._compile(this._excludePattern); 
@@ -63,7 +63,7 @@ Redirect.prototype = {
 		this.patternType = other.patternType;
 		this.unescapeMatches = other.unescapeMatches;
 		this.disabled = other.disabled;
-    },
+	},
 
 	deserialize : function(str) {
 		if (!str || !str.split) {
@@ -76,7 +76,7 @@ Redirect.prototype = {
 		this._init.apply(this, parts);
 	},
 	
-    equals : function(redirect) {
+	equals : function(redirect) {
 		return this.exampleUrl == redirect.exampleUrl
 			&& this.includePattern == redirect.includePattern
 			&& this.excludePattern == redirect.excludePattern
@@ -84,7 +84,7 @@ Redirect.prototype = {
 			&& this.patternType == redirect.patternType
 			&& this.unescapeMatches == redirect.unescapeMatches
 		;
-    },
+	},
 	
 	getMatch: function(url) {
 		var result = { 
@@ -93,25 +93,25 @@ Redirect.prototype = {
 			isDisabledMatch : false, 
 			redirectTo : '',
 			toString : function() { return "{ isMatch : " + this.isMatch + 
-			                               ", isExcludeMatch : " + this.isExcludeMatch + 
-			                               ", isDisabledMatch : " + this.isDisabledMatch + 
-			                               ", redirectTo : \"" + this.redirectTo + "\"" +
-			                               "}"; }
+										   ", isExcludeMatch : " + this.isExcludeMatch + 
+										   ", isDisabledMatch : " + this.isDisabledMatch + 
+										   ", redirectTo : \"" + this.redirectTo + "\"" +
+										   "}"; }
 		};
 		var redirectTo = null;
 
 		redirectTo = this._includeMatch(url);
-        if (redirectTo !== null) {
-	        if (this.disabled) {
+		if (redirectTo !== null) {
+			if (this.disabled) {
 				result.isDisabledMatch = true;
 			} else if (this._excludeMatch(url)) {
-	            result.isExcludeMatch = true;
-		  	} else {
-	         	result.isMatch = true;
-	         	result.redirectTo = redirectTo;
-	        }
-        }
-     	return result;   
+				result.isExcludeMatch = true;
+			} else {
+				result.isMatch = true;
+				result.redirectTo = redirectTo;
+			}
+		}
+		return result;	 
 	},
 	
 	isRegex: function() {
@@ -153,7 +153,7 @@ Redirect.prototype = {
 	
 	_preparePattern : function(pattern) {
 		if (this.patternType == Redirect.REGEX) {
-			return pattern;	
+			return pattern; 
 		} else { //Convert wildcard to regex pattern
 			var converted = '^';
 			for (var i = 0; i < pattern.length; i++) {
@@ -190,13 +190,13 @@ Redirect.prototype = {
 	
 	toString : function() {
 		return 'REDIRECT: {'
-			+  '\n\tExample url      : ' + this.exampleUrl
+			+  '\n\tExample url 	 : ' + this.exampleUrl
 			+  '\n\tInclude pattern  : ' + this.includePattern
 			+  '\n\tExclude pattern  : ' + this.excludePattern
-			+  '\n\tRedirect url     : ' + this.redirectUrl
-			+  '\n\tPattern type     : ' + this.patternType
+			+  '\n\tRedirect url	 : ' + this.redirectUrl
+			+  '\n\tPattern type	 : ' + this.patternType
 			+  '\n\tUnescape matches : ' + this.unescapeMatches
-			+  '\n\tDisabled         : ' + this.disabled
+			+  '\n\tDisabled		 : ' + this.disabled
 			+  '\n}\n';
 	},
 	
@@ -209,11 +209,11 @@ Redirect.prototype = {
 			return null;
 		}
 		var resultUrl = this.redirectUrl;
-        for (var i = 1; i < matches.length; i++) {
-            resultUrl = resultUrl.replace(new RegExp('\\$' + i, 'gi'), this.unescapeMatches ? unescape(matches[i]) : matches[i]);
-        }
-        this._rxInclude.lastIndex = 0;
-        return resultUrl;
+		for (var i = 1; i < matches.length; i++) {
+			resultUrl = resultUrl.replace(new RegExp('\\$' + i, 'gi'), this.unescapeMatches ? unescape(matches[i]) : matches[i]);
+		}
+		this._rxInclude.lastIndex = 0;
+		return resultUrl;
 	},
 	
 	_excludeMatch : function(url) {

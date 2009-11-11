@@ -1,16 +1,16 @@
 //// $Id$
 
 var EditRedirect = {
-    txtExampleUrl : null,
-    txtIncludePattern : null,
-    txtRedirectUrl : null,
-    txtExcludePattern : null,
-    chkUnescapeMatches : null,
-    rdoRegex : null,
-    rdoWildcard : null, 
-    
-    onLoad : function() {
-        var args = window.arguments[0];
+	txtExampleUrl : null,
+	txtIncludePattern : null,
+	txtRedirectUrl : null,
+	txtExcludePattern : null,
+	chkUnescapeMatches : null,
+	rdoRegex : null,
+	rdoWildcard : null, 
+	
+	onLoad : function() {
+		var args = window.arguments[0];
 		var redirect = args.redirect;
 		this.txtExampleUrl = document.getElementById('txtExampleUrl');
 		this.txtIncludePattern = document.getElementById('txtIncludePattern');
@@ -25,14 +25,14 @@ var EditRedirect = {
 		this.txtExcludePattern.value = redirect.excludePattern;
 		this.txtRedirectUrl.value = redirect.redirectUrl;
 		this.chkUnescapeMatches.setAttribute('checked', redirect.unescapeMatches);
-        this.rdoRegex.setAttribute('selected', redirect.isRegex());
-        this.rdoWildcard.setAttribute('selected', redirect.isWildcard());
+		this.rdoRegex.setAttribute('selected', redirect.isRegex());
+		this.rdoWildcard.setAttribute('selected', redirect.isWildcard());
 
-        this.txtIncludePattern.focus();
-        this.strings = document.getElementById("redirector-strings");
-    },
+		this.txtIncludePattern.focus();
+		this.strings = document.getElementById("redirector-strings");
+	},
 
-    onAccept : function() {
+	onAccept : function() {
 		var args = window.arguments[0];
 		var msg, title;
 		args.saved = true;
@@ -50,12 +50,12 @@ var EditRedirect = {
 				return rv == 0;
 			} else {
 				var resultUrl = result.redirectTo;
-        		if (!resultUrl.match(/https?:/)) {
-		        	var ioService = Components.classes["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService);
-	    	    	var uri = ioService.newURI(args.redirect.exampleUrl, null, null); 
-	        		resultUrl = uri.resolve(resultUrl);
-        		} 
-        
+				if (!resultUrl.match(/https?:/)) {
+					var ioService = Components.classes["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService);
+					var uri = ioService.newURI(args.redirect.exampleUrl, null, null); 
+					resultUrl = uri.resolve(resultUrl);
+				} 
+		
 				var secondResult = args.redirect.getMatch(resultUrl);
 				if (secondResult.isMatch) {
 					title = this.strings.getString('errorExampleUrlMatchesRecursiveTitle');
@@ -65,16 +65,16 @@ var EditRedirect = {
 				}
 			}
 		}
-        return true;
-    },
+		return true;
+	},
 
-    msgBox : function(title, text) {
-        Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
-            .getService(Components.interfaces.nsIPromptService)
-                .alert(window, title, text);
-    },
-    
-    saveValues : function(redirect) {
+	msgBox : function(title, text) {
+		Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
+			.getService(Components.interfaces.nsIPromptService)
+				.alert(window, title, text);
+	},
+	
+	saveValues : function(redirect) {
 		redirect.exampleUrl = this.txtExampleUrl.value;
 		redirect.includePattern = this.txtIncludePattern.value;
 		redirect.excludePattern = this.txtExcludePattern.value;
@@ -83,21 +83,21 @@ var EditRedirect = {
 		var val = this.chkUnescapeMatches.getAttribute('checked');
 		redirect.unescapeMatches = val === 'true' || val === true;
 		//Disabled cannot be set here
-    },
-    
-    testPattern : function() {
-	    try {
+	},
+	
+	testPattern : function() {
+		try {
 			var redirect = new Redirect();
 			this.saveValues(redirect);
 			var extName = this.strings.getString('extensionName');
 			var result = redirect.test();
-	        if (result.isMatch) {
-	            this.msgBox(extName, this.strings.getFormattedString('testPatternSuccess', [redirect.includePattern, redirect.exampleUrl, result.redirectTo]));
-	        } else if (result.isExcludeMatch) {
-	            this.msgBox(extName, this.strings.getFormattedString('testPatternExclude', [redirect.exampleUrl, redirect.excludePattern]));
-	        } else {
-	            this.msgBox(extName, this.strings.getFormattedString('testPatternFailure', [redirect.includePattern, redirect.exampleUrl]));
-	        }
-    	} catch(e) {alert(e);}
-    }
+			if (result.isMatch) {
+				this.msgBox(extName, this.strings.getFormattedString('testPatternSuccess', [redirect.includePattern, redirect.exampleUrl, result.redirectTo]));
+			} else if (result.isExcludeMatch) {
+				this.msgBox(extName, this.strings.getFormattedString('testPatternExclude', [redirect.exampleUrl, redirect.excludePattern]));
+			} else {
+				this.msgBox(extName, this.strings.getFormattedString('testPatternFailure', [redirect.includePattern, redirect.exampleUrl]));
+			}
+		} catch(e) {alert(e);}
+	}
 };
