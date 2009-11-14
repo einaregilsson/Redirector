@@ -258,7 +258,9 @@ Redirector.prototype = {
 				}
 				this._prefs.redirects = newArr.join(':::');
 			}
-			this._prefs.version = '2.0';
+			this._prefs.version = '2.0.1';
+		} else if (version == '2.0') {
+			this._prefs.version = '2.0.1';
 		}
 		//Update finished
 		
