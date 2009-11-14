@@ -237,7 +237,7 @@ Redirector.prototype = {
 		if (this._prefs) {
 			this._prefs.dispose();
 		}
-		this._prefs = new Prefs();
+		this._prefs = new RedirectorPrefs();
 		//Check if we need to update existing redirects
 		var data = this._prefs.redirects;
 		var version = this._prefs.version;

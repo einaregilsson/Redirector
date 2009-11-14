@@ -6,7 +6,7 @@ for f in os.listdir('.'):
 		os.system(r'xpidl -m typelib -e ..\%s %s' % (f[:-3] + 'xpt',f))
 os.chdir(r'..\..')
 
-xpi = zipfile.ZipFile('redirector-2.0.xpi','w')
+xpi = zipfile.ZipFile('redirector-2.0.1.xpi','w')
 for (root, folders, files) in os.walk('.'):
 	if not '.svn' in root:
 		for f in files:

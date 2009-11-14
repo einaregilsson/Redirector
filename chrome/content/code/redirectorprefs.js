@@ -1,10 +1,10 @@
 // $Id$
 
-function Prefs() {
+function RedirectorPrefs() {
 	this.init();	
 }
 
-Prefs.prototype = {
+RedirectorPrefs.prototype = {
 
 	//Preferences:
 	_version : null,

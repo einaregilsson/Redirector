@@ -35,7 +35,7 @@ var Settings = {
 			this.chkShowContextMenu = document.getElementById('chkShowContextMenu');
 			this.chkEnableDebugOutput = document.getElementById('chkEnableDebugOutput');
 			
-			this.prefs = new Prefs();
+			this.prefs = new RedirectorPrefs();
 			//Preferences
 			this.changedPrefs(this.prefs);
 			this.prefs.addListener(this);

@@ -14,7 +14,7 @@ function Redirector() {
 try {
 	loader.loadSubScript('chrome://redirector/content/code/redirector.prototype.js');
 	loader.loadSubScript('chrome://redirector/content/code/redirect.js');
-	loader.loadSubScript('chrome://redirector/content/code/prefs.js');
+	loader.loadSubScript('chrome://redirector/content/code/redirectorprefs.js');
 } catch(e) {
 	for (i in e) {
 		Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService).logStringMessage('REDIRECTOR: Loading Redirector implementation failed: ' + i + e[i]);

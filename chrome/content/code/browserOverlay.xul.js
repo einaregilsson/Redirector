@@ -15,7 +15,7 @@ var RedirectorOverlay = {
 				.addEventListener("popupshowing", function(e) { RedirectorOverlay.showContextMenu(e); }, false);
 			
 			this.strings = document.getElementById("redirector-strings");
-			this.prefs = new Prefs();
+			this.prefs = new RedirectorPrefs();
 			this.changedPrefs(this.prefs);
 			this.prefs.addListener(this);
 		} catch(e) {
