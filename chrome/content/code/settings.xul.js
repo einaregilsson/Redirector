@@ -141,8 +141,10 @@ var Settings = {
 		var args = { saved : false, redirect : new Redirect() };
 		window.openDialog("chrome://redirector/content/ui/editRedirect.xul", "redirect", "chrome,dialog,modal,centerscreen", args);
 		if (args.saved) {
-			this.addItemsToListBox([args.redirect]);
 			Redirector.addRedirect(args.redirect);
+			//Get it from redirector since it has processed it and it's no longer the same
+			//object as the one we added.
+			this.addItemsToListBox([Redirector.getRedirectAt(Redirector.redirectCount-1)]);
 			this.selectionChange();
 		}
 	},

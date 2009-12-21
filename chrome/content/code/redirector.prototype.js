@@ -18,7 +18,12 @@ Redirector.prototype = {
 	},
 	
 	addRedirect : function(redirect) {
-		this._list.push(redirect);
+		//This runaround is necessary because the redirect
+		//that was created somewhere up in the GUI doesn't
+		//have the Redirect function in scope.
+		var rx = new Redirect();
+		rx.copyValues(redirect);
+		this._list.push(rx);
 		this.save();
 	},
 
