@@ -247,7 +247,7 @@ Redirector.prototype = {
 		var data = this._prefs.redirects;
 		var version = this._prefs.version;
 		this._loadStrings();
-		
+		var currentVersion = '2.0.2';
 		//Here update checks are handled
 		if (version == 'undefined') { //Either a fresh install of Redirector, or first time install of v2.0
 			if (data) { //There is some data in redirects, we are upgrading from a previous version, need to upgrade data
@@ -263,9 +263,9 @@ Redirector.prototype = {
 				}
 				this._prefs.redirects = newArr.join(':::');
 			}
-			this._prefs.version = '2.0.1';
-		} else if (version == '2.0') {
-			this._prefs.version = '2.0.1';
+			this._prefs.version = currentVersion;
+		} else if (version == '2.0' || version == '2.0.1') {
+			this._prefs.version = currentVersion;
 		}
 		//Update finished
 		
