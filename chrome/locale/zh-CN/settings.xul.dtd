@@ -1,0 +1,65 @@
+<!-- $Id: settings.xul.dtd 266 2009-10-14 11:13:03Z einar@einaregilsson.com $ -->
+<!ENTITY window.title "Redirector">
+
+<!-- ListItems with redirects -->
+<!ENTITY colIncludePattern.label "使用规则">
+<!ENTITY colExcludePattern.label "例外规则">
+<!ENTITY colRedirectTo.label "重定向到">
+<!ENTITY colEnabled.label "启用">
+
+<!-- Buttons -->
+<!ENTITY btnAdd.label "增加规则...">
+<!ENTITY btnAdd.accesskey "A">
+<!ENTITY btnAdd.tooltip "新建一条规则">
+
+<!ENTITY btnEdit.label "编辑规则...">
+<!ENTITY btnEdit.accesskey "E">
+<!ENTITY btnEdit.tooltip "编辑选定的规则">
+
+<!ENTITY btnDelete.label "删除规则">
+<!ENTITY btnDelete.accesskey "D">
+<!ENTITY btnDelete.tooltip "删除选定的规则">
+
+<!ENTITY btnUp.tooltip "把规则向上移动一条位置">
+
+<!ENTITY btnDown.tooltip "把规则向下移动一条位置">
+
+<!ENTITY btnImport.label "导入...">
+<!ENTITY btnImport.accesskey "I">
+<!ENTITY btnImport.tooltip "从文件导入规则">
+
+<!ENTITY btnExport.label "导出...">
+<!ENTITY btnExport.accesskey "E">
+<!ENTITY btnExport.tooltip "导出规则到文件">
+
+
+<!-- Tab headers -->
+<!ENTITY tabRedirects.label "重定向规则">
+<!ENTITY tabRedirects.accesskey "R">
+<!ENTITY tabPreferences.label "选项">
+<!ENTITY tabPreferences.accesskey "P">
+<!ENTITY tabImportExport.label "导入/导出">
+<!ENTITY tabImportExport.accesskey "m">
+<!ENTITY tabHelp.label "帮助">
+<!ENTITY tabHelp.accesskey "H">
+
+<!-- Preferences -->
+<!ENTITY grpGeneralPreferences.label "一般">
+<!ENTITY grpDebuggingPreferences.label "调试">
+
+<!ENTITY chkEnableRedirector.label "启用 Redirector">
+<!ENTITY chkEnableRedirector.accesskey "E">
+
+<!ENTITY chkShowStatusBarIcon.label "在状态栏显示图标">
+<!ENTITY chkShowStatusBarIcon.accesskey "s">
+
+<!ENTITY chkShowContextMenu.label "在右键菜单中显示">
+<!ENTITY chkShowContextMenu.accesskey "c">
+
+<!ENTITY chkEnableDebugOutput.label "启用调试输出">
+<!ENTITY chkEnableDebugOutput.accesskey "d">
+
+
+<!-- Import / Export -->
+<!ENTITY lblExport.label "将规则导出到文件">
+<!ENTITY lblImport.label "从文件导入规则">

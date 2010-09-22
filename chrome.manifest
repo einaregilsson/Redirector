@@ -1,6 +1,18 @@
 # $Id$
 content redirector file:chrome/content/
 locale  redirector en-US   file:chrome/locale/en-US/
+locale  redirector zh-CN   file:chrome/locale/zh-CN/
 skin    redirector classic/1.0 file:chrome/skin/
 
 overlay chrome://browser/content/browser.xul    chrome://redirector/content/ui/browserOverlay.xul
+
+#FF4 registration
+interfaces components/rdIMatchResult.xpt
+interfaces components/rdIRedirect.xpt
+interfaces components/rdIRedirector.xpt
+
+component {b7a7a54f-0581-47ff-b086-d6920cb7a3f7} components/redirector.component.js
+contract @einaregilsson.com/redirector;1 {b7a7a54f-0581-47ff-b086-d6920cb7a3f7}
+category profile-after-change Redirector @einaregilsson.com/redirector;1
+category content-policy  Redirector @einaregilsson.com/redirector;1
+category net-channel-event-sinks  Redirector @einaregilsson.com/redirector;1

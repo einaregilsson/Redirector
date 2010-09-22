@@ -1,0 +1,9 @@
+<!-- $Id: browserOverlay.xul.dtd 249 2009-09-15 21:41:06Z einar@einaregilsson.com $ -->
+<!ENTITY RedirectorMenuItem.label "管理 URL 重定向">
+<!ENTITY RedirectorMenuItem.accesskey "R">
+<!ENTITY RedirectorContext.label "把 URL 添加到 Redirector 规则...">
+<!ENTITY RedirectorContext.accesskey "A">
+<!ENTITY RedirectorManageRedirects.label "管理规则">
+<!ENTITY RedirectorManageRedirects.accesskey "M">
+<!ENTITY RedirectorHelp.label "帮助">
+<!ENTITY RedirectorHelp.accesskey "H">

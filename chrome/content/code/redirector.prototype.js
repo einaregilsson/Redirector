@@ -143,6 +143,7 @@ Redirector.prototype = {
 	
 	// nsIContentPolicy implementation
 	shouldLoad: function(contentType, contentLocation, requestOrigin, aContext, mimeTypeGuess, extra) {
+		rdump('nsIContentPolicy::ShouldLoad ' + contentLocation.spec);
 		try {
 			//This is also done in getRedirectUrl, but we want to exit as quickly as possible for performance
 			if (!this._prefs.enabled) {
@@ -181,10 +182,19 @@ Redirector.prototype = {
 	//end nsIContentPolicy
 
 	//nsIChannelEventSink implementation
+	
+	//For FF4.0. Got this from a thread about adblock plus, https://adblockplus.org/forum/viewtopic.php?t=5895
+	asyncOnChannelRedirect: function(oldChannel, newChannel, flags, redirectCallback) {
+		this.onChannelRedirect(oldChannel, newChannel, flags);
+		redirectCallback.onRedirectVerifyCallback(0);
+	},	
+	
 	onChannelRedirect: function(oldChannel, newChannel, flags)
 	{
 		try {
 			let newLocation = newChannel.URI.spec;
+			rdump('nsIChannelEventSink::onChannelRedirect ' + newLocation);
+
 			if (!(newChannel.loadFlags & Ci.nsIChannel.LOAD_DOCUMENT_URI)) {
 				//We only redirect documents...
 				return; 
@@ -242,12 +252,13 @@ Redirector.prototype = {
 		if (this._prefs) {
 			this._prefs.dispose();
 		}
+		this._cout.logStringMessage('REDIRECTOR CREATED');
 		this._prefs = new RedirectorPrefs();
 		//Check if we need to update existing redirects
 		var data = this._prefs.redirects;
 		var version = this._prefs.version;
 		this._loadStrings();
-		var currentVersion = '2.0.2';
+		var currentVersion = '2.5';
 		//Here update checks are handled
 		if (version == 'undefined') { //Either a fresh install of Redirector, or first time install of v2.0
 			if (data) { //There is some data in redirects, we are upgrading from a previous version, need to upgrade data
@@ -264,7 +275,7 @@ Redirector.prototype = {
 				this._prefs.redirects = newArr.join(':::');
 			}
 			this._prefs.version = currentVersion;
-		} else if (version == '2.0' || version == '2.0.1') {
+		} else if (version == '2.0' || version == '2.0.1' || version == '2.0.2') {
 			this._prefs.version = currentVersion;
 		}
 		//Update finished
