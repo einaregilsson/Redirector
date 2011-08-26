@@ -1,11 +1,5 @@
 import os, os.path, zipfile
 
-os.chdir(r'components\interfaces')
-for f in os.listdir('.'):
-	if f.startswith('rdI') and f.endswith('.idl'):
-		os.system(r'xpidl -m typelib -e ..\%s %s' % (f[:-3] + 'xpt',f))
-os.chdir(r'..\..')
-
 xpi = zipfile.ZipFile('redirector-2.6.xpi','w')
 for (root, folders, files) in os.walk('.'):
 	if not '.svn' in root:
