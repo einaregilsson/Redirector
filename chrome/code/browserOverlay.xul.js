@@ -17,6 +17,11 @@ var RedirectorOverlay = {
 			this.prefs = new RedirectorPrefs();
 			this.changedPrefs(this.prefs);
 			this.prefs.addListener(this);
+			document.addEventListener('keypress', function(event) {
+				if ((event.charCode == 114) && event.altKey) { //alt+r
+					RedirectorOverlay.toggleEnabled();
+				}
+			}, true);			
 		} catch(e) {
 			if (this.strings) {
 				alert(this.strings.getString("initError") + "\n\n" + e);

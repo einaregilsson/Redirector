@@ -39,9 +39,6 @@ RedirectorPrefs.prototype = {
 	get defaultDir() { return this._defaultDir; },
 	set defaultDir(value) { this._prefBranch.setCharPref('defaultDir', value); },
 
-	get redirects() { return this._redirects; },
-	set redirects(value) { this._prefBranch.setCharPref('redirects', value); },
-
 	init : function() {
 		this._prefBranch = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService).getBranch("extensions.redirector.");
 		this.reload();
@@ -61,7 +58,6 @@ RedirectorPrefs.prototype = {
 		this._showContextMenu = this._prefBranch.getBoolPref('showContextMenu');
 		this._debugEnabled = this._prefBranch.getBoolPref('debugEnabled');
 		this._defaultDir = this._prefBranch.getCharPref('defaultDir');
-		this._redirects = this._prefBranch.getCharPref('redirects');
 	},
 	
 	get service() {

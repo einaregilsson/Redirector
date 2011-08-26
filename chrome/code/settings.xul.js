@@ -217,12 +217,12 @@ var Settings = {
 		//Mostly borrowed from Adblock Plus
 		var picker = Cc["@mozilla.org/filepicker;1"].createInstance(Ci.nsIFilePicker);
 		picker.init(window, this.strings.getString(captionKey), mode);
-		picker.defaultExtension = ".rdx";
+		picker.defaultExtension = ".rjson";
 		var dir = this.prefs.defaultDir;
 		if (dir) {
 			picker.displayDirectory = new nsLocalFile(dir);
 		}
-		picker.appendFilter(this.strings.getString('redirectorFiles'), '*.rdx');
+		picker.appendFilter(this.strings.getString('redirectorFiles'), '*.rjson');
 		
 		if (picker.show() == picker.returnCancel) {
 			return null;

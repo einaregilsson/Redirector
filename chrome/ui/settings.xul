@@ -63,6 +63,7 @@
 						<button id="btnDelete" oncommand="Settings.deleteRedirect();" accesskey="&btnDelete.accesskey;" label="&btnDelete.label;" tooltiptext="&btnDelete.tooltip;" disabled="true" />
 						<button id="btnUp" oncommand="Settings.moveUp();" tooltiptext="&btnUp.tooltip;" disabled="true" />
 						<button id="btnDown" oncommand="Settings.moveDown();" tooltiptext="&btnDown.tooltip;" disabled="true" />
+						<button id="btnClose" oncommand="close();" tooltiptext="&btnClose.tooltip;" label="&btnClose.label;" accesskey="&btnClose.accesskey;" />
 					</hbox>
 				</vbox>
 			</tabpanel>

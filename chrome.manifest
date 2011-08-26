@@ -1,7 +1,6 @@
 
 content redirector file:chrome/
 locale  redirector en-US   file:locale/en-US/
-locale  redirector zh-CN   file:locale/zh-CN/
 skin    redirector classic/1.0 file:chrome/ui/skin/
 
 overlay chrome://browser/content/browser.xul    chrome://redirector/content/ui/browserOverlay.xul

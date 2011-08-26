@@ -12,7 +12,7 @@ Components.utils.import("chrome://redirector/content/code/redirect.js");
 Components.utils.import("chrome://redirector/content/code/redirectorprefs.js");
 
 function rdump(msg) {
-	dump(msg + '\n');
+	//dump(msg + '\n');
 }
 
 Redirector = {
@@ -36,12 +36,7 @@ Redirector = {
 	},
 	
 	addRedirect : function(redirect) {
-		//This runaround is necessary because the redirect
-		//that was created somewhere up in the GUI doesn't
-		//have the Redirect function in scope.
-		var rx = new Redirect();
-		rx.copyValues(redirect);
-		this._list.push(rx);
+		this._list.push(redirect);
 		this.save();
 	},
 
@@ -65,7 +60,7 @@ Redirector = {
 		fileStream.init(file, PR_WRONLY | PR_CREATE_FILE | PR_TRUNCATE, 0644, 0);
 		var stream = Cc["@mozilla.org/intl/converter-output-stream;1"].createInstance(Ci.nsIConverterOutputStream);
 		stream.init(fileStream, "UTF-8", 16384, Ci.nsIConverterInputStream.DEFAULT_REPLACEMENT_CHARACTER);
-		var rjson = { globalExcludePattern : '', createdBy : 'Redirector v' + this._prefs.version, redirects :[]};
+		var rjson = { createdBy : 'Redirector v' + this._prefs.version, createdAt : new Date(), redirects :[]};
 		for each (var re in this._list) {
 			rjson.redirects.push(re.toObject());
 		}
@@ -124,30 +119,40 @@ Redirector = {
 	
 	handleUpgrades : function(){
 		var currentVersion = '2.6';
+		this._list = [];
 
-		//Here update checks are handled
-		if (this._prefs.version != currentVersion) {
-			var data = this._prefs.redirects;
-			var arr;
-			this._list = [];
-			if (data != '') {
-				for each (redirectString in data.split(':::')) {
-					if (!redirectString || !redirectString.split) {
-						continue;
-						rdump('Invalid old redirect: ' + redirectString);
-					}	
-					var parts = redirectString.split(',,,');
-					if (parts.length < 5) {
-						throw Error("Invalid serialized redirect, too few fields: " + redirectString);
-					}
-					var redirect = new Redirect();
-					redirect._init.apply(parts);
-					this._list.push(redirect);
-				}
-				this.save();
-				this._list = []; //Let the real loading start this properly
-			}
+		if (this._prefs.version == currentVersion) {
+			return;
 		}
+		//Here update checks are handled
+			
+		try {
+			var branch = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefService).getBranch("extensions.redirector.");
+			var data = branch.getCharPref("redirects");
+		} catch(e) {
+			this._prefs.version = currentVersion;
+			return;
+		}
+		var arr;
+		this._list = [];
+		if (data != '') {
+			for each (redirectString in data.split(':::')) {
+				if (!redirectString || !redirectString.split) {
+					continue;
+					rdump('Invalid old redirect: ' + redirectString);
+				}	
+				var parts = redirectString.split(',,,');
+				if (parts.length < 5) {
+					throw Error("Invalid serialized redirect, too few fields: " + redirectString);
+				}
+				var redirect = new Redirect();
+				redirect._init.apply(redirect, parts);
+				this._list.push(redirect);
+			}
+			this.save();
+			this._list = []; //Let the real loading start this properly
+		}
+		branch.deleteBranch('redirects');
 		this._prefs.version = currentVersion;
 	},	
 	

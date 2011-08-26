@@ -1,10 +1,8 @@
-//// $Id$
 
 pref("extensions.redirector.debugEnabled", false);
 pref("extensions.redirector.enabled", true);
 pref("extensions.redirector.showContextMenu", true);
 pref("extensions.redirector.showStatusBarIcon", true);
-pref("extensions.redirector.redirects", '');
 pref("extensions.redirector.version", 'undefined');
 pref("extensions.redirector.defaultDir", '');
 

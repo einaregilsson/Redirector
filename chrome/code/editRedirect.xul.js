@@ -1,4 +1,4 @@
-//// $Id$
+Components.utils.import("chrome://redirector/content/code/redirect.js");
 
 var EditRedirect = {
 	txtExampleUrl : null,

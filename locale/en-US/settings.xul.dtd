@@ -32,6 +32,10 @@
 <!ENTITY btnExport.accesskey "E">
 <!ENTITY btnExport.tooltip "Export redirects to a file">
 
+<!ENTITY btnClose.label "Close">
+<!ENTITY btnClose.tooltip "Close this window">
+<!ENTITY btnClose.accesskey "C">
+
 
 <!-- Tab headers -->
 <!ENTITY tabRedirects.label "Redirects">
@@ -63,3 +67,4 @@
 <!-- Import / Export -->
 <!ENTITY lblExport.label "Export your redirects to a file">
 <!ENTITY lblImport.label "Import new redirects from a file">
+
