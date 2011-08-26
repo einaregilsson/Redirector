@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id$ -->
 <RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
  xmlns:em="http://www.mozilla.org/2004/em-rdf#">
   <Description about="urn:mozilla:install-manifest">
     <em:id>redirector@einaregilsson.com</em:id>
     <em:name>Redirector</em:name>
-    <em:version>2.5.1</em:version>
+    <em:version>2.5.2</em:version>
     <em:creator>Einar Egilsson</em:creator>
 	<em:contributor>quaful Zhang (Simplified  Chinese locale)</em:contributor>
     <em:description>Automatically redirects to user-defined urls on certain pages</em:description>
-    <em:homepageURL>http://tech.einaregilsson.com/projects/redirector/</em:homepageURL>
+    <em:homepageURL>http://einaregilsson.com/projects/redirector/</em:homepageURL>
     <em:optionsURL>chrome://redirector/content/ui/settings.xul</em:optionsURL>
     <em:iconURL>chrome://redirector/skin/redirector.png</em:iconURL>
     <em:unpack>true</em:unpack>
@@ -17,7 +16,7 @@
       <Description>
         <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id> <!-- firefox -->
         <em:minVersion>3.5</em:minVersion>
-        <em:maxVersion>4.0b10</em:maxVersion>
+        <em:maxVersion>6.*</em:maxVersion>
       </Description>
     </em:targetApplication>
   </Description>
