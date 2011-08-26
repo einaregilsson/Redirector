@@ -65,7 +65,7 @@ Redirector = {
 		fileStream.init(file, PR_WRONLY | PR_CREATE_FILE | PR_TRUNCATE, 0644, 0);
 		var stream = Cc["@mozilla.org/intl/converter-output-stream;1"].createInstance(Ci.nsIConverterOutputStream);
 		stream.init(fileStream, "UTF-8", 16384, Ci.nsIConverterInputStream.DEFAULT_REPLACEMENT_CHARACTER);
-		var rjson = { globalExcludePattern : '', createdBy : 'Redirector v' + RedirectorPrefs.version, redirects :[]};
+		var rjson = { globalExcludePattern : '', createdBy : 'Redirector v' + this._prefs.version, redirects :[]};
 		for each (var re in this._list) {
 			rjson.redirects.push(re.toObject());
 		}
