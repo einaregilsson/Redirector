@@ -1,0 +1,9 @@
+<!-- $Id$ -->
+<!ENTITY RedirectorMenuItem.label "Redirector">
+<!ENTITY RedirectorMenuItem.accesskey "R">
+<!ENTITY RedirectorContext.label "Add url to Redirector...">
+<!ENTITY RedirectorContext.accesskey "A">
+<!ENTITY RedirectorManageRedirects.label "Manage redirects">
+<!ENTITY RedirectorManageRedirects.accesskey "M">
+<!ENTITY RedirectorHelp.label "Help">
+<!ENTITY RedirectorHelp.accesskey "H">

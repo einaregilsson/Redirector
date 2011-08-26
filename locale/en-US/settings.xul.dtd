@@ -1,0 +1,65 @@
+<!-- $Id$ -->
+<!ENTITY window.title "Redirector">
+
+<!-- ListItems with redirects -->
+<!ENTITY colIncludePattern.label "Include pattern">
+<!ENTITY colExcludePattern.label "Exclude pattern">
+<!ENTITY colRedirectTo.label "Redirect to">
+<!ENTITY colEnabled.label "Enabled">
+
+<!-- Buttons -->
+<!ENTITY btnAdd.label "Add...">
+<!ENTITY btnAdd.accesskey "A">
+<!ENTITY btnAdd.tooltip "Create a new redirect">
+
+<!ENTITY btnEdit.label "Edit...">
+<!ENTITY btnEdit.accesskey "E">
+<!ENTITY btnEdit.tooltip "Edit the selected redirect">
+
+<!ENTITY btnDelete.label "Delete">
+<!ENTITY btnDelete.accesskey "D">
+<!ENTITY btnDelete.tooltip "Delete the selected redirect">
+
+<!ENTITY btnUp.tooltip "Move the selected redirect up">
+
+<!ENTITY btnDown.tooltip "Move the selected redirect down">
+
+<!ENTITY btnImport.label "Import...">
+<!ENTITY btnImport.accesskey "I">
+<!ENTITY btnImport.tooltip "Import redirects from a file">
+
+<!ENTITY btnExport.label "Export...">
+<!ENTITY btnExport.accesskey "E">
+<!ENTITY btnExport.tooltip "Export redirects to a file">
+
+
+<!-- Tab headers -->
+<!ENTITY tabRedirects.label "Redirects">
+<!ENTITY tabRedirects.accesskey "R">
+<!ENTITY tabPreferences.label "Preferences">
+<!ENTITY tabPreferences.accesskey "P">
+<!ENTITY tabImportExport.label "Import/Export">
+<!ENTITY tabImportExport.accesskey "m">
+<!ENTITY tabHelp.label "Help">
+<!ENTITY tabHelp.accesskey "H">
+
+<!-- Preferences -->
+<!ENTITY grpGeneralPreferences.label "General">
+<!ENTITY grpDebuggingPreferences.label "Debugging">
+
+<!ENTITY chkEnableRedirector.label "Enable Redirector">
+<!ENTITY chkEnableRedirector.accesskey "E">
+
+<!ENTITY chkShowStatusBarIcon.label "Show status bar icon">
+<!ENTITY chkShowStatusBarIcon.accesskey "s">
+
+<!ENTITY chkShowContextMenu.label "Show context menu">
+<!ENTITY chkShowContextMenu.accesskey "c">
+
+<!ENTITY chkEnableDebugOutput.label "Enable debug output">
+<!ENTITY chkEnableDebugOutput.accesskey "d">
+
+
+<!-- Import / Export -->
+<!ENTITY lblExport.label "Export your redirects to a file">
+<!ENTITY lblImport.label "Import new redirects from a file">
