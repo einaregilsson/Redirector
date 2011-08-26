@@ -52,6 +52,24 @@ Redirect.prototype = {
 		this._rxExclude = this._compile(this._excludePattern); 
 	},
 
+	toObject : function() {
+		return {
+			exampleUrl : this.exampleUrl,
+			includePattern : this.includePattern,
+			excludePattern : this.excludePattern,
+			redirectUrl : this.redirectUrl,
+			patternType : this.patternType,
+			unescapeMatches : this.unescapeMatches,
+			disabled : !!this.disabled
+		};
+	},
+
+	fromObject : function(o) {
+		for (var prop in o) {
+			this[prop] = o[prop];
+		}
+	},
+	
 	copyValues : function(other) {
 		this.exampleUrl = other.exampleUrl;
 		this.includePattern = other.includePattern;

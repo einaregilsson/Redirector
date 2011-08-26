@@ -4,6 +4,10 @@ Cc = Components.classes;
 Ci = Components.interfaces;
 Cr = Components.results;
 
+const FileInputStream = Components.Constructor("@mozilla.org/network/file-input-stream;1", "nsIFileInputStream", "init");
+const ConverterInputStream = Components.Constructor("@mozilla.org/intl/converter-input-stream;1", "nsIConverterInputStream", "init");
+const LocalFile = Components.Constructor("@mozilla.org/file/local;1", "nsILocalFile", "initWithPath");
+
 Components.utils.import("chrome://redirector/content/code/redirect.js");
 Components.utils.import("chrome://redirector/content/code/redirectorprefs.js");
 
@@ -61,7 +65,11 @@ Redirector = {
 		fileStream.init(file, PR_WRONLY | PR_CREATE_FILE | PR_TRUNCATE, 0644, 0);
 		var stream = Cc["@mozilla.org/intl/converter-output-stream;1"].createInstance(Ci.nsIConverterOutputStream);
 		stream.init(fileStream, "UTF-8", 16384, Ci.nsIConverterInputStream.DEFAULT_REPLACEMENT_CHARACTER);
-		stream.writeString(this._redirectsAsString('\n'));
+		var rjson = { globalExcludePattern : '', createdBy : 'Redirector v' + RedirectorPrefs.version, redirects :[]};
+		for each (var re in this._list) {
+			rjson.redirects.push(re.toObject());
+		}
+		stream.writeString(JSON.stringify(rjson, null, 4));
 		stream.close();
 	},
 	
@@ -108,14 +116,50 @@ Redirector = {
 		throw Cr.NS_ERROR_NO_INTERFACE;
 	},
 	
+	_getRedirectsFile : function() {
+		var file = Cc["@mozilla.org/file/directory_service;1"].getService(Ci.nsIProperties).get("ProfD", Ci.nsIFile);
+		file.append('redirector.rjson');
+		return file;
+	},	
 	
-	importRedirects : function(file) {
+	handleUpgrades : function(){
+		var currentVersion = '2.6';
+
+		//Here update checks are handled
+		if (this._prefs.version != currentVersion) {
+			var data = this._prefs.redirects;
+			var arr;
+			this._list = [];
+			if (data != '') {
+				for each (redirectString in data.split(':::')) {
+					if (!redirectString || !redirectString.split) {
+						continue;
+						rdump('Invalid old redirect: ' + redirectString);
+					}	
+					var parts = redirectString.split(',,,');
+					if (parts.length < 5) {
+						throw Error("Invalid serialized redirect, too few fields: " + redirectString);
+					}
+					var redirect = new Redirect();
+					redirect._init.apply(parts);
+					this._list.push(redirect);
+				}
+				this.save();
+				this._list = []; //Let the real loading start this properly
+			}
+		}
+		this._prefs.version = currentVersion;
+	},	
+	
+	importOldRedirects : function(file) {
 		var fileStream = Cc["@mozilla.org/network/file-input-stream;1"].createInstance(Ci.nsIFileInputStream);
 		fileStream.init(file, 0x01, 0444, 0); //TODO: Find the actual constants for these magic numbers
 
 		var stream = Cc["@mozilla.org/intl/converter-input-stream;1"].createInstance(Ci.nsIConverterInputStream);
 		stream.init(fileStream, "UTF-8", 16384, Ci.nsIConverterInputStream.DEFAULT_REPLACEMENT_CHARACTER);
 		stream = stream.QueryInterface(Ci.nsIUnicharLineInputStream);
+
+
 
 		var importCount = 0, existsCount = 0;
 		var lines = [];
@@ -136,24 +180,37 @@ Redirector = {
 		this.save();
 		return importCount | (existsCount << 16);
 	},
-	
-	reload : function() {
-		loader.loadSubScript('chrome://redirector/content/code/redirector.prototype.js');
-		loader.loadSubScript('chrome://redirector/content/code/redirect.js');
-		var oldEnabled = this.enabled;
-		for (var key in Redirector.prototype) {
-			if (key != 'redirectCount' && key != 'enabled') {
-				this[key] = Redirector.prototype[key];
+
+	importRedirects : function(file) {
+		var fileStream = new FileInputStream(file, 0x01, 0444, 0);
+		var stream = new ConverterInputStream(fileStream, "UTF-8", 16384, Ci.nsIConverterInputStream.DEFAULT_REPLACEMENT_CHARACTER);
+		var str = {};
+		var rjson = '';
+		while (stream.readString(4096, str) != 0) {
+			rjson += str.value;
+		}
+		stream.close();
+		var importCount = 0, existsCount = 0;
+		rjson = JSON.parse(rjson);
+		for each (var rd in rjson.redirects) {
+			var redirect = new Redirect();
+			redirect.fromObject(rd);
+			if (this._containsRedirect(redirect)) {
+				existsCount++;
+			} else {
+				this._list.push(redirect);
+				importCount++;
 			}
 		}
-		this._init();
-		this.enabled = oldEnabled;
-	}, 
-	
-	save : function() {
-		this._prefs.redirects = this._redirectsAsString(':::');
+		this.save();
+		return importCount | (existsCount << 16);
 	},
 
+	save : function() {
+		var file = this._getRedirectsFile();
+		this.exportRedirects(file);
+	},
+	
 	switchItems : function(index1, index2) {
 		var item = this._list[index1];
 		this._list[index1] = this._list[index2];
@@ -218,7 +275,7 @@ Redirector = {
 	{
 		try {
 			let newLocation = newChannel.URI.spec;
-			rrdump('nsIChannelEventSink::onChannelRedirect ' + newLocation);
+			rdump('nsIChannelEventSink::onChannelRedirect ' + newLocation);
 
 			if (!(newChannel.loadFlags & Ci.nsIChannel.LOAD_DOCUMENT_URI)) {
 				//We only redirect documents...
@@ -273,7 +330,7 @@ Redirector = {
 	_strings : null,
 	_cout : Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService),
 
-	_init : function() {
+	init : function() {
 		if (this._prefs) {
 			this._prefs.dispose();
 		}
@@ -283,38 +340,11 @@ Redirector = {
 		var data = this._prefs.redirects;
 		var version = this._prefs.version;
 		this._loadStrings();
-		var currentVersion = '2.5';
-		//Here update checks are handled
-		if (version == 'undefined') { //Either a fresh install of Redirector, or first time install of v2.0
-			if (data) { //There is some data in redirects, we are upgrading from a previous version, need to upgrade data
-				var tempList = JSON.parse(data);
-				var arr;
-				var newArr = []
-				for each (arr in tempList) {
-					if (arr.length == 5) {
-						arr.push(''); //For those that don't have an exclude pattern. Backwards compatibility is a bitch!
-					}
-					arr.splice(3,1); //Remove the "only if link exists" data
-					newArr.push(arr.join(',,,'));
-				}
-				this._prefs.redirects = newArr.join(':::');
-			}
-			this._prefs.version = currentVersion;
-		} else if (version == '2.0' || version == '2.0.1' || version == '2.0.2') {
-			this._prefs.version = currentVersion;
-		}
-		//Update finished
-		
-		//Now get from the new format
-		data = this._prefs.redirects;
-		var arr;
 		this._list = [];
-		if (data != '') {
-			for each (redirectString in data.split(':::')) {
-				var redirect = new Redirect();
-				redirect.deserialize(redirectString);
-				this._list.push(redirect);
-			}
+		this.handleUpgrades();
+		var redirectsFile = this._getRedirectsFile();
+		if (redirectsFile.exists()) {
+			this.importRedirects(redirectsFile);
 		}
 	},
 	
@@ -367,4 +397,4 @@ Redirector = {
 	}
 };
 
-Redirector._init();
+Redirector.init();
