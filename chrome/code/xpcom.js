@@ -11,3 +11,10 @@ const ScriptableInputStream = Components.Constructor("@mozilla.org/scriptableinp
 const FileInputStream = Components.Constructor("@mozilla.org/network/file-input-stream;1", "nsIFileInputStream", "init");
 const ConverterInputStream = Components.Constructor("@mozilla.org/intl/converter-input-stream;1", "nsIConverterInputStream", "init");
 const LocalFile = Components.Constructor("@mozilla.org/file/local;1", "nsILocalFile", "initWithPath");
+                          
+function Service(className, interfaceName) 
+	return Cc[className].getService(Ci[interfaceName]);
+}
+
+const PromptService = Service("@mozilla.org/embedcomp/prompt-service;1","nsIPromptService");
+const IOService = Service("@mozilla.org/network/io-service;1","nsIIOService");
