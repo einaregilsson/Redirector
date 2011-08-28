@@ -14,7 +14,7 @@ RedirectorPrefs.prototype = {
 	_debugEnabled : null,
 	_defaultDir : null,
 	_redirects : null,
-	
+	_proxyServerPort : null,
 	_prefBranch : null,
 	
 	_listeners : null,
@@ -35,6 +35,9 @@ RedirectorPrefs.prototype = {
 		
 	get debugEnabled() { return this._debugEnabled; },
 	set debugEnabled(value) { this._prefBranch.setBoolPref('debugEnabled', value); },
+
+	get proxyServerPort() { return this._proxyServerPort; },
+	set proxyServerPort(value) { this._prefBranch.setIntPref('proxyServerPort', value); },
 
 	get defaultDir() { return this._defaultDir; },
 	set defaultDir(value) { this._prefBranch.setCharPref('defaultDir', value); },

@@ -4,12 +4,13 @@
   <Description about="urn:mozilla:install-manifest">
     <em:id>redirector@einaregilsson.com</em:id>
     <em:name>Redirector</em:name>
-    <em:version>2.6</em:version>
+    <em:version>3.0</em:version>
     <em:creator>Einar Egilsson</em:creator>
     <em:description>Automatically redirects to user-defined urls on certain pages</em:description>
     <em:homepageURL>http://einaregilsson.com/projects/redirector/</em:homepageURL>
     <em:optionsURL>chrome://redirector/content/ui/settings.xul</em:optionsURL>
     <em:iconURL>chrome://redirector/skin/redirector.png</em:iconURL>
+	<em:type>2</em:type>
     <em:unpack>true</em:unpack>
     <em:targetApplication>
       <Description>

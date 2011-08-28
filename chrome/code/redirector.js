@@ -1,15 +1,9 @@
-var EXPORTED_SYMBOLS = ['Redirector', 'rdump'];
-Ci = Components.interfaces;
-Cc = Components.classes;
-Ci = Components.interfaces;
-Cr = Components.results;
-
-const FileInputStream = Components.Constructor("@mozilla.org/network/file-input-stream;1", "nsIFileInputStream", "init");
-const ConverterInputStream = Components.Constructor("@mozilla.org/intl/converter-input-stream;1", "nsIConverterInputStream", "init");
-const LocalFile = Components.Constructor("@mozilla.org/file/local;1", "nsILocalFile", "initWithPath");
-
+Components.utils.import("chrome://redirector/content/code/xpcom.js");
 Components.utils.import("chrome://redirector/content/code/redirect.js");
 Components.utils.import("chrome://redirector/content/code/redirectorprefs.js");
+Components.utils.import("chrome://redirector/content/code/proxyserver.js");
+
+var EXPORTED_SYMBOLS = ['Redirector', 'rdump'];
 
 function rdump(msg) {
 	//dump(msg + '\n');
@@ -156,36 +150,6 @@ Redirector = {
 		this._prefs.version = currentVersion;
 	},	
 	
-	importOldRedirects : function(file) {
-		var fileStream = Cc["@mozilla.org/network/file-input-stream;1"].createInstance(Ci.nsIFileInputStream);
-		fileStream.init(file, 0x01, 0444, 0); //TODO: Find the actual constants for these magic numbers
-
-		var stream = Cc["@mozilla.org/intl/converter-input-stream;1"].createInstance(Ci.nsIConverterInputStream);
-		stream.init(fileStream, "UTF-8", 16384, Ci.nsIConverterInputStream.DEFAULT_REPLACEMENT_CHARACTER);
-		stream = stream.QueryInterface(Ci.nsIUnicharLineInputStream);
-
-
-
-		var importCount = 0, existsCount = 0;
-		var lines = [];
-		var line = {value: null};
-		stream.readLine(line);
-		while (line.value) {
-			var redirect = new Redirect();
-			redirect.deserialize(line.value.replace('\n', ''));
-			if (this._containsRedirect(redirect)) {
-				existsCount++;
-			} else {
-				this._list.push(redirect);
-				importCount++;
-			}
-			stream.readLine(line);
-		}
-		stream.close();
-		this.save();
-		return importCount | (existsCount << 16);
-	},
-
 	importRedirects : function(file) {
 		var fileStream = new FileInputStream(file, 0x01, 0444, 0);
 		var stream = new ConverterInputStream(fileStream, "UTF-8", 16384, Ci.nsIConverterInputStream.DEFAULT_REPLACEMENT_CHARACTER);
@@ -351,6 +315,11 @@ Redirector = {
 		if (redirectsFile.exists()) {
 			this.importRedirects(redirectsFile);
 		}
+		
+		RedirectorProxy.start(this._prefs.proxyServerPort);
+		rdump('Registering as Proxy Filter');
+		//var pps = Cc["@mozilla.org/network/protocol-proxy-service;1"].getService(Ci.nsIProtocolProxyService);		
+		//pps.registerFilter(this, 0);
 	},
 	
 	_loadStrings : function() {
@@ -360,11 +329,6 @@ Redirector = {
 		var stringBundleService = Cc["@mozilla.org/intl/stringbundle;1"].getService(Ci.nsIStringBundleService);
 		this._strings = stringBundleService.createBundle(src, appLocale);	 
 	},	  
-
-	_redirectsAsString : function(seperator) {
-		return [r.serialize() for each (r in this._list)].join(seperator);
-	},
-	
 	
 	_containsRedirect : function(redirect) {
 		for each (var existing in this._list) {
