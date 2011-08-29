@@ -3,10 +3,41 @@
 	<head>
 		<title>Redirector Extension Settings</title>
 		<style type="text/css">
-			body { font-family: Helvetica, Georgia, Arial, sans-serif; }
-			h1 { text-align:center; }
+			body { 
+				font-family: Helvetica, Georgia, Arial, sans-serif; 
+				font-size:10pt; 
+				min-height:100%;
+				background:-moz-linear-gradient(top, #bcd, #fff);
+				margin:0; padding:0;
+			}
+			html {
+				height:100%;
+				margin:0; padding:0;
+			}
+			h1 { text-align:center; color:#555; text-shadow:0px 0px 15px white; font-size:34pt; padding:0px; margin:20px 0px 0px 0px; }
 			label { display:table-cell; }
 			input { display:table-cell; }
+			li { margin:0; padding:5px; border-top: dotted 1px grey;}
+			li:first-child { border-top:none;} 
+			#actions { width:600px; margin:10px auto; text-align:center; }
+			#redirect-list { 
+				border:solid 1px grey; 
+				margin:auto; 
+				padding:0px;
+				width: 700px; 
+				list-style-type:none; 
+				list-style-position:outside;
+				border-radius:3px; 
+				box-shadow: 0px 0px 2px grey;
+				text-shadow: 1px 1px 1px white;
+			}
+			#config { display:none; }
+			button { border:solid 1px grey; border-radius:4px; background:-moz-linear-gradient(top, #ccc, #fff); cursor:pointer;}
+			h5 { text-align:center; margin:0px; padding-left:130px; }
+			.pattern, .redirectTo { color:blue; font-style:italic;}
+			.exampleUrl, .redirectResult { color:blue; }
+			#redirect-list li:nth-child(odd) { background:-moz-linear-gradient(top, #ddf, #cce); }
+			#redirect-list li:nth-child(even) { background-color:#fff; }
 			#redirect-form div { display:table-row; }
 			#redirect-form { display:none; }
 		</style>
@@ -15,31 +46,31 @@
 	</head>
 	<body>
 		<h1>Redirector</h1>
-		<nav>
-			<a href="">Redirects</a>
-			<a href="">Preferences</a>
-			<a href="">Help</a>
-		</nav>
-		<div id="redirect-list">
-			<div>
-				Redirect asdfasdfasdfasdfasdf to ælasdtasdasdt
-				Example: hsdtasdt st to 
-			</div>
-		</div>
-		<div id="crud">
-			<button>Add</button>
-			<button>Edit</button>
-			<button>Delete</button>
-			<button>Move Up</button>
-			<button>Move Down</button>
+		<h5>Go where <em>YOU</em> want!</h5>
+		<div id="actions">
+			<button id="new-redirect">New Redirect...</button>
+			<button id="configure">Configure</button>
 			<button id="import">Import</button>
 			<button id="export">Export</button>
 		</div>
+		<ul id="redirect-list">
+			<li>
+				<div>Redirect: <span class="pattern">pattern</span> to <span class="redirectTo"></span></div>
+				<div>Example: <span class="exampleUrl"></span> becomes <span class="redirectResult"></span></div>
+				<div>
+					<a href="#edit">Edit</a> 
+					<a href="#delete">Delete</a>
+					<a href="#up">Up</a>
+					<a href="#down">Down</a>
+				</div>
+			</li>
+		</ul>
 		<div id="config">
-			<input type="checkbox" id="enable-redirector" data-pref="enabled" /> Enable Redirector
-			<input type="checkbox" id="show-status-bar-icon" data-pref="showStatusBarIcon"/> Show status bar icon
-			<input type="checkbox" id="show-context-menu" data-pref="showContextMenu"/> Show context menu
-			<input type="checkbox" id="enable-debug-output" data-pref="debugEnabled"/> Enable debug output
+			<h2>Configuration</h2>
+			<input type="checkbox" id="enable-redirector" data-pref="enabled" />Enabled
+			<input type="checkbox" id="show-status-bar-icon" data-pref="showStatusBarIcon"/> Statusbar icon
+			<input type="checkbox" id="show-context-menu" data-pref="showContextMenu"/> Context menu
+			<input type="checkbox" id="enable-debug-output" data-pref="debugEnabled"/> Debug output
 		</div>
 		<div id="redirect-form">
 			<div>

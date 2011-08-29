@@ -73,13 +73,27 @@ $(document).ready(function() {
 		}
 	}
 	
+	var template = $('#redirect-list').html().replace(/^\s*|\s$/g, '');
 	function databind() {
+		$('#redirect-list').html('');
 		for (var i = 0; i < Redirector.redirectCount; i++) {
 			var redirect = Redirector.getRedirectAt(i);
-			$('#redirect-list');
+			var node = $(template);
+			node.find('.pattern').html(redirect.includePattern);
+			node.find('.redirectTo').html(redirect.redirectUrl);
+			node.find('.exampleUrl').html(redirect.exampleUrl);
+			node.find('.redirectResult').html(redirect.getMatch(redirect.exampleUrl).redirectTo);
+			node.appendTo('#redirect-list');
+			node.redirect = redirect;
 		}
+		
+		$('#redirect-list li a').click(function() {
+			alert(this.parentNode.parentNode.redirect);
+		});
 	}
+	
 
+	databind();
 	$('#import').click(importRedirects);
 	$('#export').click(exportRedirects);
 	
