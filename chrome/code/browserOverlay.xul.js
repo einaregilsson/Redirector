@@ -91,7 +91,7 @@ var RedirectorOverlay = {
 					windowName,
 					"chrome,dialog,resizable=yes,centerscreen", this);
 		}
-	
+		gBrowser.selectedTab = gBrowser.addTab("chrome://redirector/content/settings.html");	
 	},
 	
 	statusBarClick : function(event) {

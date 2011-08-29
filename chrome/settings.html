@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Redirector Extension Settings</title>
+		<style type="text/css">
+			body { font-family: Helvetica, Georgia, Arial, sans-serif; }
+			h1 { text-align:center; }
+			label { display:table-cell; }
+			input { display:table-cell; }
+			#redirect-form div { display:table-row; }
+			#redirect-form { display:none; }
+		</style>
+		<script type="text/javascript" src="js/jquery-1.6.2.min.js"></script>
+		<script type="text/javascript" src="js/settings.js"></script>
+	</head>
+	<body>
+		<h1>Redirector</h1>
+		<nav>
+			<a href="">Redirects</a>
+			<a href="">Preferences</a>
+			<a href="">Help</a>
+		</nav>
+		<div id="redirect-list">
+			<div>
+				Redirect asdfasdfasdfasdfasdf to ælasdtasdasdt
+				Example: hsdtasdt st to 
+			</div>
+		</div>
+		<div id="crud">
+			<button>Add</button>
+			<button>Edit</button>
+			<button>Delete</button>
+			<button>Move Up</button>
+			<button>Move Down</button>
+			<button id="import">Import</button>
+			<button id="export">Export</button>
+		</div>
+		<div id="configuration">
+			<input type="checkbox" /> Enable Redirector
+			<input type="checkbox" /> Show status bar icon
+			<input type="checkbox" /> Show context menu
+			<input type="checkbox" /> Enable debug output
+		</div>
+		<div id="redirect-form">
+			<div>
+				<label>Description</label>
+				<input type="text" value="foo"/>
+			</div>
+			<div>
+				<label>Example URL</label>
+				<input type="text" value="foo"/>
+			</div>
+			<div>
+				<label>Include Pattern</label>
+				<input type="text" value="foo"/>
+			</div>
+			<div>
+				<label>Exclude Pattern</label>
+				<input type="text" value="foo"/>
+			</div>
+			<div>
+				<label>Redirect To</label>
+				<input type="text" value="foo"/>
+			</div>
+			<div>
+				<label>Pattern Type</label>
+				<input type="radio" /> Regular Expression
+				<input type="radio" /> Wildcard
+			</div>
+			<div>
+				<label>Unescape matches</label>
+				<input type="checkbox"/>
+			</div>
+			<div>
+				<label>Enabled</label>
+				<input type="checkbox"/>
+			</div>
+		</div>
+	</body>
+</html>

@@ -41,10 +41,7 @@ Redirect.prototype = {
 	
 	//Functions
 	clone : function() {
-		return new Redirect(this.exampleUrl, this.includePattern, 
-							this.redirectUrl, this.patternType, 
-							this.excludePattern, this.unescapeMatches,
-							this.disabled);    
+		return new Redirect().fromObject(this.toObject());
 	},
 	
 	compile : function() {
@@ -68,6 +65,7 @@ Redirect.prototype = {
 		for (var prop in o) {
 			this[prop] = o[prop];
 		}
+		return this;
 	},
 	
 	copyValues : function(other) {
@@ -80,17 +78,6 @@ Redirect.prototype = {
 		this.disabled = other.disabled;
 	},
 
-	deserialize : function(str) {
-		if (!str || !str.split) {
-			throw Error("Invalid serialized redirect: " + str);
-		}	
-		var parts = str.split(',,,');
-		if (parts.length < 5) {
-			throw Error("Invalid serialized redirect, too few fields: " + str);
-		}
-		this._init.apply(this, parts);
-	},
-	
 	equals : function(redirect) {
 		return this.exampleUrl == redirect.exampleUrl
 			&& this.includePattern == redirect.includePattern
@@ -137,16 +124,6 @@ Redirect.prototype = {
 		return this.patternType == Redirect.WILDCARD;	
 	},
 
-	serialize : function() {
-		return [ this.exampleUrl
-			   , this.includePattern
-			   , this.redirectUrl
-			   , this.patternType
-			   , this.excludePattern
-			   , this.unescapeMatches
-			   , this.disabled ].join(',,,');
-	},
-	
 	test : function() {
 		return this.getMatch(this.exampleUrl);	
 	},
