@@ -82,4 +82,19 @@ $(document).ready(function() {
 
 	$('#import').click(importRedirects);
 	$('#export').click(exportRedirects);
+	
+	function bindConfig() {
+		$('#config input[type="checkbox"]').each(function() {
+			var pref = $(this).attr('data-pref');
+			$(this).attr('checked', prefs[pref]);
+		});
+	}
+	
+	bindConfig();
+	prefs.addListener({ changedPrefs:bindConfig});
+	
+	$('#config input[type="checkbox"]').bind('CheckboxStateChange', function() {
+		var pref = $(this).attr('data-pref');
+		prefs[pref] = !!$(this).attr('checked');
+	});
 });
