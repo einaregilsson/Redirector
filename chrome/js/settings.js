@@ -97,7 +97,12 @@ $(document).ready(function() {
 		}
 		ev.preventDefault();
 	});
-	
+
+	$('#redirect-list li div a.edit').live('click', function(ev) {
+		var redirect = $(this.parentNode.parentNode).data('redirect');
+		$('#redirect-form').show();
+		ev.preventDefault();
+	});
 
 	databind();
 	$('#import').click(importRedirects);
@@ -112,13 +117,12 @@ $(document).ready(function() {
 	
 	bindConfig();
 	prefs.addListener({ changedPrefs:bindConfig});
-	var moving = false;
-	
-	function drag() {
-	
-	}
+
 	var movingElement = null;
-	$('li').mousedown(function() {
+	$('li').mousedown(function(ev) {
+		if (ev.target && ev.target.tagName == 'A') {
+			return;
+		}
 		$(this).css('background', '-moz-linear-gradient(top, #aac, #99b)');
 		$('#redirect-list').css('cursor', 'move');
 		movingElement = this;
