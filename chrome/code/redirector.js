@@ -180,13 +180,10 @@ Redirector = {
 		this.exportRedirects(file);
 	},
 	
-	switchItems : function(index1, index2) {
-		var item = this._list[index1];
-		this._list[index1] = this._list[index2];
-		this._list[index2] = item;
+	sortRedirects : function(sortFunc) {
+		this._list.sort(sortFunc);
 		this.save();
 	},
-	
 	
 	// nsIContentPolicy implementation
 	shouldLoad: function(contentType, contentLocation, requestOrigin, aContext, mimeTypeGuess, extra) {

@@ -84,7 +84,7 @@ $(document).ready(function() {
 			node.find('.exampleUrl').html(redirect.exampleUrl);
 			node.find('.redirectResult').html(redirect.getMatch(redirect.exampleUrl).redirectTo);
 			node.appendTo('#redirect-list');
-			node.redirect = redirect;
+			node.data('redirect', redirect);
 		}
 		
 		$('#redirect-list li a').click(function() {
@@ -106,7 +106,45 @@ $(document).ready(function() {
 	
 	bindConfig();
 	prefs.addListener({ changedPrefs:bindConfig});
+	var moving = false;
 	
+	function drag() {
+	
+	}
+	var movingElement = null;
+	$('li').mousedown(function() {
+		$(this).css('background', '-moz-linear-gradient(top, #aac, #99b)');
+		$('#redirect-list').css('cursor', 'move');
+		movingElement = this;
+	});
+
+
+	$('li').mouseover(function() {
+		if (movingElement && this !== movingElement) {
+			if ($(movingElement).offset().top > $(this).offset().top) {
+				$(movingElement).detach().insertBefore(this);
+			} else {
+				$(movingElement).detach().insertAfter(this);
+			}
+		}
+	});
+	
+	$(document).mouseup(function() {
+		if (movingElement) {
+			$(movingElement).css('background', '');
+			movingElement = null;
+			$('#redirect-list').css('cursor', '');
+			var newOrder = {};
+			$('#redirect-list li').each(function(i) {
+				newOrder[$(this).data('redirect')] = i;
+			});
+
+			Redirector.sortRedirects(function(a,b) {
+				return newOrder[a] - newOrder[b];
+			});
+		}
+	});
+
 	$('#config input[type="checkbox"]').bind('CheckboxStateChange', function() {
 		var pref = $(this).attr('data-pref');
 		prefs[pref] = !!$(this).attr('checked');

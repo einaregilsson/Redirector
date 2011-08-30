@@ -12,7 +12,8 @@
 			}
 			html {
 				height:100%;
-				margin:0; padding:0;
+				margin:0; 
+				padding:0;
 			}
 			h1 { text-align:center; color:#555; text-shadow:0px 0px 15px white; font-size:34pt; padding:0px; margin:20px 0px 0px 0px; }
 			label { display:table-cell; }
@@ -21,6 +22,8 @@
 			li:first-child { border-top:none;} 
 			#actions { width:600px; margin:10px auto; text-align:center; }
 			#redirect-list { 
+				-moz-user-select: -moz-none;
+
 				border:solid 1px grey; 
 				margin:auto; 
 				padding:0px;
@@ -60,8 +63,6 @@
 				<div>
 					<a href="#edit">Edit</a> 
 					<a href="#delete">Delete</a>
-					<a href="#up">Up</a>
-					<a href="#down">Down</a>
 				</div>
 			</li>
 		</ul>
