@@ -40,8 +40,8 @@ Redirector = {
 		}
 	},
 	
-	deleteRedirectAt : function(index) {
-		this._list.splice(index, 1);
+	deleteRedirect : function(redirect) {
+		this._list.splice(this._list.indexOf(redirect), 1);
 		this.save();
 	},
 	

@@ -75,7 +75,7 @@ $(document).ready(function() {
 	
 	var template = $('#redirect-list').html().replace(/^\s*|\s$/g, '');
 	function databind() {
-		$('#redirect-list').html('');
+		$('#redirect-list').empty();
 		for (var i = 0; i < Redirector.redirectCount; i++) {
 			var redirect = Redirector.getRedirectAt(i);
 			var node = $(template);
@@ -87,10 +87,16 @@ $(document).ready(function() {
 			node.data('redirect', redirect);
 		}
 		
-		$('#redirect-list li a').click(function() {
-			alert(this.parentNode.parentNode.redirect);
-		});
 	}
+
+	$('#redirect-list li div a.delete').live('click', function(ev) {
+		var redirect = $(this.parentNode.parentNode).data('redirect');
+		if (PromptService.confirm(null, tr("deleteConfirmationTitle"), tr("deleteConfirmationText"))) {
+			Redirector.deleteRedirect(redirect);
+			$(this.parentNode.parentNode).remove();
+		}
+		ev.preventDefault();
+	});
 	
 
 	databind();
