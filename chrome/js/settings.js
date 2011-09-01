@@ -93,7 +93,7 @@ $(document).ready(function() {
 		var redirect = $(this.parentNode.parentNode).data('redirect');
 		if (PromptService.confirm(null, tr("deleteConfirmationTitle"), tr("deleteConfirmationText"))) {
 			Redirector.deleteRedirect(redirect);
-			$(this.parentNode.parentNode).remove();
+			$(this.parentNode.parentNode).fadeOut(function() { $(this).remove(); });
 		}
 		ev.preventDefault();
 	});
