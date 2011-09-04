@@ -1,5 +1,5 @@
-
-Components.utils.import("chrome://redirector/content/code/redirector.js");
+Components.utils.import("chrome://redirector/content/js/redirectorprefs.js");
+Components.utils.import("chrome://redirector/content/js/redirector.js");
 
 var RedirectorOverlay = {
 
@@ -40,10 +40,10 @@ var RedirectorOverlay = {
 		var statusImg = document.getElementById('redirector-statusbar-img');
 
 		if (prefs.enabled) {
-			statusImg.src = 'chrome://redirector/skin/statusactive.png'
+			statusImg.src = 'chrome://redirector/content/images/statusactive.png'
 			statusImg.setAttribute('tooltiptext', this.strings.getString('enabledTooltip'));
 		} else {
-			statusImg.src = 'chrome://redirector/skin/statusinactive.png'
+			statusImg.src = 'chrome://redirector/content/images/statusinactive.png'
 			statusImg.setAttribute('tooltiptext', this.strings.getString('disabledTooltip'));
 		}
 
@@ -65,11 +65,7 @@ var RedirectorOverlay = {
 			redirect.redirectUrl = gContextMenu.link.toString();
 		}
 
-		var args = { saved : false, 'redirect' : redirect };
-		window.openDialog("chrome://redirector/content/ui/editRedirect.xul", "redirect", "chrome,dialog,modal,centerscreen", args);
-		if (args.saved) {
-			Redirector.addRedirect(args.redirect);
-		}
+		gBrowser.selectedTab = gBrowser.addTab("chrome://redirector/content/redirector.html");	
 	},
 		
 	onMenuItemCommand: function(event) {
@@ -81,17 +77,7 @@ var RedirectorOverlay = {
 	},
 
 	openSettings : function() {
-		var windowName = "redirectorSettings";
-		var windowsMediator = Components.classes["@mozilla.org/appshell/window-mediator;1"].getService(Components.interfaces.nsIWindowMediator);
-		var win = windowsMediator.getMostRecentWindow(windowName);
-		if (win) {
-			win.focus();
-		} else {
-			window.openDialog("chrome://redirector/content/ui/settings.xul",
-					windowName,
-					"chrome,dialog,resizable=yes,centerscreen", this);
-		}
-		gBrowser.selectedTab = gBrowser.addTab("chrome://redirector/content/settings.html");	
+		gBrowser.selectedTab = gBrowser.addTab("chrome://redirector/content/redirector.html");	
 	},
 	
 	statusBarClick : function(event) {

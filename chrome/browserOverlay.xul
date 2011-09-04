@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id$ -->
-<!DOCTYPE overlay SYSTEM "chrome://redirector/locale/browserOverlay.xul.dtd">
+<!DOCTYPE overlay SYSTEM "chrome://redirector/locale/browserOverlay.dtd">
 <overlay id="redirector-overlay"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-  <script src="../code/redirect.js"/>
-  <script src="../code/redirectorprefs.js"/>
-  <script src="../code/browserOverlay.xul.js"/>
+  <script src="chrome://redirector/content/js/browserOverlay.js"/>
 
   <stringbundleset id="stringbundleset">
     <stringbundle id="redirector-strings" src="chrome://redirector/locale/redirector.properties"/>
@@ -23,12 +20,11 @@
               oncommand="RedirectorOverlay.onContextMenuCommand(event)"/>
   </popup>
   <statusbar id="status-bar">
-  <statusbarpanel id="redirector-status">
-      <image id="redirector-statusbar-img" src="chrome://redirector/skin/statusactive.png"
+    <statusbarpanel id="redirector-status">
+      <image id="redirector-statusbar-img" src="chrome://redirector/content/images/statusactive.png"
              tooltiptext="Redirector is enabled;"
              style="width:16px; height:16px;"
              onclick="RedirectorOverlay.statusBarClick(event);" />
-  </statusbarpanel>
+    </statusbarpanel>
   </statusbar>
-
 </overlay>

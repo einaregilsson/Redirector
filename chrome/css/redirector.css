@@ -1,0 +1,40 @@
+body { 
+	font-family: Tahoma, Arial, sans-serif; 
+	font-size:10pt; 
+	min-height:100%;
+	background:-moz-linear-gradient(top, #bcd, #fff);
+	margin:0; padding:0;
+}
+html {
+	height:100%;
+	margin:0; 
+	padding:0;
+}
+h1 { font-family: ; text-align:center; color:#555; text-shadow:0px 0px 15px white; font-size:34pt; padding:0px; margin:20px 0px 0px 0px; letter-spacing:2px; }
+label { display:table-cell; }
+input { display:table-cell; }
+li { margin:0; padding:5px; border-top: dotted 1px grey;}
+li:first-child { border-top:none;} 
+#actions { width:600px; margin:10px auto; text-align:center; }
+#redirect-list { 
+	-moz-user-select: -moz-none;
+
+	border:solid 1px grey; 
+	margin:auto; 
+	padding:0px;
+	width: 700px; 
+	list-style-type:none; 
+	list-style-position:outside;
+	border-radius:3px; 
+	box-shadow: 0px 0px 2px grey;
+	text-shadow: 1px 1px 1px white;
+}
+#config { display:none; position:fixed; margin:auto;}
+button { border:solid 1px grey; border-radius:4px; background:-moz-linear-gradient(top, #ccc, #fff); cursor:pointer;}
+h5 { text-align:center; margin:0px; padding-left:130px; }
+.pattern, .redirectTo { color:blue; font-style:italic;}
+.exampleUrl, .redirectResult { color:blue; }
+#redirect-list li:nth-child(odd) { background:-moz-linear-gradient(top, #ddf, #cce); }
+#redirect-list li:nth-child(even) { background-color:#fff; }
+#redirect-form div { display:table-row; }
+#redirect-form { display:none; position:fixed; margin:0 auto; border:solid 1px black; }

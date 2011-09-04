@@ -1,4 +1,4 @@
-Components.utils.import("chrome://redirector/content/code/xpcom.js");
+Components.utils.import("chrome://redirector/content/js/xpcom.js");
 
 var EXPORTED_SYMBOLS = ['RedirectorProxy'];
 

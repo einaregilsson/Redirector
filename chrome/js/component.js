@@ -2,7 +2,7 @@ Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 Ci = Components.interfaces;
 Cr = Components.results;
 
-Components.utils.import("chrome://redirector/content/code/redirector.js");
+Components.utils.import("chrome://redirector/content/js/redirector.js");
 
 function RedirectorComponent() { }
 

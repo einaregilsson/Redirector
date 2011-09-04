@@ -1,7 +1,7 @@
-Components.utils.import("chrome://redirector/content/code/xpcom.js");
-Components.utils.import("chrome://redirector/content/code/redirect.js");
-Components.utils.import("chrome://redirector/content/code/redirectorprefs.js");
-Components.utils.import("chrome://redirector/content/code/proxyserver.js");
+Components.utils.import("chrome://redirector/content/js/xpcom.js");
+Components.utils.import("chrome://redirector/content/js/redirect.js");
+Components.utils.import("chrome://redirector/content/js/redirectorprefs.js");
+Components.utils.import("chrome://redirector/content/js/proxyserver.js");
 
 var EXPORTED_SYMBOLS = ['Redirector', 'rdump'];
 
