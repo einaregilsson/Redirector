@@ -2,7 +2,7 @@ body {
 	font-family: Tahoma, Arial, sans-serif; 
 	font-size:10pt; 
 	min-height:100%;
-	background:-moz-linear-gradient(top, #bcd, #fff);
+	background:-moz-linear-gradient(top, #AFCFFE,#fff);
 	margin:0; padding:0;
 }
 html {
@@ -39,7 +39,7 @@ button { border:solid 1px grey; border-radius:4px; background:-moz-linear-gradie
 h5 { text-align:center; margin:0px; padding-left:130px; }
 .pattern, .redirectTo { color:blue; font-style:italic;}
 .exampleUrl, .redirectResult { color:blue; }
-#redirect-list li:nth-child(odd) { background:-moz-linear-gradient(top, #ddf, #cce); }
+#redirect-list li:nth-child(odd) { background:#e5e5e5; }
 #redirect-list li:nth-child(even) { background-color:#fff; }
 
 #redirect-form div {  margin-top:5px; display:table-row; }
@@ -48,7 +48,7 @@ h5 { text-align:center; margin:0px; padding-left:130px; }
 
 .button-row { text-align:center; display:block !important;}
 #redirect-form {
-	background:-moz-linear-gradient(top, #fff, #bcd);
+	background:-moz-linear-gradient(top,#fff, #AFCFFE);
 	border-radius:8px;
 	display:none; 
 	position:fixed; 

@@ -11,6 +11,7 @@ jQuery.fn.center = function () {
 }
 
 $(document).ready(function() {
+	$('link').attr('href',$('link').attr('href')+new Date());
 	var prefs = new RedirectorPrefs();
 	var strings = StringBundleService.createBundle('chrome://redirector/locale/redirector.properties', LocaleService.getApplicationLocale());
 	function tr(name) {
@@ -121,9 +122,33 @@ $(document).ready(function() {
 		bindRedirect(redirect);
 		$('#redirect-form').center().css('top', '-=40px').show();
 	}
+	
+	function saveRedirect() {
+		var isNew = !window.editRedirect;
+		var redirect = isNew ? new Redirect() : window.editRedirect;
+		redirect.description = $('#description').val();
+		redirect.exampleUrl = $('#example-url').val();
+		redirect.includePattern = $('#include-pattern').val();
+		redirect.excludePattern = $('#exclude-pattern').val();
+		redirect.redirectUrl = $('#redirect-to').val();
+		redirect.disabled =	!$('#redirect-enabled').attr('checked');
+		redirect.unescapeMatches = $('#unescape-matches').attr('checked');
+		if ($('#regex-pattern').attr('checked')) {
+			redirect.patternType = Redirect.REGEX;
+		} else {
+			redirect.patternType = Redirect.WILDCARD;
+		}
+		if (isNew) {
+			Redirector.addRedirect(redirect);
+		}
+		Redirector.save();
+		$('#redirect-form').hide();
+		databind();
+	}
 
 	$('#redirect-list li div a.edit').live('click', function(ev) {
 		var redirect = $(this.parentNode.parentNode).data('redirect');
+		window.editRedirect = redirect;
 		showRedirect(redirect);
 		ev.preventDefault();
 	});
@@ -131,10 +156,11 @@ $(document).ready(function() {
 	databind();
 	$('#import').click(importRedirects);
 	$('#export').click(exportRedirects);
-	$('#new-redirect').click(function() { showRedirect({patternType:Redirect.REGEX});});
+	$('#new-redirect').click(function() { window.editRedirect = null; showRedirect({patternType:Redirect.REGEX});});
 	$('#configure').click(configure);
 	$('#cancel').click(function() { $('#redirect-form').hide();});
 	$('#configure').click(configure);
+	$('#save').click(saveRedirect);
 	
 	function configure() {
 		$('#config').show();
