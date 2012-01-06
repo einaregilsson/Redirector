@@ -1,6 +1,14 @@
+Components.utils.import("chrome://redirector/content/js/redirect.js");
 Components.utils.import("chrome://redirector/content/js/redirector.js");
 Components.utils.import("chrome://redirector/content/js/redirectorprefs.js");
 Components.utils.import("chrome://redirector/content/js/xpcom.js");
+
+jQuery.fn.center = function () {
+    this.css("position","absolute");
+    this.css("top", (($(window).height() - this.outerHeight()) / 2) + $(window).scrollTop() + "px");
+    this.css("left", (($(window).width() - this.outerWidth()) / 2) + $(window).scrollLeft() + "px");
+    return this;
+}
 
 $(document).ready(function() {
 	var prefs = new RedirectorPrefs();
@@ -69,6 +77,7 @@ $(document).ready(function() {
 			for (var i = Redirector.redirectCount-imported; i < Redirector.redirectCount; i++) {
 				newlist.push(Redirector.getRedirectAt(i));
 			}				
+			databind();
 		}
 	}
 	
@@ -85,7 +94,18 @@ $(document).ready(function() {
 			node.appendTo('#redirect-list');
 			node.data('redirect', redirect);
 		}
-		
+	}
+	
+	function bindRedirect(redirect) {
+		$('#description').val(redirect.description);
+		$('#example-url').val(redirect.exampleUrl);
+		$('#include-pattern').val(redirect.includePattern);
+		$('#exclude-pattern').val(redirect.excludePattern);
+		$('#redirect-to').val(redirect.redirectUrl);
+		$('#redirect-enabled').attr('checked', !redirect.disabled);
+		$('#unescape-matches').attr('checked', redirect.unescapeMatches);
+		$('#regex-pattern').attr('checked', redirect.patternType == Redirect.REGEX);
+		$('#wildcard-pattern').attr('checked', redirect.patternType == Redirect.WILDCARD);
 	}
 
 	$('#redirect-list li div a.delete').live('click', function(ev) {
@@ -96,17 +116,29 @@ $(document).ready(function() {
 		}
 		ev.preventDefault();
 	});
+	
+	function showRedirect(redirect) {
+		bindRedirect(redirect);
+		$('#redirect-form').center().css('top', '-=40px').show();
+	}
 
 	$('#redirect-list li div a.edit').live('click', function(ev) {
 		var redirect = $(this.parentNode.parentNode).data('redirect');
-		$('#redirect-form').show();
+		showRedirect(redirect);
 		ev.preventDefault();
 	});
 
 	databind();
 	$('#import').click(importRedirects);
 	$('#export').click(exportRedirects);
+	$('#new-redirect').click(function() { showRedirect({patternType:Redirect.REGEX});});
+	$('#configure').click(configure);
+	$('#cancel').click(function() { $('#redirect-form').hide();});
+	$('#configure').click(configure);
 	
+	function configure() {
+		$('#config').show();
+	}
 	function bindConfig() {
 		$('#config input[type="checkbox"]').each(function() {
 			var pref = $(this).attr('data-pref');

@@ -29,12 +29,30 @@ li:first-child { border-top:none;}
 	box-shadow: 0px 0px 2px grey;
 	text-shadow: 1px 1px 1px white;
 }
-#config { display:none; position:fixed; margin:auto;}
+#config { 
+	display:none; 
+	position:fixed; 
+	margin:auto;
+}
+
 button { border:solid 1px grey; border-radius:4px; background:-moz-linear-gradient(top, #ccc, #fff); cursor:pointer;}
 h5 { text-align:center; margin:0px; padding-left:130px; }
 .pattern, .redirectTo { color:blue; font-style:italic;}
 .exampleUrl, .redirectResult { color:blue; }
 #redirect-list li:nth-child(odd) { background:-moz-linear-gradient(top, #ddf, #cce); }
 #redirect-list li:nth-child(even) { background-color:#fff; }
-#redirect-form div { display:table-row; }
-#redirect-form { display:none; position:fixed; margin:0 auto; border:solid 1px black; }
+
+#redirect-form div {  margin-top:5px; display:table-row; }
+#redirect-form div label{ text-align:right; padding:6px;}
+#redirect-form div input[type='text']{  margin-top:7px; width:300px; display:inline-block; }
+
+.button-row { text-align:center; display:block !important;}
+#redirect-form {
+	background:-moz-linear-gradient(top, #fff, #bcd);
+	border-radius:8px;
+	display:none; 
+	position:fixed; 
+	margin:0 auto; 
+	padding:10px;
+	box-shadow: 0px 0px 4px black;
+}

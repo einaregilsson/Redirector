@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<title>Redirector Extension Settings</title>
-		<link rel="stylesheet" href="css/redirector.css" />
+		<link rel="stylesheet" href="css/redirector.css?sfsdf" />
 		<script type="text/javascript" src="js/jquery-1.6.2.min.js"></script>
 		<script type="text/javascript" src="js/redirector-ui.js"></script>
 	</head>
@@ -27,10 +27,10 @@
 		</ul>
 		<div id="config">
 			<h2>Configuration</h2>
-			<input type="checkbox" id="enable-redirector" data-pref="enabled" />Enabled
-			<input type="checkbox" id="show-status-bar-icon" data-pref="showStatusBarIcon"/> Statusbar icon
-			<input type="checkbox" id="show-context-menu" data-pref="showContextMenu"/> Context menu
-			<input type="checkbox" id="enable-debug-output" data-pref="debugEnabled"/> Debug output
+			<input type="checkbox" id="enable-redirector" data-pref="enabled" /><label>Enabled</label>
+			<input type="checkbox" id="show-status-bar-icon" data-pref="showStatusBarIcon"/><label>Statusbar icon</label>
+			<input type="checkbox" id="show-context-menu" data-pref="showContextMenu"/><label>Context menu</label>
+			<input type="checkbox" id="enable-debug-output" data-pref="debugEnabled"/><label>Debug output</label>
 		</div>
 		<div id="redirect-form">
 			<div>
@@ -65,6 +65,10 @@
 			<div>
 				<label>Enabled</label>
 				<input type="checkbox" id="redirect-enabled" />
+			</div>
+			<div class="button-row">
+				<button id="save">Save</button>
+				<button id="cancel">Cancel</button>
 			</div>
 		</div>
 	</body>
