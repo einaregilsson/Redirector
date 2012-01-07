@@ -33,8 +33,10 @@ li:first-child { border-top:none;}
 	display:none; 
 	position:fixed; 
 	margin:auto;
+	width:300px;
 }
 
+h2 { text-align:center; margin-top:0px; }
 button { border:solid 1px grey; border-radius:4px; background:-moz-linear-gradient(top, #ccc, #fff); cursor:pointer;}
 h5 { text-align:center; margin:0px; padding-left:130px; }
 .pattern, .redirectTo { color:blue; font-style:italic;}
@@ -46,6 +48,9 @@ h5 { text-align:center; margin:0px; padding-left:130px; }
 #redirect-form div label{ text-align:right; padding:6px;}
 #redirect-form div input[type='text']{  margin-top:7px; width:300px; display:inline-block; }
 
+
+#config label{ display:inline; }
+#config input { margin-top:10px; }
 .button-row { text-align:center; display:block !important;}
 
 .dialog {

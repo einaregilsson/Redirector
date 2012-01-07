@@ -14,6 +14,7 @@
 			<button id="configure">Configure</button>
 			<button id="import">Import</button>
 			<button id="export">Export</button>
+			<button id="help">Help</button>
 		</div>
 		<ul id="redirect-list">
 			<li>
@@ -27,11 +28,14 @@
 		</ul>
 		<div id="config" class="dialog">
 			<h2>Configuration</h2>
-			<input type="checkbox" id="enable-redirector" data-pref="enabled" /><label>Enabled</label>
-			<input type="checkbox" id="show-status-bar-icon" data-pref="showStatusBarIcon"/><label>Statusbar icon</label>
-			<input type="checkbox" id="show-context-menu" data-pref="showContextMenu"/><label>Context menu</label>
-			<input type="checkbox" id="enable-debug-output" data-pref="debugEnabled"/><label>Debug output</label>
-		</div>
+			<input type="checkbox" id="enable-redirector" data-pref="enabled" /><label>Enabled</label><br />
+			<input type="checkbox" id="show-status-bar-icon" data-pref="showStatusBarIcon"/><label>Statusbar icon</label><br />
+			<input type="checkbox" id="show-context-menu" data-pref="showContextMenu"/><label>Context menu</label><br />
+			<input type="checkbox" id="enable-debug-output" data-pref="debugEnabled"/><label>Debug output</label><br />
+			<div class="button-row">
+				<button id="close">Close</button>
+			</div>
+			</div>
 		<div id="redirect-form" class="dialog">
 			<div>
 				<label>Description</label>

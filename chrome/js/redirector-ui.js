@@ -238,6 +238,12 @@ $(document).ready(function() {
 	$('#configure').click(configure);
 	$('#save').click(saveRedirect);
 	$('#test-pattern').click(testPattern);
+	$('#close').click(function() {
+		$('#config').hide();
+	});
+	$('#help').click(function() {
+		window.location.href = "chrome://redirector/content/help.html";	
+	});
 	
 	bindConfig();
 	prefs.addListener({ changedPrefs:bindConfig});
