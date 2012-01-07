@@ -110,7 +110,7 @@ Redirector = {
 	},	
 	
 	handleUpgrades : function(){
-		var currentVersion = '3.0';
+		var currentVersion = '2.7';
 		this._list = [];
 
 		if (this._prefs.version == currentVersion) {

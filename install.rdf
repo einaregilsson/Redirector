@@ -4,7 +4,7 @@
   <Description about="urn:mozilla:install-manifest">
     <em:id>redirector@einaregilsson.com</em:id>
     <em:name>Redirector</em:name>
-    <em:version>3.0</em:version>
+    <em:version>2.7</em:version>
     <em:creator>Einar Egilsson</em:creator>
     <em:description>Automatically redirects to user-defined urls on certain pages</em:description>
     <em:homepageURL>http://einaregilsson.com/projects/redirector/</em:homepageURL>
@@ -16,7 +16,7 @@
       <Description>
         <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id> <!-- firefox -->
         <em:minVersion>5.0</em:minVersion>
-        <em:maxVersion>8.*</em:maxVersion>
+        <em:maxVersion>9.*</em:maxVersion>
       </Description>
     </em:targetApplication>
   </Description>
