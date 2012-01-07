@@ -28,7 +28,6 @@ function validateRedirect(redirect) {
 		if (!result.isMatch) {
 			title = tr('warningExampleUrlDoesntMatchPatternTitle');
 			msg = tr('warningExampleUrlDoesntMatchPattern');
-			var ps = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Components.interfaces.nsIPromptService);
 			var rv = PromptService.confirmEx(window, title, msg, PromptService.STD_YES_NO_BUTTONS, PromptService.BUTTON_TITLE_YES, PromptService.BUTTON_TITLE_NO, null, null, {});				
 			return rv == 0;
 		} else {
@@ -38,10 +37,10 @@ function validateRedirect(redirect) {
 				resultUrl = uri.resolve(resultUrl);
 			} 
 	
-			var secondResult = args.redirect.getMatch(resultUrl);
+			var secondResult = redirect.getMatch(resultUrl);
 			if (secondResult.isMatch) {
-				title = this.strings.getString('errorExampleUrlMatchesRecursiveTitle');
-				msg = this.strings.getFormattedString('errorExampleUrlMatchesRecursive', [args.redirect.exampleUrl, resultUrl]);
+				title = tr('errorExampleUrlMatchesRecursiveTitle');
+				msg = tr('errorExampleUrlMatchesRecursive', [redirect.exampleUrl, resultUrl]);
 				alert(title, msg);
 				return false;
 			}
@@ -179,7 +178,7 @@ function saveRedirect() {
 }
 
 function configure() {
-	$('#config').show();
+	$('#config').center().css('top', '-=40px').show();
 }
 function bindConfig() {
 	$('#config input[type="checkbox"]').each(function() {

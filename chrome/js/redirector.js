@@ -36,7 +36,7 @@ Redirector = {
 
 	debug : function(msg) {
 		if (this._prefs.debugEnabled) {
-			this._cout.logStringMessage('REDIRECTOR: ' + msg);
+			ConsoleService.logStringMessage('REDIRECTOR: ' + msg);
 		}
 	},
 	
@@ -46,14 +46,12 @@ Redirector = {
 	},
 	
 	exportRedirects : function(file) {
-		var fileStream = Cc["@mozilla.org/network/file-output-stream;1"].createInstance(Ci.nsIFileOutputStream);
 		const PR_WRONLY 	 = 0x02;
 		const PR_CREATE_FILE = 0x08;
 		const PR_TRUNCATE	 = 0x20;
 
-		fileStream.init(file, PR_WRONLY | PR_CREATE_FILE | PR_TRUNCATE, 0644, 0);
-		var stream = Cc["@mozilla.org/intl/converter-output-stream;1"].createInstance(Ci.nsIConverterOutputStream);
-		stream.init(fileStream, "UTF-8", 16384, Ci.nsIConverterInputStream.DEFAULT_REPLACEMENT_CHARACTER);
+		var fileStream = new FileOutputStream(file, PR_WRONLY | PR_CREATE_FILE | PR_TRUNCATE, 0644, 0);
+		var stream = new ConverterOutputStream(fileStream, "UTF-8", 16384, Ci.nsIConverterInputStream.DEFAULT_REPLACEMENT_CHARACTER);
 		var rjson = { createdBy : 'Redirector v' + this._prefs.version, createdAt : new Date(), redirects :[]};
 		for each (var re in this._list) {
 			rjson.redirects.push(re.toObject());
@@ -106,13 +104,13 @@ Redirector = {
 	},
 	
 	_getRedirectsFile : function() {
-		var file = Cc["@mozilla.org/file/directory_service;1"].getService(Ci.nsIProperties).get("ProfD", Ci.nsIFile);
+		var file = DirectoryService.get("ProfD", Ci.nsIFile);
 		file.append('redirector.rjson');
 		return file;
 	},	
 	
 	handleUpgrades : function(){
-		var currentVersion = '2.6';
+		var currentVersion = '3.0';
 		this._list = [];
 
 		if (this._prefs.version == currentVersion) {
@@ -121,7 +119,7 @@ Redirector = {
 		//Here update checks are handled
 			
 		try {
-			var branch = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefService).getBranch("extensions.redirector.");
+			var branch = PrefService.getBranch("extensions.redirector.");
 			var data = branch.getCharPref("redirects");
 		} catch(e) {
 			this._prefs.version = currentVersion;
@@ -294,13 +292,12 @@ Redirector = {
 	_prefs : null,
 	_list : null,
 	_strings : null,
-	_cout : Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService),
 
 	init : function() {
 		if (this._prefs) {
 			this._prefs.dispose();
 		}
-		this._cout.logStringMessage('REDIRECTOR CREATED');
+		ConsoleService.logStringMessage('REDIRECTOR CREATED');
 		this._prefs = new RedirectorPrefs();
 		//Check if we need to update existing redirects
 		var data = this._prefs.redirects;
@@ -321,10 +318,8 @@ Redirector = {
 	
 	_loadStrings : function() {
 		var src = 'chrome://redirector/locale/redirector.properties';
-		var localeService = Cc["@mozilla.org/intl/nslocaleservice;1"].getService(Ci.nsILocaleService);
-		var appLocale = localeService.getApplicationLocale();
-		var stringBundleService = Cc["@mozilla.org/intl/stringbundle;1"].getService(Ci.nsIStringBundleService);
-		this._strings = stringBundleService.createBundle(src, appLocale);	 
+		var appLocale = LocaleService.getApplicationLocale();
+		this._strings = StringBundleService.createBundle(src, appLocale);	 
 	},	  
 	
 	_containsRedirect : function(redirect) {
@@ -345,9 +340,7 @@ Redirector = {
 	},
 	
 	_msgBox : function(title, text) {
-		Cc["@mozilla.org/embedcomp/prompt-service;1"]
-			.getService(Ci.nsIPromptService)
-				.alert(null, title, text);
+		PromptService.alert(null, title, text);
 	},
 
 	_makeAbsoluteUrl : function(currentUrl, relativeUrl) {
@@ -356,9 +349,7 @@ Redirector = {
 			return relativeUrl;
 		} 
 		
-		var ioService = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
-		var uri = ioService.newURI(currentUrl, null, null); 
-		
+		var uri = IOService.newURI(currentUrl, null, null); 
 		return uri.resolve(relativeUrl);
 	}
 };
