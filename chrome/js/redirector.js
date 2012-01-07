@@ -1,12 +1,12 @@
 Components.utils.import("chrome://redirector/content/js/xpcom.js");
 Components.utils.import("chrome://redirector/content/js/redirect.js");
 Components.utils.import("chrome://redirector/content/js/redirectorprefs.js");
-Components.utils.import("chrome://redirector/content/js/proxyserver.js");
+//Components.utils.import("chrome://redirector/content/js/proxyserver.js");
 
 var EXPORTED_SYMBOLS = ['Redirector', 'rdump'];
 
 function rdump(msg) {
-	//dump(msg + '\n');
+	Redirector.debug(msg);
 }
 
 Redirector = {
@@ -131,7 +131,7 @@ Redirector = {
 			for each (redirectString in data.split(':::')) {
 				if (!redirectString || !redirectString.split) {
 					continue;
-					rdump('Invalid old redirect: ' + redirectString);
+					this.debug('Invalid old redirect: ' + redirectString);
 				}	
 				var parts = redirectString.split(',,,');
 				if (parts.length < 5) {
@@ -189,7 +189,7 @@ Redirector = {
 			return Ci.nsIContentPolicy.ACCEPT;
 		} //Immediately, otherwise we will log all sorts of crap
 			
-		rdump('nsIContentPolicy::ShouldLoad ' + contentLocation.spec);
+		this.debug('nsIContentPolicy::ShouldLoad ' + contentLocation.spec);
 		try {
 			//This is also done in getRedirectUrl, but we want to exit as quickly as possible for performance
 			if (!this._prefs.enabled) {
@@ -239,7 +239,7 @@ Redirector = {
 	{
 		try {
 			let newLocation = newChannel.URI.spec;
-			rdump('nsIChannelEventSink::onChannelRedirect ' + newLocation);
+			this.debug('nsIChannelEventSink::onChannelRedirect ' + newLocation);
 
 			if (!(newChannel.loadFlags & Ci.nsIChannel.LOAD_DOCUMENT_URI)) {
 				//We only redirect documents...
@@ -282,7 +282,7 @@ Redirector = {
 			
 		} catch (e if (e != Cr.NS_BASE_STREAM_WOULD_BLOCK)) {
 			// We shouldn't throw exceptions here - this will prevent the redirect.
-			rdump("Redirector: Unexpected error in onChannelRedirect: " + e + "\n");
+			this.debug("Redirector: Unexpected error in onChannelRedirect: " + e + "\n");
 		}
 	},
 	//end nsIChannelEventSink
@@ -310,8 +310,8 @@ Redirector = {
 			this.importRedirects(redirectsFile);
 		}
 		
-		RedirectorProxy.start(this._prefs.proxyServerPort);
-		rdump('Registering as Proxy Filter');
+		//RedirectorProxy.start(this._prefs.proxyServerPort);
+		//rdump('Registering as Proxy Filter');
 		//var pps = Cc["@mozilla.org/network/protocol-proxy-service;1"].getService(Ci.nsIProtocolProxyService);		
 		//pps.registerFilter(this, 0);
 	},
