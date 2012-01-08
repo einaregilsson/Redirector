@@ -22,6 +22,19 @@ function tr(name, args) {
 	}
 }
 
+function validatePattern(pattern, patternType) {
+	if (patternType != Redirect.REGEX) {
+		return true;
+	}
+	try {
+		var rx = new RegExp(pattern)
+		return true;
+	} catch(e) {
+		alert(tr('regexPatternErrorTitle'), tr('regexPatternError', [pattern, e.toString()]));
+		return false;
+	}
+}
+
 function validateRedirect(redirect) {
 	if (!/^\s*$/.test(redirect.exampleUrl)) {
 		var result = redirect.getMatch(redirect.exampleUrl);
@@ -145,24 +158,37 @@ function showRedirect(redirect) {
 }
 
 function controlsToRedirect(redirect) {
-	redirect.description = $('#description').val();
-	redirect.exampleUrl = $('#example-url').val();
-	redirect.includePattern = $('#include-pattern').val();
-	redirect.excludePattern = $('#exclude-pattern').val();
-	redirect.redirectUrl = $('#redirect-to').val();
-	redirect.disabled =	!$('#redirect-enabled').attr('checked');
-	redirect.unescapeMatches = $('#unescape-matches').attr('checked');
 	if ($('#regex-pattern').attr('checked')) {
 		redirect.patternType = Redirect.REGEX;
 	} else {
 		redirect.patternType = Redirect.WILDCARD;
 	}
+	
+	var inc = $('#include-pattern').val();
+	var exc = $('#exclude-pattern').val();
+	if (!validatePattern(inc, redirect.patternType)) {
+		return false;
+	}
+	if (!validatePattern(exc, redirect.patternType)) {
+		return false;
+	}
+	redirect.includePattern = inc;
+	redirect.excludePattern = exc;
+	
+	redirect.description = $('#description').val();
+	redirect.exampleUrl = $('#example-url').val();
+	redirect.redirectUrl = $('#redirect-to').val();
+	redirect.disabled =	!$('#redirect-enabled').attr('checked');
+	redirect.unescapeMatches = $('#unescape-matches').attr('checked');
+	return true;
 }
 
 function saveRedirect() {
 	//First validate:
 	var tmpRedirect = new Redirect();
-	controlsToRedirect(tmpRedirect);
+	if (!controlsToRedirect(tmpRedirect)) {
+		return;
+	}
 	if (!validateRedirect(tmpRedirect)) {
 		return;
 	}
@@ -190,8 +216,13 @@ function bindConfig() {
 function testPattern() {
 	try {
 		var redirect = new Redirect();
-		controlsToRedirect(redirect);
+		if (!controlsToRedirect(redirect)) {
+			return;
+		}
 		var extName = tr('extensionName');
+		if (!validateRedirect(redirect)) {
+			return;
+		}
 		var result = redirect.test();
 		if (result.isMatch) {
 			alert(extName, tr('testPatternSuccess', [redirect.includePattern, redirect.exampleUrl, result.redirectTo]));
