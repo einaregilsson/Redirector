@@ -15,8 +15,9 @@
 		<script type="text/javascript">
 
 		//Global variables
-		var subscriptLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
-		var redirector = Components.classes["@einaregilsson.com/redirector;1"].getService(Components.interfaces.rdIRedirector);
+		Components.utils.import("chrome://redirector/content/js/redirect.js");
+		Components.utils.import("chrome://redirector/content/js/redirector.js");
+		var redirector = Redirector;
 		
 		function setupTest(name, testcase) {
 			var table = document.createElement('table');
@@ -48,9 +49,6 @@
 		function setup() {
 			//quick and dirty cleanup
 			document.getElementById('tests').innerHTML = '';
-			subscriptLoader.loadSubScript('chrome://redirector/content/code/redirect.js');
-			subscriptLoader.loadSubScript('chrome://redirector/content/unittest/testcases.js');
-			redirector.reload();
 			
 			var sorted = [];
 			for (var name in tests) {
@@ -88,6 +86,7 @@
 		}
 		
 		</script>
+		<script type="text/javascript" src="testcases.js"></script>
 	</head>
 	<body onload="setup();">
 		<h1>Redirector Unit Tests</h1>

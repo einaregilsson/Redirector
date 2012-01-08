@@ -7,7 +7,7 @@ Components.utils.import("chrome://redirector/content/js/redirector.js");
 function RedirectorComponent() { }
 
 RedirectorComponent.prototype = {
-  classDescription: "My Hello World Javascript XPCOM Component",
+  classDescription: "Redirector",
   classID:          Components.ID("{b7a7a54f-0581-47ff-b086-d6920cb7a3f7}"),
   contractID:       "@einaregilsson.com/redirector;1",
   QueryInterface: function(iid) {

@@ -3,11 +3,7 @@ Components.utils.import("chrome://redirector/content/js/redirect.js");
 Components.utils.import("chrome://redirector/content/js/redirectorprefs.js");
 //Components.utils.import("chrome://redirector/content/js/proxyserver.js");
 
-var EXPORTED_SYMBOLS = ['Redirector', 'rdump'];
-
-function rdump(msg) {
-	Redirector.debug(msg);
-}
+var EXPORTED_SYMBOLS = ['Redirector'];
 
 Redirector = {
 	
@@ -81,12 +77,11 @@ Redirector = {
 				//check for loops...
 				result = redirect.getMatch(redirectUrl);
 				if (result.isMatch) {
-					var title = this._getString('invalidRedirectTitle');
 					var msg = this._getFormattedString('invalidRedirectText', [redirect.includePattern, url, redirectUrl]);
 					this.debug(msg);
 					redirect.disabled = true;
-					this.save();					
-					this._msgBox(title, msg);
+					this.save();
+					ConsoleService.logStringMessage('Redirector: ' + msg);
 				} else {
 					this.debug('Redirecting ' + url + ' to ' + redirectUrl);
 					return redirectUrl;
@@ -110,7 +105,7 @@ Redirector = {
 	},	
 	
 	handleUpgrades : function(){
-		var currentVersion = '2.7';
+		var currentVersion = '2.7.1';
 		this._list = [];
 
 		if (this._prefs.version == currentVersion) {
@@ -297,8 +292,8 @@ Redirector = {
 		if (this._prefs) {
 			this._prefs.dispose();
 		}
-		ConsoleService.logStringMessage('REDIRECTOR CREATED');
 		this._prefs = new RedirectorPrefs();
+		this.debug('REDIRECTOR CREATED');
 		//Check if we need to update existing redirects
 		var data = this._prefs.redirects;
 		var version = this._prefs.version;
@@ -311,7 +306,7 @@ Redirector = {
 		}
 		
 		//RedirectorProxy.start(this._prefs.proxyServerPort);
-		//rdump('Registering as Proxy Filter');
+		//Redirector.debug('Registering as Proxy Filter');
 		//var pps = Cc["@mozilla.org/network/protocol-proxy-service;1"].getService(Ci.nsIProtocolProxyService);		
 		//pps.registerFilter(this, 0);
 	},
@@ -339,10 +334,6 @@ Redirector = {
 		return this._strings.formatStringFromName(name, params, params.length);
 	},
 	
-	_msgBox : function(title, text) {
-		PromptService.alert(null, title, text);
-	},
-
 	_makeAbsoluteUrl : function(currentUrl, relativeUrl) {
 		
 		if (relativeUrl.match(/https?:/)) {
