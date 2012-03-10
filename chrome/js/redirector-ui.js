@@ -148,6 +148,7 @@ function bindRedirect(redirect) {
 	$('#redirect-to').val(redirect.redirectUrl);
 	$('#redirect-enabled').attr('checked', !redirect.disabled);
 	$('#unescape-matches').attr('checked', redirect.unescapeMatches);
+	$('#escape-matches').attr('checked', redirect.escapeMatches);
 	$('#regex-pattern').attr('checked', redirect.patternType == Redirect.REGEX);
 	$('#wildcard-pattern').attr('checked', redirect.patternType == Redirect.WILDCARD);
 }
@@ -180,6 +181,7 @@ function controlsToRedirect(redirect) {
 	redirect.redirectUrl = $('#redirect-to').val();
 	redirect.disabled =	!$('#redirect-enabled').attr('checked');
 	redirect.unescapeMatches = $('#unescape-matches').attr('checked');
+	redirect.escapeMatches = $('#escape-matches').attr('checked');
 	return true;
 }
 
