@@ -2,8 +2,8 @@
 var EXPORTED_SYMBOLS = ['Redirect'];
 
 
-function Redirect(exampleUrl, includePattern, redirectUrl, patternType, excludePattern, unescapeMatches, disabled) {
-	this._init(exampleUrl, includePattern, redirectUrl, patternType, excludePattern, unescapeMatches, disabled);
+function Redirect(exampleUrl, includePattern, redirectUrl, patternType, excludePattern, unescapeMatches, escapeMatches, disabled) {
+	this._init(exampleUrl, includePattern, redirectUrl, patternType, excludePattern, unescapeMatches, escapeMatches, disabled);
 }
 
 //Static
@@ -36,6 +36,7 @@ Redirect.prototype = {
 	},
 
 	unescapeMatches : false,
+	escapeMatches : false,
 	
 	disabled : false,
 	
@@ -57,6 +58,7 @@ Redirect.prototype = {
 			redirectUrl : this.redirectUrl,
 			patternType : this.patternType,
 			unescapeMatches : this.unescapeMatches,
+			escapeMatches : this.escapeMatches,
 			disabled : !!this.disabled
 		};
 	},
@@ -75,6 +77,7 @@ Redirect.prototype = {
 		this.redirectUrl = other.redirectUrl;
 		this.patternType = other.patternType;
 		this.unescapeMatches = other.unescapeMatches;
+		this.escapeMatches = other.escapeMatches;
 		this.disabled = other.disabled;
 	},
 
@@ -85,6 +88,7 @@ Redirect.prototype = {
 			&& this.redirectUrl == redirect.redirectUrl
 			&& this.patternType == redirect.patternType
 			&& this.unescapeMatches == redirect.unescapeMatches
+			&& this.escapeMatches == redirect.escapeMatches
 		;
 	},
 	
@@ -164,13 +168,14 @@ Redirect.prototype = {
 		return new RegExp(this._preparePattern(pattern),"gi");
 	},
 	
-	_init : function(exampleUrl, includePattern, redirectUrl, patternType, excludePattern, unescapeMatches, disabled) {
+	_init : function(exampleUrl, includePattern, redirectUrl, patternType, excludePattern, unescapeMatches, escapeMatches, disabled) {
 		this.exampleUrl = exampleUrl || '';
 		this.includePattern = includePattern || '';
 		this.excludePattern = excludePattern || '';
 		this.redirectUrl = redirectUrl || '';
 		this.patternType = patternType || Redirect.WILDCARD;
 		this.unescapeMatches = (unescapeMatches === 'true' || unescapeMatches === true);
+		this.escapeMatches = (escapeMatches === 'true' || escapeMatches === true);
 		this.disabled = (disabled === 'true' || disabled === true);
 	},
 	
@@ -182,6 +187,7 @@ Redirect.prototype = {
 			+  '\n\tRedirect url	 : ' + this.redirectUrl
 			+  '\n\tPattern type	 : ' + this.patternType
 			+  '\n\tUnescape matches : ' + this.unescapeMatches
+			+  '\n\tEscape matches : ' + this.escapeMatches
 			+  '\n\tDisabled		 : ' + this.disabled
 			+  '\n}\n';
 	},
@@ -196,7 +202,11 @@ Redirect.prototype = {
 		}
 		var resultUrl = this.redirectUrl;
 		for (var i = 1; i < matches.length; i++) {
-			resultUrl = resultUrl.replace(new RegExp('\\$' + i, 'gi'), this.unescapeMatches ? unescape(matches[i]) : matches[i]);
+			resultUrl = resultUrl.replace(new RegExp('\\$' + i, 'gi'), 
+					this.unescapeMatches ?	unescape(matches[i]) : 
+					this.escapeMatches ?		encodeURIComponent(matches[i]) : 
+																	matches[i]
+			);
 		}
 		this._rxInclude.lastIndex = 0;
 		return resultUrl;
