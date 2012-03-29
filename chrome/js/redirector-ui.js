@@ -79,7 +79,9 @@ function getFile(captionKey, mode) {
 	if (picker.show() == picker.returnCancel) {
 		return null;
 	}
-	prefs.defaultDir = picker.displayDirectory.path;
+	if (picker.displayDirectory) {
+		prefs.defaultDir = picker.displayDirectory.path;
+	}
 	return picker.file;
 }
 
