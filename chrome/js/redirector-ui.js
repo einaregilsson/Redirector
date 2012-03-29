@@ -70,6 +70,7 @@ function trPlural(name, count) {
 function getFile(captionKey, mode) {
 	var picker = new FilePicker(window, tr(captionKey), mode);
 	picker.defaultExtension = ".rjson";
+	picker.defaultString = "Redirector.rjson";
 	var dir = prefs.defaultDir;
 	if (dir) {
 		picker.displayDirectory = new LocalFile(dir);
@@ -79,7 +80,9 @@ function getFile(captionKey, mode) {
 	if (picker.show() == picker.returnCancel) {
 		return null;
 	}
-	prefs.defaultDir = picker.displayDirectory.path;
+	if (picker.displayDirectory) {
+		prefs.defaultDir = picker.displayDirectory.path;
+	}
 	return picker.file;
 }
 
