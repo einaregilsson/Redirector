@@ -1,6 +1,6 @@
 import os, os.path, zipfile
 
-xpi = zipfile.ZipFile('redirector-2.7.1.xpi','w')
+xpi = zipfile.ZipFile('ayubowan-redirector.xpi','w')
 for (root, folders, files) in os.walk('.'):
 	if 'unittest' in root:
 		continue

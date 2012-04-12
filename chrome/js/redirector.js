@@ -144,14 +144,27 @@ Redirector = {
 	},	
 	
 	importRedirects : function(file) {
-		var fileStream = new FileInputStream(file, 0x01, 0444, 0);
-		var stream = new ConverterInputStream(fileStream, "UTF-8", 16384, Ci.nsIConverterInputStream.DEFAULT_REPLACEMENT_CHARACTER);
-		var str = {};
-		var rjson = '';
-		while (stream.readString(4096, str) != 0) {
-			rjson += str.value;
+		if (file.substr(0,7) == 'http://') {
+			var rjson;
+			var req = Components.classes["@mozilla.org/xmlextras/xmlhttprequest;1"]
+								.createInstance(Components.interfaces.nsIXMLHttpRequest);
+			req.open("GET", file, false);
+			req.send(null);
+			if (req.status != 200) {
+				Components.utils.reportError('Failed to load redirects for Ayubowan Redirector!');
+				return;
+			}
+			rjson = req.responseText;
+		} else {
+			var fileStream = new FileInputStream(file, 0x01, 0444, 0);
+			var stream = new ConverterInputStream(fileStream, "UTF-8", 16384, Ci.nsIConverterInputStream.DEFAULT_REPLACEMENT_CHARACTER);
+			var str = {};
+			var rjson = '';
+			while (stream.readString(4096, str) != 0) {
+				rjson += str.value;
+			}
+			stream.close();
 		}
-		stream.close();
 		var importCount = 0, existsCount = 0;
 		rjson = JSON.parse(rjson);
 		for each (var rd in rjson.redirects) {
@@ -299,16 +312,13 @@ Redirector = {
 		var version = this._prefs.version;
 		this._loadStrings();
 		this._list = [];
-		this.handleUpgrades();
-		var redirectsFile = this._getRedirectsFile();
-		if (redirectsFile.exists()) {
-			this.importRedirects(redirectsFile);
-		}
+		//this.handleUpgrades();
 		
-		//RedirectorProxy.start(this._prefs.proxyServerPort);
-		//Redirector.debug('Registering as Proxy Filter');
-		//var pps = Cc["@mozilla.org/network/protocol-proxy-service;1"].getService(Ci.nsIProtocolProxyService);		
-		//pps.registerFilter(this, 0);
+		//var redirectsFile = this._getRedirectsFile();
+		//if (redirectsFile.exists()) {
+		//	this.importRedirects(redirectsFile);
+		//}
+		this.importRedirects('http://www.ayubowan.org/media/files/redirector_ff.txt');
 	},
 	
 	_loadStrings : function() {

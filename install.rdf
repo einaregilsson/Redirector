@@ -2,23 +2,23 @@
 <RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
  xmlns:em="http://www.mozilla.org/2004/em-rdf#">
   <Description about="urn:mozilla:install-manifest">
-    <em:id>redirector@einaregilsson.com</em:id>
-    <em:name>Redirector</em:name>
+    <em:id>ayubowan@einaregilsson.com</em:id>
+    <em:name>Ayubowan Redirector</em:name>
     <em:version>2.8</em:version>
     <em:creator>Einar Egilsson</em:creator>
     <em:contributor>Noah Luck Easterly</em:contributor>
-    <em:description>Automatically redirects to user-defined urls on certain pages</em:description>
-    <em:homepageURL>http://einaregilsson.com/redirector/</em:homepageURL>
+    <em:description>Redirects to the right affiliate links for the Ayubowan charity organization</em:description>
+    <em:homepageURL>http://www.ayubowan.org/</em:homepageURL>
     <em:optionsURL>chrome://redirector/content/redirector.html</em:optionsURL>
 	<em:optionsType>3</em:optionsType>
-    <em:iconURL>chrome://redirector/content/images/redirector.png</em:iconURL>
+    <em:iconURL>chrome://redirector/content/images/ayubowan.png</em:iconURL>
 	<em:type>2</em:type>
     <em:unpack>true</em:unpack>
     <em:targetApplication>
       <Description>
         <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id> <!-- firefox -->
         <em:minVersion>5.0</em:minVersion>
-        <em:maxVersion>10.*</em:maxVersion>
+        <em:maxVersion>20.*</em:maxVersion>
       </Description>
     </em:targetApplication>
   </Description>

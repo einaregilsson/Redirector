@@ -1,5 +1,5 @@
 <!-- $Id$ -->
-<!ENTITY RedirectorMenuItem.label "Redirector">
+<!ENTITY RedirectorMenuItem.label "Ayubowan Redirector">
 <!ENTITY RedirectorMenuItem.accesskey "R">
 <!ENTITY RedirectorContext.label "Add url to Redirector...">
 <!ENTITY RedirectorContext.accesskey "A">
