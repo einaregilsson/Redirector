@@ -4,7 +4,7 @@
   <Description about="urn:mozilla:install-manifest">
     <em:id>redirector@einaregilsson.com</em:id>
     <em:name>Redirector</em:name>
-    <em:version>2.8</em:version>
+    <em:version>3.0</em:version>
     <em:creator>Einar Egilsson</em:creator>
     <em:contributor>Noah Luck Easterly</em:contributor>
     <em:description>Automatically redirects to user-defined urls on certain pages</em:description>
