@@ -1,7 +1,6 @@
 Components.utils.import("chrome://redirector/content/js/xpcom.js");
 Components.utils.import("chrome://redirector/content/js/redirect.js");
 Components.utils.import("chrome://redirector/content/js/redirectorprefs.js");
-//Components.utils.import("chrome://redirector/content/js/proxyserver.js");
 
 var EXPORTED_SYMBOLS = ['Redirector'];
 
