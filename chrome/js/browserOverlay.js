@@ -18,7 +18,7 @@ var RedirectorOverlay = {
 			this.changedPrefs(this.prefs);
 			this.prefs.addListener(this); 
 			document.addEventListener('keypress', function(event) {
-				if ((event.charCode == 114) && event.altKey) { //alt+r
+				if ((RedirectorOverlay.prefs.enableShortcutKey) && (event.charCode == 114) && event.altKey) { //alt+r
 					RedirectorOverlay.toggleEnabled();
 				}
 			}, true);			
