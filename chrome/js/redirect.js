@@ -202,11 +202,14 @@ Redirect.prototype = {
 		}
 		var resultUrl = this.redirectUrl;
 		for (var i = 1; i < matches.length; i++) {
-			resultUrl = resultUrl.replace(new RegExp('\\$' + i, 'gi'), 
-					this.unescapeMatches ?	unescape(matches[i]) : 
-					this.escapeMatches ?		encodeURIComponent(matches[i]) : 
-																	matches[i]
-			);
+			var repl = matches[i] || '';
+			if (this.unescapeMatches) {
+				repl = unescape(repl);
+			}
+			if (this.escapeMatches) {
+				repl = encodeURIComponent(repl);
+			}
+			resultUrl = resultUrl.replace(new RegExp('\\$' + i, 'gi'), repl);
 		}
 		this._rxInclude.lastIndex = 0;
 		return resultUrl;

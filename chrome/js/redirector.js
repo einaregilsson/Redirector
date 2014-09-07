@@ -303,11 +303,6 @@ Redirector = {
 		if (redirectsFile.exists()) {
 			this.importRedirects(redirectsFile);
 		}
-		
-		//RedirectorProxy.start(this._prefs.proxyServerPort);
-		//Redirector.debug('Registering as Proxy Filter');
-		//var pps = Cc["@mozilla.org/network/protocol-proxy-service;1"].getService(Ci.nsIProtocolProxyService);		
-		//pps.registerFilter(this, 0);
 	},
 	
 	_loadStrings : function() {

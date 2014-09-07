@@ -1,6 +1,6 @@
-import os, os.path, zipfile
+import os, os.path, zipfile, sys
 
-xpi = zipfile.ZipFile('redirector-2.7.1.xpi','w')
+xpi = zipfile.ZipFile('redirector-' + raw_input('Version: ') + '.xpi','w')
 for (root, folders, files) in os.walk('.'):
 	if 'unittest' in root:
 		continue
