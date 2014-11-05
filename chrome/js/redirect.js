@@ -53,6 +53,7 @@ Redirect.prototype = {
 	toObject : function() {
 		return {
 			exampleUrl : this.exampleUrl,
+			description : this.description,
 			includePattern : this.includePattern,
 			excludePattern : this.excludePattern,
 			redirectUrl : this.redirectUrl,
