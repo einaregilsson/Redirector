@@ -62,6 +62,30 @@ function validateRedirect(redirect) {
 	return true;
 }
 
+function validateRedirectForTest(redirect) {
+	if (!/^\s*$/.test(redirect.exampleUrl)) {
+		var result = redirect.getMatch(redirect.exampleUrl);
+		if (!result.isMatch) {
+			return true;
+		} else {
+			var resultUrl = result.redirectTo;
+			if (!resultUrl.match(/https?:/)) {
+				var uri = IOService.newURI(redirect.exampleUrl, null, null); 
+				resultUrl = uri.resolve(resultUrl);
+			} 
+	
+			var secondResult = redirect.getMatch(resultUrl);
+			if (secondResult.isMatch) {
+				title = tr('errorExampleUrlMatchesRecursiveTitle');
+				msg = tr('errorExampleUrlMatchesRecursive', [redirect.exampleUrl, resultUrl]);
+				alert(title, msg);
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
 function trPlural(name, count) {
 	name += count == 1 ? 'Singular' : '';
 	return strings.formatStringFromName(name, [count],1);
@@ -134,10 +158,12 @@ function databind() {
 	for (var i = 0; i < Redirector.redirectCount; i++) {
 		var redirect = Redirector.getRedirectAt(i);
 		var node = $(template);
+		node.find('.description').html(redirect.description);
 		node.find('.pattern').html(redirect.includePattern);
 		node.find('.redirectTo').html(redirect.redirectUrl);
 		node.find('.exampleUrl').html(redirect.exampleUrl);
 		node.find('.redirectResult').html(redirect.getMatch(redirect.exampleUrl).redirectTo);
+		if (redirect.disabled) { node.find('.disabled').html('[Disabled] ');  }
 		node.appendTo('#redirect-list');
 		node.data('redirect', redirect);
 	}
@@ -182,7 +208,7 @@ function controlsToRedirect(redirect) {
 	redirect.description = $('#description').val();
 	redirect.exampleUrl = $('#example-url').val();
 	redirect.redirectUrl = $('#redirect-to').val();
-	redirect.disabled =	!$('#redirect-enabled').attr('checked');
+	redirect.disabled = !$('#redirect-enabled').attr('checked');
 	redirect.unescapeMatches = $('#unescape-matches').attr('checked');
 	redirect.escapeMatches = $('#escape-matches').attr('checked');
 	return true;
@@ -225,7 +251,7 @@ function testPattern() {
 			return;
 		}
 		var extName = tr('extensionName');
-		if (!validateRedirect(redirect)) {
+		if (!validateRedirectForTest(redirect)) {
 			return;
 		}
 		var result = redirect.test();
