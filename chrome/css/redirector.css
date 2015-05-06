@@ -1,10 +1,22 @@
 /* Redirector CSS */
 
 /* entire page */
-html { font-family: "Segoe UI"; }
+body { 
+  font-family: Tahoma, Arial, sans-serif; 
+  font-size:12pt; 
+  min-height:100%;
+  background:-moz-linear-gradient(top, #AFCFFE,#fff);
+  margin:0; padding:0;
+}
+
+html {
+  height:100%;
+  margin:0; 
+  padding:0;
+}
 
 /* main header */
-h1 { margin: 0px; text-align: center; font-size: 280%; line-height: 90%; font-style: italic; }
+h1 { margin-top: 40px; margin-bottom:0; text-align: center; font-size: 280%; line-height: 90%; font-style: italic; color:#222; }
 
 /* sub-header */
 h5 { margin: 0px; padding-left: 14em; text-align: center; }
@@ -15,8 +27,9 @@ h5 { margin: 0px; padding-left: 14em; text-align: center; }
 /* table (list) of redirect rules */
 #redirect-list { 
   width: 96%; 
-  box-shadow: 0px 0px 2px gray;
-  border: solid 2px gray; 
+  max-width:600px;
+  box-shadow: 0px 0px 2px black;
+  border: solid 1px gray; 
   margin: auto; 
   padding: 0px;
   list-style-type: none; 
@@ -28,6 +41,7 @@ h5 { margin: 0px; padding-left: 14em; text-align: center; }
 #redirect-list > li { margin: 0px; border-top: dotted 1px gray; padding: 8px 2px 12px 10px; font-size: 80%; }
 #redirect-list > li:first-child { border-top: none; }
 #redirect-list > li:nth-child(odd) { background-color: #f0f0f0; }
+#redirect-list > li:nth-child(even) { background-color: white; }
 
 /* rule within each cell */
 .disabled { font-weight: bold; color: red; }

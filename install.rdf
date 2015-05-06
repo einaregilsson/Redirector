@@ -4,9 +4,10 @@
   <Description about="urn:mozilla:install-manifest">
     <em:id>redirector@einaregilsson.com</em:id>
     <em:name>Redirector</em:name>
-    <em:version>2.8.4</em:version>
+    <em:version>2.9</em:version>
     <em:creator>Einar Egilsson</em:creator>
     <em:contributor>Noah Luck Easterly</em:contributor>
+    <em:contributor>https://github.com/gitoffthelawn</em:contributor>
     <em:description>Automatically redirects to user-defined urls on certain pages</em:description>
     <em:homepageURL>http://einaregilsson.com/redirector/</em:homepageURL>
     <em:optionsURL>chrome://redirector/content/redirector.html</em:optionsURL>
@@ -18,7 +19,7 @@
       <Description>
         <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id> <!-- firefox -->
         <em:minVersion>5.0</em:minVersion>
-        <em:maxVersion>12.*</em:maxVersion>
+        <em:maxVersion>38.*</em:maxVersion>
       </Description>
     </em:targetApplication>
   </Description>
