@@ -1,22 +1,22 @@
 /* Redirector CSS */
 
 /* entire page */
-body { 
-  font-family: Tahoma, Arial, sans-serif; 
-  font-size:12pt; 
-  min-height:100%;
-  background:-moz-linear-gradient(top, #AFCFFE,#fff);
-  margin:0; padding:0;
-}
-
 html {
-  height:100%;
-  margin:0; 
-  padding:0;
+  height: 100%;
+  margin: 0px; 
+  padding: 0px;
+}
+body { 
+  font-family: Tahoma; 
+  font-size: 90%; 
+  min-height: 100%;
+  background: linear-gradient ( to bottom, #afcffe, #fff);
+  background-attachment: fixed; 
+  margin: 0px; padding:0px;
 }
 
 /* main header */
-h1 { margin-top: 40px; margin-bottom:0; text-align: center; font-size: 280%; line-height: 90%; font-style: italic; color:#222; }
+h1 { margin-top: 25px; margin-bottom:0; text-align: center; font-size: 280%; line-height: 90%; font-style: italic; color:#222; }
 
 /* sub-header */
 h5 { margin: 0px; padding-left: 14em; text-align: center; }
@@ -26,8 +26,7 @@ h5 { margin: 0px; padding-left: 14em; text-align: center; }
 
 /* table (list) of redirect rules */
 #redirect-list { 
-  width: 96%; 
-  max-width:600px;
+  width: 80em; 
   box-shadow: 0px 0px 2px black;
   border: solid 1px gray; 
   margin: auto; 
