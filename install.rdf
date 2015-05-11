@@ -4,7 +4,7 @@
   <Description about="urn:mozilla:install-manifest">
     <em:id>redirector@einaregilsson.com</em:id>
     <em:name>Redirector</em:name>
-    <em:version>2.9</em:version>
+    <em:version>2.9.1</em:version>
     <em:creator>Einar Egilsson</em:creator>
     <em:contributor>Noah Luck Easterly</em:contributor>
     <em:contributor>https://github.com/gitoffthelawn</em:contributor>
