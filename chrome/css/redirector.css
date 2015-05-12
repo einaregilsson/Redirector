@@ -2,7 +2,7 @@
 
 /* entire page */
 body { 
-  font-family: Tahoma, Arial, sans-serif; 
+  font-family: Segoe UI, Tahoma, sans-serif; 
   font-size: 90%; 
   background: linear-gradient(to bottom, #afcffe, #fff);
   background-attachment: fixed; 
@@ -11,12 +11,12 @@ body {
 /* main header */
 h1 { 
   margin-top: 25px; 
-  margin-bottom:0; 
+  margin-bottom: 0px; 
   text-align: center; 
   font-size: 280%; 
   line-height: 90%; 
   font-style: italic; 
-  color:#222; 
+  color: #222; 
 }
 
 /* sub-header */
@@ -67,7 +67,8 @@ h5 {
 
 /* rule within each cell */
 .disabled { 
-  font-weight: bold; color: red; 
+  font-weight: bold;
+  color: red; 
 }
 
 .description { 
@@ -123,7 +124,8 @@ label, input {
 }
 
 .button-row { 
-  text-align: center; display: block !important; 
+  display: block !important; 
+  text-align: center;
 }
 
 button { 
@@ -132,11 +134,13 @@ button {
 
 /* New (and Edit) Redirect dialog box */
 #redirect-form > div { 
-  margin-top: 3px; display: table-row; 
+  display: table-row; 
+  margin-top: 3px;
 }
 
 #redirect-form > div > label { 
-  text-align: right; padding: 6px; 
+  text-align: right;
+  padding: 6px; 
 }
 
 #redirect-form > div > input[type='text'] { 
