@@ -27,4 +27,10 @@
              onclick="RedirectorOverlay.statusBarClick(event);" />
     </statusbarpanel>
   </statusbar>
+  <toolbarpalette id="BrowserToolbarPalette">
+    <toolbarbutton id="redirector-toolbar-img"
+                   label="Redirector"
+                   image="chrome://redirector/content/images/statusactive.png"
+                   onclick="RedirectorOverlay.statusBarClick(event);return false;" />
+  </toolbarpalette>
 </overlay>
