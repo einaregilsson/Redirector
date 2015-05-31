@@ -38,18 +38,18 @@ var RedirectorOverlay = {
 
 	changedPrefs : function(prefs) {
 		var statusImg = document.getElementById('redirector-statusbar-img');
-		var tootbarImg = document.getElementById('redirector-toolbar-img');
+		var toolbarImg = document.getElementById('redirector-toolbar-img');
 
 		if (prefs.enabled) {
 			statusImg.src = 'chrome://redirector/content/images/statusactive.png'
 			statusImg.setAttribute('tooltiptext', this.strings.getString('enabledTooltip'));
-			tootbarImg.setAttribute('image', 'chrome://redirector/content/images/statusactive.png');
-			tootbarImg.setAttribute('tooltiptext', this.strings.getString('enabledTooltip'));
+			toolbarImg.setAttribute('image', 'chrome://redirector/content/images/statusactive.png');
+			toolbarImg.setAttribute('tooltiptext', this.strings.getString('enabledTooltip'));
 		} else {
 			statusImg.src = 'chrome://redirector/content/images/statusinactive.png'
 			statusImg.setAttribute('tooltiptext', this.strings.getString('disabledTooltip'));
-			tootbarImg.setAttribute('image', 'chrome://redirector/content/images/statusinactive.png');
-			tootbarImg.setAttribute('tooltiptext', this.strings.getString('disabledTooltip'));
+			toolbarImg.setAttribute('image', 'chrome://redirector/content/images/statusinactive.png');
+			toolbarImg.setAttribute('tooltiptext', this.strings.getString('disabledTooltip'));
 		}
 
 		document.getElementById('redirector-status').hidden = !prefs.showStatusBarIcon;
