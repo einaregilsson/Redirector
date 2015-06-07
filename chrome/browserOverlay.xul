@@ -13,24 +13,11 @@
               accesskey="&RedirectorMenuItem.accesskey;"
               oncommand="RedirectorOverlay.onMenuItemCommand(event);"/>
   </menupopup>
-  <popup id="contentAreaContextMenu">
-    <menuitem id="redirector-context" label="&RedirectorContext.label;"
-              accesskey="&RedirectorContext.accesskey;"
-              insertafter="context-stop"
-              oncommand="RedirectorOverlay.onContextMenuCommand(event)"/>
-  </popup>
-  <statusbar id="status-bar">
-    <statusbarpanel id="redirector-status">
-      <image id="redirector-statusbar-img" src="chrome://redirector/content/images/statusactive.png"
-             tooltiptext="Redirector is enabled;"
-             style="width:16px; height:16px;"
-             onclick="RedirectorOverlay.statusBarClick(event);" />
-    </statusbarpanel>
-  </statusbar>
   <toolbarpalette id="BrowserToolbarPalette">
     <toolbarbutton id="redirector-toolbar-img"
                    label="Redirector"
+                   class="toolbarbutton-1 chromeclass-toolbar-additional" 
                    image="chrome://redirector/content/images/statusactive.png"
-                   onclick="RedirectorOverlay.statusBarClick(event);return false;" />
+                   onclick="RedirectorOverlay.toolBarClick(event);return false;" />
   </toolbarpalette>
 </overlay>

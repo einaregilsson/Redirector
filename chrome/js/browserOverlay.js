@@ -9,10 +9,6 @@ var RedirectorOverlay = {
 	onLoad : function(event) {
 		try {
 
-			// initialization code
-			document.getElementById('contentAreaContextMenu')
-				.addEventListener("popupshowing", function(e) { RedirectorOverlay.showContextMenu(e); }, false);
-			
 			this.strings = document.getElementById("redirector-strings");
 			this.prefs = new RedirectorPrefs();
 			this.changedPrefs(this.prefs);
@@ -37,42 +33,19 @@ var RedirectorOverlay = {
 	},
 
 	changedPrefs : function(prefs) {
-		var statusImg = document.getElementById('redirector-statusbar-img');
 		var toolbarImg = document.getElementById('redirector-toolbar-img');
 
-		if (prefs.enabled) {
-			statusImg.src = 'chrome://redirector/content/images/statusactive.png'
-			statusImg.setAttribute('tooltiptext', this.strings.getString('enabledTooltip'));
-			toolbarImg.setAttribute('image', 'chrome://redirector/content/images/statusactive.png');
-			toolbarImg.setAttribute('tooltiptext', this.strings.getString('enabledTooltip'));
-		} else {
-			statusImg.src = 'chrome://redirector/content/images/statusinactive.png'
-			statusImg.setAttribute('tooltiptext', this.strings.getString('disabledTooltip'));
-			toolbarImg.setAttribute('image', 'chrome://redirector/content/images/statusinactive.png');
-			toolbarImg.setAttribute('tooltiptext', this.strings.getString('disabledTooltip'));
-		}
-
-		document.getElementById('redirector-status').hidden = !prefs.showStatusBarIcon;
-		document.getElementById('redirector-context').hidden = !prefs.showContextMenu;
-	},
-	
-	showContextMenu : function(event) {
-		if (gContextMenu.onLink) {
-			document.getElementById("redirector-context").label = this.strings.getString('addLinkUrl');
-		} else {
-			document.getElementById("redirector-context").label = this.strings.getString('addCurrentUrl');
+		if (toolbarImg) {
+			if (prefs.enabled) {
+				toolbarImg.setAttribute('image', 'chrome://redirector/content/images/statusactive.png');
+				toolbarImg.setAttribute('tooltiptext', this.strings.getString('enabledTooltip'));
+			} else {
+				toolbarImg.setAttribute('image', 'chrome://redirector/content/images/statusinactive.png');
+				toolbarImg.setAttribute('tooltiptext', this.strings.getString('disabledTooltip'));
+			}
 		}
 	},
-
-	onContextMenuCommand: function(event) {
-		var redirect = new Redirect(window.content.location.href, window.content.location.href);
-		if (gContextMenu.onLink) {
-			redirect.redirectUrl = gContextMenu.link.toString();
-		}
-
-		gBrowser.selectedTab = gBrowser.addTab("chrome://redirector/content/redirector.html");	
-	},
-		
+			
 	onMenuItemCommand: function(event) {
 		this.openSettings();
 	},
@@ -85,7 +58,7 @@ var RedirectorOverlay = {
 		gBrowser.selectedTab = gBrowser.addTab("chrome://redirector/content/redirector.html");	
 	},
 	
-	statusBarClick : function(event) {
+	toolBarClick : function(event) {
 		var LEFT = 0, RIGHT = 2;
 
 		if (event.button == LEFT) {
