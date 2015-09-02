@@ -1,9 +1,0 @@
-content redirector file:chrome/
-locale  redirector en-US   file:locale/en-US/
-
-overlay chrome://browser/content/browser.xul    chrome://redirector/content/browserOverlay.xul
-
-component {b7a7a54f-0581-47ff-b086-d6920cb7a3f7} chrome/js/component.js
-contract @einaregilsson.com/redirector;1 {b7a7a54f-0581-47ff-b086-d6920cb7a3f7}
-category content-policy  Redirector @einaregilsson.com/redirector;1
-category net-channel-event-sinks  Redirector @einaregilsson.com/redirector;1

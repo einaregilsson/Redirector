@@ -1,0 +1,18 @@
+{
+
+  "manifest_version": 2,
+  "name": "Redirector",
+  "version": "3.0",
+
+  "permissions" : ["webRequest", "webRequestBlocking", "storage", "http://*/*", "https://*/*"],
+  "applications": {
+    "gecko": {
+      "id": "redirector@einaregilsson.com"
+    }
+  },
+
+ "background": {
+    "scripts": ["js/background.js"],
+    "persistent": true
+  }
+}

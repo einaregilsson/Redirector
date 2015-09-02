@@ -1,9 +1,6 @@
 
-var EXPORTED_SYMBOLS = ['Redirect'];
-
-
-function Redirect(exampleUrl, includePattern, redirectUrl, patternType, excludePattern, unescapeMatches, escapeMatches, disabled) {
-	this._init(exampleUrl, includePattern, redirectUrl, patternType, excludePattern, unescapeMatches, escapeMatches, disabled);
+function Redirect(o) {
+	this._init(o);
 }
 
 //Static
@@ -13,97 +10,55 @@ Redirect.REGEX = 'R';
 Redirect.prototype = {
 	
 	//attributes
-	exampleUrl : null,
-			
-	get includePattern() { return this._includePattern; },
-	set includePattern(value) { 
-		this._includePattern = value;
-		this._rxInclude = this._compile(value); 
-	},
-	
-	get excludePattern() { return this._excludePattern; },
-	set excludePattern(value) { 
-		this._excludePattern = value; 
-		this._rxExclude = this._compile(value); 
-	},
-	
-	redirectUrl : null,
-	
-	get patternType() { return this._patternType; },
-	set patternType(value) { 
-		this._patternType = value;
-		this.compile();
-	},
-
+	description : '',
+	exampleUrl : '',
+	includePattern : '',
+	excludePattern : '',
+	redirectUrl : '',
+	patternType : '',
 	unescapeMatches : false,
 	escapeMatches : false,
-	
 	disabled : false,
-	
-	//Functions
-	clone : function() {
-		return new Redirect().fromObject(this.toObject());
-	},
 	
 	compile : function() {
 		this._rxInclude = this._compile(this._includePattern); 
 		this._rxExclude = this._compile(this._excludePattern); 
 	},
 
-	toObject : function() {
-		return {
-			exampleUrl : this.exampleUrl,
-			description : this.description,
-			includePattern : this.includePattern,
-			excludePattern : this.excludePattern,
-			redirectUrl : this.redirectUrl,
-			patternType : this.patternType,
-			unescapeMatches : this.unescapeMatches,
-			escapeMatches : this.escapeMatches,
-			disabled : !!this.disabled
-		};
-	},
-
-	fromObject : function(o) {
-		for (var prop in o) {
-			this[prop] = o[prop];
-		}
-		return this;
-	},
-	
-	copyValues : function(other) {
-		this.exampleUrl = other.exampleUrl;
-		this.includePattern = other.includePattern;
-		this.excludePattern = other.excludePattern;
-		this.redirectUrl = other.redirectUrl;
-		this.patternType = other.patternType;
-		this.unescapeMatches = other.unescapeMatches;
-		this.escapeMatches = other.escapeMatches;
-		this.disabled = other.disabled;
-	},
-
 	equals : function(redirect) {
-		return this.exampleUrl == redirect.exampleUrl
+		return this.description == redirect.description
+			&& this.exampleUrl == redirect.exampleUrl
 			&& this.includePattern == redirect.includePattern
 			&& this.excludePattern == redirect.excludePattern
 			&& this.redirectUrl == redirect.redirectUrl
 			&& this.patternType == redirect.patternType
 			&& this.unescapeMatches == redirect.unescapeMatches
 			&& this.escapeMatches == redirect.escapeMatches
-		;
+			&& this.appliesTo.toString() == redirect.appliesTo.toString();
 	},
 	
+	toObject : function() {
+		return {
+			description : this.description,
+			exampleUrl : this.exampleUrl,
+			includePattern : this.includePattern,
+			excludePattern : this.excludePattern,
+			redirectUrl : this.redirectUrl,
+			patternType : this.patternType,
+			unescapeMatches : this.unescapeMatches,
+			escapeMatches : this.escapeMatches,
+			disabled : this.disabled,
+			appliesTo : this.appliesTo.slice(0)
+		};
+	},
+
 	getMatch: function(url) {
 		var result = { 
 			isMatch : false, 
 			isExcludeMatch : false, 
 			isDisabledMatch : false, 
 			redirectTo : '',
-			toString : function() { return "{ isMatch : " + this.isMatch + 
-										   ", isExcludeMatch : " + this.isExcludeMatch + 
-										   ", isDisabledMatch : " + this.isDisabledMatch + 
-										   ", redirectTo : \"" + this.redirectTo + "\"" +
-										   "}"; }
+			toString : function() { return JSON.stringify(this); }
 		};
 		var redirectTo = null;
 
@@ -133,7 +88,6 @@ Redirect.prototype = {
 		return this.getMatch(this.exampleUrl);	
 	},
 
-	
 	//Private functions below	
 
 	_includePattern : null,
@@ -169,15 +123,21 @@ Redirect.prototype = {
 		return new RegExp(this._preparePattern(pattern),"gi");
 	},
 	
-	_init : function(exampleUrl, includePattern, redirectUrl, patternType, excludePattern, unescapeMatches, escapeMatches, disabled) {
-		this.exampleUrl = exampleUrl || '';
-		this.includePattern = includePattern || '';
-		this.excludePattern = excludePattern || '';
-		this.redirectUrl = redirectUrl || '';
-		this.patternType = patternType || Redirect.WILDCARD;
-		this.unescapeMatches = (unescapeMatches === 'true' || unescapeMatches === true);
-		this.escapeMatches = (escapeMatches === 'true' || escapeMatches === true);
-		this.disabled = (disabled === 'true' || disabled === true);
+	_init : function(o) {
+		this.description = o.description || '',
+		this.exampleUrl = o.exampleUrl || '';
+		this.includePattern = o.includePattern || '';
+		this.excludePattern = o.excludePattern || '';
+		this.redirectUrl = o.redirectUrl || '';
+		this.patternType = o.patternType || Redirect.WILDCARD;
+		this.unescapeMatches = !!o.unescapeMatches;
+		this.escapeMatches = !!o.escapeMatches;
+		this.disabled = !!o.disabled;
+		if (o.appliesTo && o.appliesTo.length) {
+			this.appliesTo = o.appliesTo.slice(0);
+		} else {
+			this.appliesTo = ['main_frame'];
+		}
 	},
 	
 	toString : function() {

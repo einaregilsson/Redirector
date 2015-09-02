@@ -1,0 +1,341 @@
+
+/* Basic element styles */
+
+body {
+  font-family: Arial, sans-serif;
+  background:white;
+  color:rgb(43, 38, 38);
+}
+
+h1, h2, h3, h5, h6 {
+  text-align: center;
+}
+
+h1 {
+  font-size:55px;
+  margin:20px 0px 0px 0px;
+}
+
+h3 {
+  font-size:18px;
+  padding:0px;
+}
+
+h4 {
+  text-align: left;
+  font-size:14px;
+  padding:0px;
+  margin:4px;
+}
+
+h5 {
+  font-size:20px;
+  margin:0;
+  color:#5e6163;
+}
+
+input[type='text'] {
+  border-radius:2px;
+  padding:3px;
+  border:solid 1px #bbb;
+}
+
+input[type="radio"] {
+  margin-right:5px;
+}
+
+/* Classes for buttons and other stuff */
+
+.btn {
+  background:white;
+  border:solid 1px #bbb;
+  border-radius:2px;
+  cursor: pointer;
+  font-weight: bold;
+  display:inline-block;
+  text-align: center;
+  text-decoration: none;
+}
+
+.btn.large {
+  font-size:18px;
+  padding:4px 8px;
+
+}
+
+.btn.medium {
+  font-size:14px;
+  padding:2px 6px;
+}
+
+.btn.small {
+
+}
+
+.btn:hover {
+  color:white !important;
+  text-decoration: none;
+}
+
+
+.btn.grey {
+  color:#333;
+}
+
+.btn.grey:hover {
+  background:#333;
+}
+
+.btn.red {
+  color:rgb(208,52,37);
+}
+
+.btn.red:hover {
+  background:rgb(208,52,37);
+}
+
+.btn.blue {
+  color:rgb(21,90,233);
+}
+
+.btn.blue:hover {
+  background:rgb(21,90,233);
+}
+
+.btn.green {
+  color:green;
+}
+
+.btn.green:hover {
+  background:green;
+}
+
+/* Main menu with buttons */
+
+#menu {
+  margin: 30px auto 8px auto;
+  max-width:90%;
+  text-align: center;
+}
+
+#import-file {
+  display:none;
+}
+
+/* Message box for success/failure messages */
+#message-box {
+  margin:10px auto;
+  width:90%;
+  color:white;
+  max-width: 800px;
+  border-radius:3px;
+  height:0px;
+  line-height: 30px;
+  font-size:16px;
+  text-align:center;
+  overflow:hidden;
+  transition: height 0.2s ease-out;
+  position: relative;
+}
+
+#message-box.visible {
+  height:30px;
+  transition: height 0.2s ease-out;
+}
+
+#message-box.success {
+  background-color: green;
+}
+
+#message-box.error {
+  background-color: rgb(208,52,37);;
+}
+
+#message-box a {
+  color:white;
+  font-size:20px;
+  position: absolute;
+  right:6px;
+  top:0px;
+}
+
+/* Table of redirects */
+
+.redirect-table {
+  width:90%;
+  max-width: 800px;
+  border:solid 1px #bbb;
+  margin:0px auto;
+  border-radius:3px;
+}
+
+.redirect-row {
+  position: relative;
+  font-size:13px;
+  padding:8px;
+  line-height:18px;
+  border-bottom:solid 1px #bbb;
+}
+
+.redirect-row:last-child {
+  border-bottom: none !important;
+}
+
+.redirect-row:nth-child(odd) {
+  background:#f8f8f8;
+}
+
+.redirect-row.disabled label, .redirect-row.disabled span, a.disabled {
+  color:#bbb !important;
+}
+
+/* Edit, Delete, Disable buttons */
+.redirect-row a, .redirect-row a:visited {
+  font-size:13px;
+  margin-top:5px;
+  width:60px;
+}
+
+#delete-redirect-form {
+  position: fixed;
+  width:500px;
+  background:white;
+  border:solid 1px #bbb;
+  border-radius:3px;
+  z-index: 6000;
+  left:50%;
+  margin-left:-250px;
+  top:50%;
+  margin-top:-220px;
+  height:220px;
+}
+
+#delete-redirect-form div{
+  margin-bottom:7px;
+}
+
+#delete-redirect-form div label:first-child {
+  width:130px;
+  font-weight:bold;
+  text-align: right;
+  display:inline-block;
+}
+
+.redirect-row h4 span.disabled-marker {
+  color:red !important;
+}
+
+.move-up-btn, .move-down-btn {
+  width:35px !important;
+}
+
+
+.redirect-row label {
+  display:inline-block;
+  width:80px;
+  font-weight:bold;
+  text-align: right;
+}
+
+a.disabled:hover {
+  cursor:default;
+  color:#bbb !important;
+  background:white !important;
+}
+
+/* Edit form */
+
+#cover {
+  position: fixed;
+  top:0px;
+  bottom:0px;
+  left:0px;
+  right:0px;
+  z-index: 5000;
+  background: #333;
+  opacity: 0.5;
+}
+
+.blur {
+  -webkit-filter:blur(3px); 
+  -moz-filter:blur(3px); 
+}
+
+#edit-redirect-form {
+  position: fixed;
+  width:500px;
+  background:white;
+  border:solid 1px #bbb;
+  border-radius:3px;
+  z-index: 6000;
+  left:50%;
+  margin-left:-250px;
+  top:50%;
+  margin-top:-258px;
+}
+
+#edit-redirect-form div{
+  margin-bottom:7px;
+}
+
+#edit-redirect-form div label:first-child {
+  width:130px;
+  font-weight:bold;
+  text-align: right;
+  display:inline-block;
+}
+
+#edit-redirect-form .second-column {
+  display:block;
+  padding-left: 134px;
+}
+
+#edit-redirect-form div input[type='text'] {
+  width:300px;
+}
+
+#advanced-toggle {
+  text-align: center;
+}
+
+#advanced-toggle a {
+  color:rgb(21,90,233);
+}
+
+#advanced-toggle a:hover {
+  text-decoration: underline;
+}
+
+
+a[ng-click] {
+  cursor:pointer;
+}
+
+#wildcardtype {
+  margin-right:10px;
+}
+
+.button-container {
+  margin-top:20px;
+  text-align: center;
+}
+
+/* Footer with link */
+footer {
+  margin-top:30px;
+  text-align: center;
+}
+
+footer small {
+  font-size:10px;
+  color:#555;
+}
+
+footer small a, footer small a:visited {
+  text-decoration: none;
+  color:rgb(21,90,233);
+}
+
+footer small a:hover {
+  text-decoration: underline;
+}
