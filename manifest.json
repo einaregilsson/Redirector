@@ -3,6 +3,11 @@
   "manifest_version": 2,
   "name": "Redirector",
   "version": "3.0",
+  
+  "icons": {   "16": "images/icon16active.png",
+               "32": "images/icon32active.png",
+               "48": "images/icon48active.png",
+              "128": "images/icon128active.png" },
 
   "permissions" : ["webRequest", "webRequestBlocking", "storage", "http://*/*", "https://*/*"],
   "applications": {
@@ -14,5 +19,19 @@
  "background": {
     "scripts": ["js/background.js"],
     "persistent": true
+  },
+
+  "options_ui": {
+    "page": "popup.html",
+    "chrome_style": true
+  },
+
+  "browser_action": {
+    "default_icon": {
+      "19": "images/icon19active.png",
+      "38": "images/icon38active.png" 
+    },
+    "default_title": "Redirector",
+    "default_popup": "popup.html"
   }
 }

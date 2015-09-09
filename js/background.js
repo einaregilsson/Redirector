@@ -19,7 +19,7 @@ function checkForRedirect(details) {
 var filter = {urls:["http://*/*", "https://*/*"]};
 
 //TODO: Better browser detection...
-var isChrome = !!navigator.userAgent.match(/ Chrome\//);
+var isFirefox = !!navigator.userAgent.match(/Firefox\//);
 
-var ev = isChrome ? chrome.webRequest.onBeforeRequest : chrome.webRequest.onBeforeSendHeaders;
+var ev = isFirefox ? chrome.webRequest.onBeforeSendHeaders : chrome.webRequest.onBeforeRequest;
 ev.addListener(checkForRedirect, filter, ["blocking"]);

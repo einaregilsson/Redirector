@@ -7,11 +7,24 @@ function Redirect(o) {
 Redirect.WILDCARD = 'W';
 Redirect.REGEX = 'R';
 
+Redirect.requestTypes = {
+	main_frame: "Main window (address bar)",
+	sub_frame: "IFrames",
+	stylesheet : "Stylesheets",
+	script : "Scripts",
+	image : "Images",
+	object : "Objects (e.g. Flash videos, Java applets)",
+	xmlhttprequest : "XMLHttpRequests (Ajax)",
+	other : "Other"
+};
+
 Redirect.prototype = {
 	
 	//attributes
 	description : '',
 	exampleUrl : '',
+	exampleResult : '',
+	error : null,
 	includePattern : '',
 	excludePattern : '',
 	redirectUrl : '',
@@ -21,8 +34,16 @@ Redirect.prototype = {
 	disabled : false,
 	
 	compile : function() {
-		this._rxInclude = this._compile(this._includePattern); 
-		this._rxExclude = this._compile(this._excludePattern); 
+
+		var incPattern = this._preparePattern(this.includePattern);
+		var excPattern = this._preparePattern(this.excludePattern);
+
+		if (incPattern) {
+			this._rxInclude = new RegExp(incPattern, 'gi');
+		}
+		if (excPattern) {
+			this._rxExclude = new RegExp(excPattern, 'gi');
+		}
 	},
 
 	equals : function(redirect) {
@@ -41,6 +62,8 @@ Redirect.prototype = {
 		return {
 			description : this.description,
 			exampleUrl : this.exampleUrl,
+			exampleResult : this.exampleResult,
+			error : this.error,
 			includePattern : this.includePattern,
 			excludePattern : this.excludePattern,
 			redirectUrl : this.redirectUrl,
@@ -52,7 +75,10 @@ Redirect.prototype = {
 		};
 	},
 
-	getMatch: function(url) {
+	getMatch: function(url, forceIgnoreDisabled) {
+		if (!this._rxInclude) {
+			this.compile();
+		}
 		var result = { 
 			isMatch : false, 
 			isExcludeMatch : false, 
@@ -64,7 +90,7 @@ Redirect.prototype = {
 
 		redirectTo = this._includeMatch(url);
 		if (redirectTo !== null) {
-			if (this.disabled) {
+			if (this.disabled && !forceIgnoreDisabled) {
 				result.isDisabledMatch = true;
 			} else if (this._excludeMatch(url)) {
 				result.isExcludeMatch = true;
@@ -76,6 +102,66 @@ Redirect.prototype = {
 		return result;	 
 	},
 	
+	//Updates the .exampleResult field or the .error
+	//field depending on if the example url and patterns match 
+	//and make a good redirect
+	updateExampleResult : function() {
+
+		//Default values
+		this.error = null;
+		this.exampleResult = '';
+
+
+		if (!this.exampleUrl) {
+			this.error = 'No example URL defined';
+			return;
+		}
+
+		if (this.patternType == Redirect.REGEX && this.includePattern) {
+			try {
+				new RegExp(this.includePattern, 'gi');
+			} catch(e) {
+				this.error = 'Invalid regular expression in Include pattern.';
+				return;
+			}
+		}
+
+		if (this.patternType == Redirect.REGEX && this.excludePattern) {
+			try {
+				new RegExp(this.excludePattern, 'gi');
+			} catch(e) {
+				this.error = 'Invalid regular expression in Exclude pattern.';
+				return;
+			}
+		}
+
+		if (!this.appliesTo || this.appliesTo.length == 0) {
+			this.error = 'At least one request type must be chosen.';
+			return;
+		}
+
+		this.compile();
+
+		var match = this.getMatch(this.exampleUrl, true);
+
+		if (match.isExcludeMatch) {
+			this.error = 'The exclude pattern excludes the example url.'
+			return;
+		}
+
+		if (!match.isMatch) {
+			this.error = 'The include pattern does not match the example url.';
+			return;
+		}
+
+		this.exampleResult = match.redirectTo;
+
+		if (this.getMatch(this.exampleResult, true).isMatch) {
+			this.exampleResult = '';
+			this.error = 'Result matches the redirect again, causing endless loop.'
+		}
+	},
+
 	isRegex: function() {
 		return this.patternType == Redirect.REGEX;
 	},
@@ -89,14 +175,13 @@ Redirect.prototype = {
 	},
 
 	//Private functions below	
-
-	_includePattern : null,
-	_excludePattern : null,
-	_patternType : null,
 	_rxInclude : null,
 	_rxExclude : null,
 	
 	_preparePattern : function(pattern) {
+		if (!pattern) {
+			return null;
+		}
 		if (this.patternType == Redirect.REGEX) {
 			return pattern; 
 		} else { //Convert wildcard to regex pattern
@@ -114,13 +199,6 @@ Redirect.prototype = {
 			converted += '$';
 			return converted;
 		}
-	},
-
-	_compile : function(pattern) {
-		if (!pattern) {
-			return null;
-		}
-		return new RegExp(this._preparePattern(pattern),"gi");
 	},
 	
 	_init : function(o) {
@@ -141,16 +219,7 @@ Redirect.prototype = {
 	},
 	
 	toString : function() {
-		return 'REDIRECT: {'
-			+  '\n\tExample url 	 : ' + this.exampleUrl
-			+  '\n\tInclude pattern  : ' + this.includePattern
-			+  '\n\tExclude pattern  : ' + this.excludePattern
-			+  '\n\tRedirect url	 : ' + this.redirectUrl
-			+  '\n\tPattern type	 : ' + this.patternType
-			+  '\n\tUnescape matches : ' + this.unescapeMatches
-			+  '\n\tEscape matches : ' + this.escapeMatches
-			+  '\n\tDisabled		 : ' + this.disabled
-			+  '\n}\n';
+		return JSON.stringify(this.toObject(), null, 2);
 	},
 	
 	_includeMatch : function(url) {

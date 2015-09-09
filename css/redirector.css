@@ -13,7 +13,11 @@ h1, h2, h3, h5, h6 {
 
 h1 {
   font-size:55px;
-  margin:20px 0px 0px 0px;
+  margin:-15px 0px 0px 0px;
+  -webkit-user-select:none;
+  -moz-user-select:none;
+  cursor:default;
+  padding:0px;
 }
 
 h3 {
@@ -30,7 +34,7 @@ h4 {
 
 h5 {
   font-size:20px;
-  margin:0;
+  margin:-20px 0 0 0;
   color:#5e6163;
 }
 
@@ -84,6 +88,7 @@ input[type="radio"] {
 
 .btn.grey:hover {
   background:#333;
+  border:solid 1px #333;
 }
 
 .btn.red {
@@ -92,6 +97,7 @@ input[type="radio"] {
 
 .btn.red:hover {
   background:rgb(208,52,37);
+  border:solid 1px rgb(208,52,37);
 }
 
 .btn.blue {
@@ -100,6 +106,7 @@ input[type="radio"] {
 
 .btn.blue:hover {
   background:rgb(21,90,233);
+  border:solid 1px rgb(21,90,233);
 }
 
 .btn.green {
@@ -108,6 +115,7 @@ input[type="radio"] {
 
 .btn.green:hover {
   background:green;
+  border:solid 1px green;
 }
 
 /* Main menu with buttons */
@@ -193,6 +201,7 @@ input[type="radio"] {
 .redirect-row a, .redirect-row a:visited {
   font-size:13px;
   margin-top:5px;
+  padding:2px;
   width:60px;
 }
 
@@ -240,6 +249,7 @@ input[type="radio"] {
 a.disabled:hover {
   cursor:default;
   color:#bbb !important;
+  border:solid 1px #bbb !important;
   background:white !important;
 }
 
@@ -287,14 +297,24 @@ a.disabled:hover {
 
 #edit-redirect-form .second-column {
   display:block;
-  padding-left: 134px;
+  margin-left: 133px;
 }
 
 #edit-redirect-form div input[type='text'] {
   width:300px;
 }
 
+.error {
+  color:red;
+}
+
+.placeholder {
+  color:#c0c0c0;
+  font-size:11px;
+}
+
 #advanced-toggle {
+  padding-top:3px;
   text-align: center;
 }
 
@@ -318,6 +338,7 @@ a[ng-click] {
 .button-container {
   margin-top:20px;
   text-align: center;
+  padding-bottom:10px;
 }
 
 /* Footer with link */

@@ -7,62 +7,72 @@
 		<script src="js/angular.min.js"></script>
 		<script src="js/redirect.js"></script>
 		<script src="js/app.js"></script>
+		<script src="js/controllers/redirectorpage.js"></script>
+		<script src="js/controllers/editredirect.js"></script>
+		<script src="js/controllers/deleteredirect.js"></script>
+		<script src="js/controllers/importexport.js"></script>
+		<script src="js/controllers/listredirects.js"></script>
 	</head>
-	<body ng-app="redirectorApp" ng-controller="redirectorController">
-		<div id="cover" ng-show="showModal">
-		</div>
-		<div id="delete-redirect-form" ng-show="deleting">
+	<body ng-app="redirectorApp" ng-controller="RedirectorPageCtrl">
+		<div id="cover" ng-show="showEditForm || showDeleteForm"></div>
+		
+		<!-- Confirmation form for deleting redirects -->
+		<div id="delete-redirect-form" ng-show="showDeleteForm" ng-controller="DeleteRedirectCtrl">
 			<h3>Are you sure you want to delete this redirect?</h3>
 			<div>
 				<label>Description:</label>
-				<span>{{deleting.description}}</span>
+				<span>{{redirect.description}}</span>
 			</div>
 			<div>
 				<label>Example URL:</label>
-				<span>{{deleting.exampleUrl}}</span>
+				<span>{{redirect.exampleUrl}}</span>
 			</div>
 			<div>
 				<label>Include pattern:</label>
-				<span>{{deleting.includePattern}}
+				<span>{{redirect.includePattern}}
 			</div>
 			<div>
 				<label>Redirect to:</label>
-				<span>{{deleting.redirectUrl}}</span>
+				<span>{{redirect.redirectUrl}}</span>
 			</div>
 			<div>
 				<label>Pattern type:</label>
-				<span>{{deleting.patternType == 'W' ? 'Wildcard' : 'Regular Expression'}}</span>
+				<span>{{redirect.patternType == 'W' ? 'Wildcard' : 'Regular Expression'}}</span>
 			</div>			
 			<div class="button-container">
 				<a class="btn red large" ng-click="deleteRedirect()">Yes, delete it</a>
 				<a class="btn grey large" ng-click="cancelDelete()">No, don't delete it</a>
 			</div>
 		</div>
-		<div id="edit-redirect-form" ng-show="activeRedirect">
+		
+
+		<!-- Form for creating and editing redirects -->
+		<div id="edit-redirect-form" ng-show="showEditForm" ng-controller="EditRedirectCtrl">
 			<h3>{{editIndex >= 0 ? 'Edit' : 'Create'}} Redirect</h3>
 			<div>
 				<label>Description:</label>
-				<input type="text" ng-model="activeRedirect.description" placeholder="Enter a description for your redirect rule" />
+				<input type="text" ng-model="redirect.description" placeholder="Enter a description for your redirect rule" />
 			</div>
 			<div>
 				<label>Example URL:</label>
-				<input type="text" ng-model="activeRedirect.exampleUrl" placeholder="http://example.com/some/path?a=1" />
+				<input type="text" ng-model="redirect.exampleUrl" ng-change="redirect.updateExampleResult()" placeholder="http://example.com/some/path?a=1" />
 			</div>
 			<div>
 				<label>Include pattern:</label>
-				<input type="text" ng-model="activeRedirect.includePattern" placeholder="Pattern that matches the urls you want to redirect" />
+				<input type="text" ng-model="redirect.includePattern" ng-change="redirect.updateExampleResult()" placeholder="Pattern that matches the urls you want to redirect" />
 			</div>
 			<div>
 				<label>Redirect to:</label>
-				<input type="text" ng-model="activeRedirect.redirectUrl" placeholder="The url you want to redirect requests to" />
+				<input type="text" ng-model="redirect.redirectUrl" ng-change="redirect.updateExampleResult()" placeholder="The url you want to redirect requests to" />
 			</div>
 			<div>
 				<label>Pattern type:</label>
-				<label id="wildcardtype"><input type="radio" ng-model="activeRedirect.patternType" name="patterntype" value="W">Wildcard</label>
-				<label><input type="radio" ng-model="activeRedirect.patternType" name="patterntype" value="R">Regular Expression</label>
+				<label id="wildcardtype"><input type="radio" ng-change="redirect.updateExampleResult()" ng-model="redirect.patternType" name="patterntype" value="W">Wildcard</label>
+				<label><input type="radio" ng-change="redirect.updateExampleResult()" ng-model="redirect.patternType" name="patterntype" value="R">Regular Expression</label>
 			</div>
 			<div>
 				<label>Example result:</label>
+				<span class="error" ng-show="redirect.error">{{redirect.error}}</span><span ng-show="redirect.exampleResult">{{redirect.exampleResult}}</span>
 			</div>
 			<div id="advanced-toggle">
 				<a ng-click="showAdvanced=true" ng-show="!showAdvanced">Show advanced options...</a>
@@ -71,15 +81,15 @@
 			<div id="advanced" ng-show="showAdvanced">
 				<div>
 					<label>Exclude pattern:</label>
-					<input type="text" ng-model="activeRedirect.excludePattern" placeholder="Pattern to exclude certain urls from the redirection"/>
+					<input type="text" ng-change="redirect.updateExampleResult()" ng-model="redirect.excludePattern" placeholder="Pattern to exclude certain urls from the redirection"/>
 				</div>
 				<div>
 					<label for="unescape-matches">Unescape matches:</label>
-					<input id="unescape-matches" ng-model="activeRedirect.unescapeMatches" type="checkbox">
+					<input id="unescape-matches" ng-change="redirect.updateExampleResult()" ng-model="redirect.unescapeMatches" type="checkbox"><span class="placeholder">E.g. turn %2Fbar%2Ffoo%3Fx%3D2 into /bar/foo?x=2</span>
 				</div>	
 				<div>
 					<label for="escape-matches">Escape matches:</label>
-					<input id="escape-matches" ng-model="activeRedirect.escapeMatches" type="checkbox">
+					<input id="escape-matches" ng-change="redirect.updateExampleResult()" ng-model="redirect.escapeMatches" type="checkbox"><span class="placeholder">E.g. turn /bar/foo?x=2 into %2Fbar%2Ffoo%3Fx%3D2</span>
 				</div>
 				<div>
 					<label>Apply to:</label>
@@ -89,23 +99,27 @@
 				</div>
 			</div>
 			<div class="button-container">
-				<a class="btn green medium" ng-click="saveRedirect()">Save</a>
-				<a class="btn red medium" ng-click="cancelEdit()">Cancel</a>
+				<a ng-class="{disabled:redirect.error}" class="btn green large" ng-click="saveRedirect()">Save</a>
+				<a class="btn red large" ng-click="cancelEdit()">Cancel</a>
 			</div>
 		</div>
 
 
-		<div id="blur-wrapper" ng-class="{blur: showModal}">
-			<h1>Redirector</h1>
-			<!--<h3>DISABLED</h3>-->
+		<div id="blur-wrapper" ng-class="{blur: showEditForm || showDeleteForm}">
+			
+			<h1><span style="font-size:100px; position:relative; top:4px">☈</span>edirector</h1>
 			<h5>Go where <em>YOU</em> want!</h5>
 
-
 			<div id="menu">
-				<input type="file" id="import-file" fileselected="importRedirects($file)" accept=".rjson,.json,.txt,text/*"  />
-				<a class="btn blue large" ng-click="createNew()">Create new redirect</a>
-				<label for="import-file" class="btn blue large">Import</label>
-				<a class="btn blue large" ng-href="{{redirectDownload}}" download="Redirector.rjson">Export</a>
+				<a class="btn blue large" ng-click="createNewRedirect()">Create new redirect</a>
+				
+				<!-- Importing/Exporting of redirects -->
+				<span ng-controller="ImportExportCtrl">
+					<input type="file" id="import-file" fileselected="importRedirects($file)" accept=".rjson,.json,.txt,text/*"  />
+					<label for="import-file" class="btn blue large">Import</label>
+					<a class="btn blue large" ng-mousedown="updateExportLink()" ng-href="{{redirectDownload}}" download="Redirector.json">Export</a>
+				</span>
+	
 				<a class="btn blue large" href="help.html" target="_blank">Help</a>
 			</div>
 
@@ -113,20 +127,22 @@
 				{{message}}
 				<a ng-click="message=null">&#x2716;</a>
 			</div>
-			<div class="redirect-table">
+
+			<!-- List of existing redirects -->
+			<div class="redirect-table" ng-controller="ListRedirectsCtrl">
 				<div class="redirect-row" ng-class="{disabled: r.disabled}" ng-repeat="r in redirects">
 					<h4><span class="disabled-marker" ng-show="r.disabled">[Disabled] </span><span>{{r.description}}</span></h4>
 					<div>
 						<label>Redirect:</label> <span>{{r.includePattern}}</span>
 					</div>
 					<div>
-						<label>to:</label> <span>foo.is</span>
+						<label>to:</label> <span>{{r.redirectUrl}}</span>
 					</div>
 					<div ng-show="r.excludePattern">
 						<label>excluding:</label> <span>asdfasdf</span>
 					</div>
 					<div>
-						<label>Example:</label> <span></span>
+						<label>Example:</label> <span>{{example(r)}}</span>
 					</div>
 					<div>
 						<label>Applies to:</label> <span>{{r.appliesTo|requestTypeDisplay}}</span>
@@ -134,15 +150,17 @@
 					<div>
 						<a class="btn blue" ng-click="toggleDisabled(r)">{{r.disabled ? "Enable" : "Disable"}}</a>
 						<a class="btn green" ng-click="editRedirect($index)">Edit</a>
-						<a class="btn red" ng-click="confirmDelete($index)">Delete</a>
+						<a class="btn red" ng-click="confirmDeleteRedirect($index)">Delete</a>
 						<a class="btn grey move-up-btn" ng-class="{disabled:$first}" ng-click="moveUp($index)">▲</a>
 						<a class="btn grey move-down-btn" ng-class="{disabled:$last}" ng-click="moveDown($index)">▼</a>
 					</div>
 				</div>
 			</div>
+
 			<footer>
 				<small>Redirector is created by <a target="_blank" href="http://einaregilsson.com">Einar Egilsson</a></small>
 			</footer>
+		
 		</div>
 	</body>
 </html>
