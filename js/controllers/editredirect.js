@@ -29,6 +29,9 @@ redirectorApp.controller('EditRedirectCtrl', ['$scope', function($s) {
 			return; //Button is already disabled, but we still get the click
 		}
 
+		//Just make sure it's freshly updated when saved
+		$s.redirect.updateExampleResult();
+
 		if ($s.editIndex >= 0) {
 			$s.redirects[$s.editIndex] = $s.redirect;
 		} else {

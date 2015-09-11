@@ -142,7 +142,7 @@
 						<label>excluding:</label> <span>asdfasdf</span>
 					</div>
 					<div>
-						<label>Example:</label> <span>{{example(r)}}</span>
+						<label>Example:</label> <span class="error" ng-show="r.error">{{r.error}}</span><span ng-show="r.exampleResult">{{r.exampleUrl}} <span class="arrow">&rarr;</span> {{r.exampleResult}}</span>
 					</div>
 					<div>
 						<label>Applies to:</label> <span>{{r.appliesTo|requestTypeDisplay}}</span>

@@ -246,6 +246,10 @@ input[type="radio"] {
   text-align: right;
 }
 
+.arrow {
+  font-size:18px;
+}
+
 a.disabled:hover {
   cursor:default;
   color:#bbb !important;

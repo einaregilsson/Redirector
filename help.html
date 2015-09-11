@@ -1,25 +1,27 @@
-<!-- $Id$ -->
+<!DOCTYPE html>
 <html>
 	<head>
 		<title>Redirector Help</title>
-		<style type="text/css">
-			body { font-family: Verdana, Arial; color:black; background-color:white; font-size:0.9em; }
-			a { color:blue; }
-		</style>
+		<meta charset="UTF-8">
+		<link rel="stylesheet" href="css/help.css" />
 	</head>
 	<body>
-		<h1>Redirector Help</h1>
+		
+		<h1><span>☈</span>edirector Help</h1>
 		<h3>Table of contents</h3>
 		<ul>
 			<li><a href="#whatisredirector">What is Redirector?</a></li>
 			<li><a href="#basicusage">Basic usage</a>
 				<ul>
+					<li><a href="#description">Description</a></li>
 					<li><a href="#exampleurl">Example url</a></li>
 					<li><a href="#includepattern">Include pattern</a></li>
 					<li><a href="#excludepattern">Exclude pattern</a></li>
 					<li><a href="#redirectto">Redirect to</a></li>
 					<li><a href="#patterntype">Pattern type</a></li>
 					<li><a href="#unescapematches">Unescape matches</a></li>
+					<li><a href="#escapematches">Escape matches</a></li>
+					<li><a href="#applyto">Apply to</a></li>
 				</ul>
 			</li>
 			<li><a href="#wildcards">Wildcards</a></li>
@@ -40,26 +42,29 @@
 		<a name="whatisredirector"></a>
 		<h4>What is Redirector?</h4>
 		
-		<p>Redirector is an extension for Firefox that allows you to automatically redirect from
-		one webpage to another. For example, every time you visit http://abc.com you will automatically
-		load http://def.com instead. This can be useful for instance to always redirect articles to printer friendly
+		<p>Redirector is a browser extension that allows you to automatically redirect from
+		one webpage to another. For example, every time you visit <span class="url">http://abc.com</span> you will automatically
+		load <span class="url">http://def.com</span> instead. This can be useful for instance to always redirect articles to printer friendly
 		versions, redirect http:// to https:// for sites that support both, bypass advertising pages that appear before
 		being able to view certain pages and more.</p>
 		
 		<a name="basicusage"></a>
 		<h4>Basic usage</h4>
-		<p>To add a new redirect you can go to the <em>Tools</em> menuitem and select <em>Redirector</em>. That will
-		open the <em>Redirector settings</em> window which shows all your redirects. The window can also be opened
-		by right clicking on the <strong>R</strong> icon in your statusbar. 
-		There you can press the <em>Add...</em> button and then you can enter the details for the new redirect. A redirect
-		consists of a few things:
-		<ul>
-			<li><a name="exampleurl"></a><strong>Example url:</strong> This is an example of an url you want to redirect. It is not really used for anything,
-			it's just there to show what types of urls you're targetting. You can leave this out, but then you can't use the <em>Test pattern</em> button.</li>
+		<p>To add a new redirect you press the Redirector icon next to your address bar, and in the popup that comes up you choose the <em>Edit Redirects</em> button.
+			On the settings page you can add, edit and delete redirect. Redirects will be checked in the same order as they are shown on that page, so you can move them
+			up or down to give them higher or lower priority. The edit form will guide you by showing you an example result as you're typing in your patterns. A redirect
+			contains the following fields:
+		</p>
+		<ul class="fields">
+			<li><a name="description"></a><strong>Description:</strong> The description is optional, it's only there for you to better keep track of your redirects
+				and why they're there.</li>
+
+			<li><a name="exampleurl"></a><strong>Example url:</strong> This is an example of an url you want to redirect. It is used to help you create your redirect, and show you
+				an example result while you're editing the redirect.</li>
 			
 			<li><a name="includepattern"></a><strong>Include pattern:</strong> This is pattern for the urls you want to redirect. In the simplest case, where you just want
-			to redirect one specific url to another then this will just be the exact url you want to redirect. For instance, if you just want http://aaa.com to
-			redirect to http://bbb.com then <em>Include pattern</em> will just be http://aaa.com. For more complex patterns that match many
+			to redirect one specific url to another then this will just be the exact url you want to redirect. For instance, if you just want <span class="url">http://aaa.com</span> to
+			redirect to <span class="url">http://bbb.com</span> then <em>Include pattern</em> will just be <span class="pattern">http://aaa.com</span>. For more complex patterns that match many
 			urls you can use either <a href="#wildcards">wildcards</a> or <a href="#regularexpressions">regular expressions</a>.</li>
 			
             <li><a name="excludepattern"></a><strong>Exclude pattern:</strong> Urls that match this pattern will never be redirected. This is not necessary to
@@ -69,20 +74,33 @@
 
             <li><a name="redirectto"></a><strong>Redirect to:</strong> This is the url that you will be redirected to when you open any page where the url matches the
             include pattern. You can use the special signs $1, $2, $3 etc. in the url, they will be replaced by the results of captures with regular
-            expressions or stars with wildcards. For instance, if you have the include pattern <em>http://google.com/*</em>, redirect to <em>http://froogle.com/$1</em>
-            and you open the page http://google.com/foobar, then you will be redireced to http://froogle.com/foobar, since 'foobar' was what the star replaced. $1 is for the
+            expressions or stars with wildcards. For instance, if you have the include pattern <span class="pattern">http://google.com/*</span>, redirect to <span class="pattern">http://froogle.com/$1</span>
+            and you open the page <span class="url">http://google.com/foobar</span>, then you will be redireced to <span class="url">http://froogle.com/foobar</span>, since 'foobar' was what the star replaced. $1 is for the
             first star in the pattern, $2 for the second and so on. For regular expression $1 is for the first parantheses, $2 for the second etc.</li>
 		
             <li><a name="patterntype"></a><strong>Pattern type:</strong> This specifies how Redirector should interpret the patterns, either as
             <a href="#wildcards">wildcards</a> or <a href="#regularexpressions#">regular expressions</a>.</li>
 
             <li><a name="unescapematches"></a><strong>Unescape matches:</strong> A common usage of Redirector is to catch urls like
-            <em>http://foo.com/redirect.php?url=http%3A%2F%2Fbar%2Ecom%2Fpath</em> and try to catch the url parameter and redirect to it. A pattern
-            like <em>http://foo.com/redirect.php?url=*</em> might be used for that purpose. However, if the url parameter is <em>escaped</em> (also known
-            as <em>urlencoded</em>) then that won't work. In the url above we see that it starts with <em>http%3A%2F%2F</em> instead of <em>http://</em>, and Firefox
+            <span class="url">http://foo.com/redirect.php?url=http%3A%2F%2Fbar%2Ecom%2Fpath</span> and try to catch the url parameter and redirect to it. A pattern
+            like <span class="pattern">http://foo.com/redirect.php?url=*</span> might be used for that purpose. However, if the url parameter is <em>escaped</em> (also known
+            as <em>urlencoded</em>) then that won't work. In the url above we see that it starts with <span class="url">http%3A%2F%2F</span> instead of <span class="url">http://</span>, and Firefox
             won't accept this as a new url to redirect to. So, in cases like these you can check the <em>Unescape matches</em> option and then all
-            matches will be unescaped (turned from e.g. <em>http%3A%2F%2Fbar%2Ecom</em> to <em>http://bar.com</em>) before being inserted into the target url.
+            matches will be unescaped (turned from e.g. <span class="url">http%3A%2F%2Fbar%2Ecom</span> to <span class="url">http://bar.com</span>) before being inserted into the target url.
             </li>
+        
+            <li><a name="escapematches"></a><strong>Escape matches:</strong> The opposite of <a href="unescapematches">Unescape matches</a>. Let's say you want to redirect all requests to
+            a domain like <span class="url">http://example.com</span> to some proxy site that took the url to proxy as an url parameter. Then you might do something like the regular expression pattern
+            <span class="pattern">^(http://example\.com/.*)</span> and redirect it to <span class="pattern">http://proxysite.com?url=$1</span>. If you used the Escape matches option then the
+            final url would become <span class="url">http://proxysite.com?url=http%3A%2F%2Fexample.com%2Ffoo%2Fbar</span>.
+        	</li>
+
+            <li><a name="applyto"></a><strong>Apply to:</strong> The Apply to option is new in version 3.0 of Redirector. For 99% of cases you won't need this, so don't worry about it.
+            	By default Redirector only redirects requests from the address bar of your browser, the page you're viewing. It doesn't redirect requests for scripts, iframes, images
+            	or anything else. Now in version 3.0 it is possible to opt into that however, and redirect any type of request. Just beware that this might have performance implications
+            	if you're redirecting all types of requests and you have many redirects. 
+        	</li>
+
             
 		</ul>
 		</p>
@@ -94,15 +112,15 @@
 		is just one special character, the asterisk *. An asterisk in your pattern will match zero or more characters and you can
 		have more than one star in your pattern. Some examples:
 			<ul>
-				<li><em>http://example.com/*</em> matches http://example.com/, http://example.com/foo, http://example.com/bar and all other urls that start with http://example.com/.</li>
-				<li><em>http://*.example.com</em> matches all subdomains of example.com, like http://www.example.com, http://mail.example.com.</li>
-				<li><em>http*://example.com</em> matches both http://example.com and https://example.com.</li>
-				<li><em>http://example.com/index.asp*</em> matches http://example.com/index.asp, http://example.com/index.asp?a=b&c=d.</li>
+				<li><span class="pattern">http://example.com/*</span> matches <span class="url">http://example.com/</span>, <span class="url">http://example.com/foo</span>, <span class="url">http://example.com/bar</span> and all other urls that start with http://example.com/.</li>
+				<li><span class="pattern">http://*.example.com</span> matches all subdomains of example.com, like <span class="url">http://www.example.com</span>, <span class="url">http://mail.example.com</span>.</li>
+				<li><span class="pattern">http*://example.com</span> matches both <span class="url">http://example.com</span> and <span class="url">https://example.com</span>.</li>
+				<li><span class="pattern">http://example.com/index.asp*</span> matches <span class="url">http://example.com/index.asp</span>, <span class="url">http://example.com/index.asp?a=b&amp;c=d</span>.</li>
 			</ul>
 		$1, $2, $3 in the redirect urls will match the text that the stars matched. Examples:
 			<ul>
-				<li><em>http://example.com/*</em> matches http://example.com/foobar, $1 is foobar.</li>
-				<li><em>http://*.example.com/*</em> matches http://www.example.com/foobar, $1 is www, $2 is foobar.</li>
+				<li><span class="pattern">http://example.com/*</span> matches <span class="url">http://example.com/foobar</span>, $1 is foobar.</li>
+				<li><span class="pattern">http://*.example.com/*</span> matches <span class="url">http://www.example.com/foobar</span>, $1 is www, $2 is foobar.</li>
 			</ul>
 		</p>
 		
@@ -112,8 +130,8 @@
 		<p>Regular expressions allow for more complicated patterns but they are a lot harder to learn than wildcards. I'm not gonna
 		create a regex tutorial here but normal javascript regex syntax works, look at <a href="http://regular-expressions.info" target="_blank">http://regular-expressions.info</a> for
 		an introduction to regular expressions. $1,$2 etc. can be used in the redirect url and will be replaced with contents of captures in
-		the regular expressions. Captures are specified with parantheses. Example: http://example.com/index.asp\?id=(\d+) will match the url
-		http://example.com/index.asp?id=12345 and $1 will be replaced by 12345. (A common mistake in regex patterns is to forget to escape
+		the regular expressions. Captures are specified with parantheses. Example: <span class="pattern">http://example.com/index.asp\?id=(\d+)</span> will match the url
+		<span class="url">http://example.com/index.asp?id=12345</span> and $1 will be replaced by 12345. (A common mistake in regex patterns is to forget to escape
 		the ? sign in the querystring of the url. ? is a special character in regular expressions so if you want to match an url with a querystring
 		you should escape it as \?).</p>
 
@@ -123,59 +141,137 @@
 		<ol>
 			<li>
 				<strong><a name="ex1"></a>Static redirect</strong><br/>
-				Redirects from http://example.com/foo to http://example.com/bar
-				<p>
-					<strong>Include pattern:</strong> http://example.com/foo<br/>
-					<strong>Exclude pattern:</strong><br/>
-					<strong>Redirect to:</strong> http://example.com/bar<br/>
-					<strong>Pattern type:</strong> Wildcard<br />
-				</p>
 				
+				<table>
+					<tr>
+						<th>Example URL:</th>
+						<td class="url">http://example.com/foo</td>
+					</tr>
+					<tr>
+						<th>Include pattern:</th>
+						<td class="pattern">http://example.com/foo</td>
+					</tr>
+					<tr>
+						<th>Redirect to:</th>
+						<td class="pattern">http://example.com/bar</td>
+					</tr>
+					<tr>
+						<th>Pattern type:</th>
+						<td>Wildcard</td>
+					</tr>
+					<tr>
+						<th>Example result:</th>
+						<td class="url">http://example.com/bar</td>
+					</tr>
+				</table>
 			</li>
 			<li>
 				<strong><a name="ex2"></a>Redirect using query string parameter and wildcards</strong><br/>
-				Redirects from http://example.com/index.php?id=12345&a=b to http://example.com/printerfriendly.php?id=12345&a=b
-				where 12345 could be any number.
-				<p>
-					<strong>Include pattern:</strong> http://example.com/index.php?id=*&a=b<br/>
-					<strong>Exclude pattern:</strong><br/>
-					<strong>Redirect to:</strong> http://example.com/printerfriendly.com?id=$1&a=b<br/>
-					<strong>Pattern type:</strong> Wildcard<br />
-				</p>
+				<table>
+					<tr>
+						<th>Example URL:</th>
+						<td class="url">http://example.com/index.php?id=12345&amp;a=b</td>
+					</tr>
+					<tr>
+						<th>Include pattern:</th>
+						<td class="pattern">http://example.com/index.php?id=*&amp;a=b</td>
+					</tr>
+					<tr>
+						<th>Redirect to:</th>
+						<td class="pattern">http://example.com/printerfriendly.com?id=$1&amp;a=b</td>
+					</tr>
+					<tr>
+						<th>Pattern type:</th>
+						<td>Wildcard</td>
+					</tr>
+					<tr>
+						<th>Example result:</th>
+						<td class="url">http://example.com/printerfriendly.php?id=12345&amp;a=b</td>
+					</tr>
+				</table>
 			</li>
 			<li>
 				<strong><a name="ex3"></a>Redirect using query string parameter and regular expressions</strong><br/>
-				Redirects from http://example.com/index.php?id=12345&a=b to http://example.com/printerfriendly.php?id=12345&a=b
-				where 12345 could be any number.
-				<p>
-					<strong>Include pattern:</strong> http://example.com/index.php\?id=(\d+)&a=b<br/>
-					<strong>Exclude pattern:</strong><br/>
-					<strong>Redirect to:</strong> http://example.com/printerfriendly.com?id=$1&a=b<br/>
-					<strong>Pattern type:</strong> Regular Expression<br />
-				</p>
+
+				<table>
+					<tr>
+						<th>Example URL:</th>
+						<td class="url">http://example.com/index.php?id=12345&amp;a=b</td>
+					</tr>
+					<tr>
+						<th>Include pattern:</th>
+						<td class="pattern">http://example.com/index.php\?id=(\d+)&amp;a=b</td>
+					</tr>
+					<tr>
+						<th>Redirect to:</th>
+						<td class="pattern">http://example.com/printerfriendly.com?id=$1&amp;a=b</td>
+					</tr>
+					<tr>
+						<th>Pattern type:</th>
+						<td>Regular Expression</td>
+					</tr>
+					<tr>
+						<th>Example result:</th>
+						<td class="url">http://example.com/printerfriendly.php?id=12345&amp;a=b</td>
+					</tr>
+				</table>
 			</li>
 			<li>
 				<strong><a name="ex4"></a>Redirect to a different folder using wildcards</strong><br/>
-				Redirects from http://example.com/category/fish/index.php to http://example.com/category/cats/index.php
-				where fish could be any word. The exclude pattern makes sure that there is only one
-				folder there, so for instance http://example.com/category/fish/cat/mouse/index.php would not match.
-				<p>
-					<strong>Include pattern:</strong> http://example.com/category/*/index.php<br/>
-					<strong>Exclude pattern:</strong> http://example.com/category/*/*/index.php<br/>
-					<strong>Redirect to:</strong> http://example.com/category/cats/index.php<br/>
-					<strong>Pattern type:</strong> Wildcard<br />
-				</p>
+				The exclude pattern makes sure that there is only one folder there, so for instance
+				 <span class="url">http://example.com/category/fish/cat/mouse/index.php</span> would not match.
+
+				<table>
+					<tr>
+						<th>Example URL:</th>
+						<td class="url">http://example.com/category/fish/index.php</td>
+					</tr>
+					<tr>
+						<th>Include pattern:</th>
+						<td class="pattern">http://example.com/category/*/index.php</td>
+					</tr>
+					<tr>
+						<th>Exclude pattern:</th>
+						<td class="pattern">http://example.com/category/*/*/index.php</td>
+					</tr>
+					<tr>
+						<th>Redirect to:</th>
+						<td class="pattern">http://example.com/category/cats/index.php</td>
+					</tr>
+					<tr>
+						<th>Pattern type:</th>
+						<td>Wildcard</td>
+					</tr>
+					<tr>
+						<th>Example result:</th>
+						<td class="url">http://example.com/category/cats/index.php</td>
+					</tr>
+				</table>
 			</li>
 			<li>
 				<strong><a name="ex5"></a>Redirect http to https using wildcards</strong><br/>
-				Redirects from http://mail.google.com/randomcharacters to https://mail.google.com/randomcharacters
-				where randomcharacters could be anything.
-				<p>
-					<strong>Include pattern:</strong> http://mail.google.com*<br/>
-					<strong>Exclude pattern:</strong><br/>
-					<strong>Redirect to:</strong> https://mail.google.com$1<br/>
-					<strong>Pattern type:</strong> Wildcard<br />
-				</p>
+				<table>
+					<tr>
+						<th>Example URL:</th>
+						<td class="url">http://mail.google.com/randomcharacters</td>
+					</tr>
+					<tr>
+						<th>Include pattern:</th>
+						<td class="pattern">http://mail.google.com*</td>
+					</tr>
+					<tr>
+						<th>Redirect to:</th>
+						<td class="pattern">https://mail.google.com$1</td>
+					</tr>
+					<tr>
+						<th>Pattern type:</th>
+						<td>Wildcard</td>
+					</tr>
+					<tr>
+						<th>Example result:</th>
+						<td class="url">https://mail.google.com/randomcharacters</td>
+					</tr>
+				</table>
 			</li>
 		</ol>
 	</body>
