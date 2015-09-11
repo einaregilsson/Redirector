@@ -17,7 +17,7 @@
   },
 
  "background": {
-    "scripts": ["js/background.js"],
+    "scripts": ["js/redirect.js", "js/background.js"],
     "persistent": true
   },
 

@@ -99,7 +99,7 @@
 				</div>
 			</div>
 			<div class="button-container">
-				<a ng-class="{disabled:redirect.error}" class="btn green large" ng-click="saveRedirect()">Save</a>
+				<a ng-class="{disabled:redirect.error || redirect.includePattern == ''}" class="btn green large" ng-click="saveRedirect()">Save</a>
 				<a class="btn red large" ng-click="cancelEdit()">Cancel</a>
 			</div>
 		</div>
