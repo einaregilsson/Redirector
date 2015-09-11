@@ -272,7 +272,7 @@ a.disabled:hover {
 
 .blur {
   -webkit-filter:blur(3px); 
-  -moz-filter:blur(3px); 
+  filter:blur(3px); 
 }
 
 #edit-redirect-form {
@@ -286,6 +286,7 @@ a.disabled:hover {
   margin-left:-250px;
   top:50%;
   margin-top:-258px;
+  font-size:12px;
 }
 
 #edit-redirect-form div{
@@ -312,9 +313,13 @@ a.disabled:hover {
   color:red;
 }
 
-.placeholder {
+.placeholder,  {
   color:#c0c0c0;
   font-size:11px;
+}
+
+::-moz-placeholder {  /* Firefox 19+ */
+   color: #c0c0c0;  
 }
 
 #advanced-toggle {

@@ -49,7 +49,7 @@ function setIcon(image19, image38, tabId) {
 //decide whether or not we want to redirect.
 function checkRedirects(details) {
 
-	log('Checking: ' + details.url);
+	log('Checking: ' details.type + ': ' + details.url);
 	
 	//We only allow GET request to be redirected, don't want to accidentally redirect
 	//sensitive POST parameters
@@ -165,10 +165,11 @@ function createPartitionedRedirects(redirects) {
 function setUpRedirectListener() {
 
 	redirectEvent.removeListener(checkRedirects); //Unsubscribe first, in case there are changes...
-	
-	storage.get('redirects', function(obj) {
+
+	storage.get({redirects:null}, function(obj) {
 		if (!obj.redirects) {
 			log('No redirects to set up');
+			//TODO: import old Firefox redirects
 			return;
 		}
 
@@ -193,8 +194,10 @@ function updateIcon() {
 //First time setup
 updateIcon();
 storage.get({disabled:false}, function(obj) {
+	console.log('REDIRECTOR IS HERE');
 	if (!obj.disabled) {
 		setUpRedirectListener();
 	}
 });
+console.log('Redirector starting up...');
        

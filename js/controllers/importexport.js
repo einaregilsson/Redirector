@@ -95,7 +95,7 @@ redirectorApp.config([
  		});
  		
  		var exportObj = { 
- 			createdBy : 'Redirector v' + chrome.app.getDetails().version, 
+ 			createdBy : 'Redirector v' + chrome.runtime.getManifest().version, 
  			createdAt : new Date(), 
  			redirects : redirects 
  		};
