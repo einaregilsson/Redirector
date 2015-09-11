@@ -1,0 +1,30 @@
+
+body {
+	width:180px;
+	text-align: center;
+	font-family: Arial, sans-serif;
+}
+
+h1 {
+	margin-top:-4px;
+	font-size:22px;
+	font-weight: bold;
+}
+
+h1 span {
+	position: relative;
+	top:1px;
+	font-size:38px;
+}
+
+button {
+	display:block;
+	width:90%;
+	margin:5px auto !important;
+}
+
+.disabled {
+	margin-top:-16px;
+	color:red;
+	height:13px;
+}

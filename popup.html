@@ -7,8 +7,10 @@
 		<script src="js/angular.min.js"></script>
 		<script src="js/popup.js"></script>
 	</head>
-	<body >
-		<h1>Redirector</h1>
-		<button>Disable</button>
+	<body ng-app="popupApp" ng-controller="PopupCtrl">
+		<h1><span>☈</span>edirector</h1>
+		<div class="disabled"><span ng-show="disabled">Disabled</span></div>
+		<button ng-click="toggleDisabled()">{{disabled ? 'Enable Redirector' : 'Disable Redirector'}}</button>
+		<button ng-click="openRedirectorSettings()">Edit Redirects</button>
 	</body>
 </html>

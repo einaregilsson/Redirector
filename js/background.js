@@ -23,3 +23,28 @@ var isFirefox = !!navigator.userAgent.match(/Firefox\//);
 
 var ev = isFirefox ? chrome.webRequest.onBeforeSendHeaders : chrome.webRequest.onBeforeRequest;
 ev.addListener(checkForRedirect, filter, ["blocking"]);
+
+var storage = chrome.storage.local; //TODO: Change to sync when Firefox supports it...
+
+
+//Icon updating code below
+
+function updateIcon() {
+	storage.get({disabled:false}, function(obj) {
+		chrome.browserAction.setIcon({
+	  		path: {
+	    		19: obj.disabled ? "images/icon19disabled.png" : "images/icon19active.png",
+	    		38: obj.disabled ? "images/icon38disabled.png" : "images/icon38active.png"  
+	  		}
+	  	});
+	});	
+}
+
+updateIcon();
+
+chrome.storage.onChanged.addListener(function(changes, namespace) {
+	if (changes.disabled) {
+		updateIcon();
+	}
+});
+       

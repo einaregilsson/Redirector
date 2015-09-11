@@ -1,13 +1,34 @@
-function hi() {
-	chrome.browserAction.setIcon({
-  		path: {
-    		19: "images/icon19disabled.png",
-    		38: "images/icon38disabled.png"
-  		}
-  	});
-  	open('redirector.html');
-}
 
-document.addEventListener('DOMContentLoaded', function() {
-	document.getElementsByTagName('button')[0].addEventListener('click', hi);
-})
+angular.module('popupApp', []).controller('PopupCtrl', ['$scope', function($s) {
+
+	var storage = chrome.storage.local; //TODO: Change to sync when Firefox supports it...
+	
+	storage.get({disabled:false}, function(obj) {
+		$s.disabled = obj.disabled;
+		$s.$apply();
+	});
+
+	$s.toggleDisabled = function() {
+		storage.get({disabled:false}, function(obj) {
+			storage.set({disabled:!obj.disabled});
+		  	$s.disabled = !obj.disabled;
+		  	$s.$apply();
+		});
+	};
+
+	$s.openRedirectorSettings = function() {
+
+		//switch to open one if we have it to minimize conflicts
+		var url = chrome.extension.getURL('redirector.html');
+		
+		chrome.tabs.query({currentWindow:true, url:url}, function(tabs) {
+			if (tabs.length > 0) {
+				chrome.tabs.update(tabs[0].id, {active:true}, function(tab) {
+					close();
+				});
+			} else {
+				open(url);
+			}
+		});
+	};
+}]);
