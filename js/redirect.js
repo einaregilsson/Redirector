@@ -113,7 +113,7 @@ Redirect.prototype = {
 
 
 		if (!this.exampleUrl) {
-			this.error = 'No example URL defined';
+			this.error = 'No example URL defined.';
 			return;
 		}
 

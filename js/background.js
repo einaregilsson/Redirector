@@ -21,7 +21,7 @@ var tabIdToIcon = {
 
 function log(msg) {
 	if (log.enabled) {
-		console.log(msg);
+		console.log('REDIRECTOR: ' + msg);
 	}
 }
 log.enabled = true;
@@ -49,7 +49,7 @@ function setIcon(image19, image38, tabId) {
 //decide whether or not we want to redirect.
 function checkRedirects(details) {
 
-	log('Checking: ' details.type + ': ' + details.url);
+	log('Checking: ' + details.type + ': ' + details.url);
 	
 	//We only allow GET request to be redirected, don't want to accidentally redirect
 	//sensitive POST parameters
@@ -166,15 +166,21 @@ function setUpRedirectListener() {
 
 	redirectEvent.removeListener(checkRedirects); //Unsubscribe first, in case there are changes...
 
-	storage.get({redirects:null}, function(obj) {
-		if (!obj.redirects) {
-			log('No redirects to set up');
+	storage.get({redirects:'firstrun'}, function(obj) {
+		var redirects = obj.redirects;
+
+		if (redirects ===  'firstrun') {
+			log('No redirects to set up, first run of extension');
 			//TODO: import old Firefox redirects
 			return;
 		}
 
-		partitionedRedirects = createPartitionedRedirects(obj.redirects);
-		var filter = createFilter(obj.redirects);
+		if (redirects.length == 0) {
+			return;
+		}
+
+		partitionedRedirects = createPartitionedRedirects(redirects);
+		var filter = createFilter(redirects);
 
 		log('Setting filter for listener: ' + JSON.stringify(filter));
 		redirectEvent.addListener(checkRedirects, filter, ["blocking"]);
@@ -194,10 +200,11 @@ function updateIcon() {
 //First time setup
 updateIcon();
 storage.get({disabled:false}, function(obj) {
-	console.log('REDIRECTOR IS HERE');
 	if (!obj.disabled) {
 		setUpRedirectListener();
+	} else {
+		log('Redirector is disabled');
 	}
 });
-console.log('Redirector starting up...');
+log('Redirector starting up...');
        

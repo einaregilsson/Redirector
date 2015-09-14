@@ -19,15 +19,12 @@ redirectorApp.controller('RedirectorPageCtrl', ['$scope', '$timeout', function($
 		var arr = $s.redirects.map(normalize);
 
 		storage.set({redirects:arr}, function() {
-			console.log('Saved redirects at ' + new Date());
+			console.log('Saved ' + arr.length + ' redirects at ' + new Date());
 		});
 	}
  
  	$s.redirects = [];
- 	storage.get('redirects', function(results) {
- 		if (!results || !results.redirects) {
- 			return;
- 		}
+ 	storage.get({redirects:[]}, function(results) {
 
  		for (var i=0; i < results.redirects.length; i++) {
 			$s.redirects.push(normalize(results.redirects[i]));

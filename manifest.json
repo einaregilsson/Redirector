@@ -10,6 +10,7 @@
               "128": "images/icon128active.png" },
 
   "permissions" : ["webRequest", "webRequestBlocking", "storage", "tabs", "http://*/*", "https://*/*"],
+  
   "applications": {
     "gecko": {
       "id": "redirector@einaregilsson.com"

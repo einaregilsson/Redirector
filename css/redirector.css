@@ -13,11 +13,10 @@ h1, h2, h3, h5, h6 {
 
 h1 {
   font-size:55px;
-  margin:-15px 0px 0px 0px;
-  -webkit-user-select:none;
-  -moz-user-select:none;
+  margin-bottom:0px;
   cursor:default;
   padding:0px;
+  letter-spacing: 2.1px;
 }
 
 h3 {
@@ -34,7 +33,7 @@ h4 {
 
 h5 {
   font-size:20px;
-  margin:-20px 0 0 0;
+  margin:-6px 0 0 0;
   color:#5e6163;
 }
 
@@ -170,8 +169,9 @@ input[type="radio"] {
 /* Table of redirects */
 
 .redirect-table {
-  width:90%;
-  max-width: 800px;
+  width:intrinsic;
+  max-width:1024px;
+  min-width:600px;
   border:solid 1px #bbb;
   margin:0px auto;
   border-radius:3px;
@@ -179,10 +179,30 @@ input[type="radio"] {
 
 .redirect-row {
   position: relative;
-  font-size:13px;
+  font-size:14px;
   padding:8px;
   line-height:18px;
   border-bottom:solid 1px #bbb;
+}
+
+.redirect-info {
+  display:table;
+}
+
+.redirect-info div {
+  display:table-row;
+}
+
+.redirect-info div label {
+  display:table-cell;
+  padding:3px 5px;
+  white-space: nowrap;
+}
+
+.redirect-info div p {
+  display:table-cell;
+  word-wrap:break-word;
+  max-width:900px;
 }
 
 .redirect-row:last-child {
@@ -193,7 +213,7 @@ input[type="radio"] {
   background:#f8f8f8;
 }
 
-.redirect-row.disabled label, .redirect-row.disabled span, a.disabled {
+.redirect-row.disabled label, .redirect-row.disabled span, .redirect-row.disabled p, a.disabled {
   color:#bbb !important;
 }
 
@@ -207,13 +227,15 @@ input[type="radio"] {
 
 #delete-redirect-form {
   position: fixed;
-  width:500px;
+  padding:10px;
+  min-width:500px;
+  width:intrinsic;
   background:white;
   border:solid 1px #bbb;
   border-radius:3px;
   z-index: 6000;
   left:50%;
-  margin-left:-250px;
+  margin-left:-260px;
   top:50%;
   margin-top:-220px;
   height:220px;
@@ -228,6 +250,16 @@ input[type="radio"] {
   font-weight:bold;
   text-align: right;
   display:inline-block;
+  vertical-align: top;
+}
+
+#delete-redirect-form div span {
+    display:inline-block;
+    width: 330px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    vertical-align: top;
 }
 
 .redirect-row h4 span.disabled-marker {
@@ -277,49 +309,80 @@ a.disabled:hover {
 
 #edit-redirect-form {
   position: fixed;
-  width:500px;
+  display:table;
+  width:700px;
   background:white;
   border:solid 1px #bbb;
   border-radius:3px;
   z-index: 6000;
   left:50%;
-  margin-left:-250px;
+  margin-left:-350px;
   top:50%;
   margin-top:-258px;
   font-size:12px;
 }
 
-#edit-redirect-form div{
-  margin-bottom:7px;
+.form-grid {
+  display:table;
 }
 
-#edit-redirect-form div label:first-child {
-  width:130px;
+.form-grid > div{
+  display:table-row;
+}
+
+.form-grid > div > label {
+  display:table-cell;
   font-weight:bold;
   text-align: right;
+  padding:6px;
+  white-space: nowrap;
+  width:120px;
+  vertical-align:top;
+}
+
+.edit-example-result {
+  width:500px;
+  display:inline-block;
+  word-wrap:break-word;
+  margin-top:4px;
+}
+
+.example-result-error {
+  margin-top:4px;
   display:inline-block;
 }
 
-#edit-redirect-form .second-column {
-  display:block;
-  margin-left: 133px;
+#unescape-matches, #escape-matches {
+  margin-top:5px;
 }
 
-#edit-redirect-form div input[type='text'] {
-  width:300px;
+.form-grid div input[type='text'] {
+  width:510px;
+}
+
+.input-cell {
+  padding-top:2px;
+} 
+
+.input-cell label {
+  display:block;
 }
 
 .error {
   color:red;
 }
 
-.placeholder,  {
+.placeholder  {
   color:#c0c0c0;
   font-size:11px;
 }
 
 ::-moz-placeholder {  /* Firefox 19+ */
    color: #c0c0c0;  
+}
+
+.advanced {
+  margin-top:8px;
 }
 
 #advanced-toggle {
@@ -335,13 +398,19 @@ a.disabled:hover {
   text-decoration: underline;
 }
 
+.advanced div .input-cell label:first-child {
+  margin-top:2px;
+}
+
 
 a[ng-click] {
   cursor:pointer;
 }
 
-#wildcardtype {
+#wildcardtype, #regextype {
   margin-right:10px;
+  display:inline-block;
+  margin-top:1px;
 }
 
 .button-container {

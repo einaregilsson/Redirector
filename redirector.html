@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>Redirector</title>
-		<link rel="stylesheet" href="css/redirector.css" />
+		<title>REDIRECTOR</title>
 		<meta charset="UTF-8">
+		<link rel="stylesheet" href="css/redirector.css" />
+		<!-- ☈ -->
+		<link rel="shortcut icon" href="images/icon32active.png">
 		<script src="js/angular.min.js"></script>
 		<script src="js/redirect.js"></script>
 		<script src="js/app.js"></script>
@@ -49,52 +51,59 @@
 		<!-- Form for creating and editing redirects -->
 		<div id="edit-redirect-form" ng-show="showEditForm" ng-controller="EditRedirectCtrl">
 			<h3>{{editIndex >= 0 ? 'Edit' : 'Create'}} Redirect</h3>
-			<div>
-				<label>Description:</label>
-				<input type="text" ng-model="redirect.description" placeholder="Enter a description for your redirect rule" />
-			</div>
-			<div>
-				<label>Example URL:</label>
-				<input type="text" ng-model="redirect.exampleUrl" ng-change="redirect.updateExampleResult()" placeholder="http://example.com/some/path?a=1" />
-			</div>
-			<div>
-				<label>Include pattern:</label>
-				<input type="text" ng-model="redirect.includePattern" ng-change="redirect.updateExampleResult()" placeholder="Pattern that matches the urls you want to redirect" />
-			</div>
-			<div>
-				<label>Redirect to:</label>
-				<input type="text" ng-model="redirect.redirectUrl" ng-change="redirect.updateExampleResult()" placeholder="The url you want to redirect requests to" />
-			</div>
-			<div>
-				<label>Pattern type:</label>
-				<label id="wildcardtype"><input type="radio" ng-change="redirect.updateExampleResult()" ng-model="redirect.patternType" name="patterntype" value="W">Wildcard</label>
-				<label><input type="radio" ng-change="redirect.updateExampleResult()" ng-model="redirect.patternType" name="patterntype" value="R">Regular Expression</label>
-			</div>
-			<div>
-				<label>Example result:</label>
-				<span class="error" ng-show="redirect.error">{{redirect.error}}</span><span ng-show="redirect.exampleResult">{{redirect.exampleResult}}</span>
+			<div class="form-grid">
+				<div>
+					<label>Description:</label>
+					<div class="input-cell"><input type="text" ng-model="redirect.description" placeholder="Enter a description for your redirect rule" /></div>
+				</div>
+				<div>
+					<label>Example URL:</label>
+					<div class="input-cell"><input type="text" ng-model="redirect.exampleUrl" ng-change="redirect.updateExampleResult()" placeholder="http://example.com/some/path?a=1" /></div>
+				</div>
+				<div>
+					<label>Include pattern:</label>
+					<div class="input-cell"><input type="text" ng-model="redirect.includePattern" ng-change="redirect.updateExampleResult()" placeholder="Pattern that matches the urls you want to redirect" /></div>
+				</div>
+				<div>
+					<label>Redirect to:</label>
+					<div class="input-cell"><input type="text" ng-model="redirect.redirectUrl" ng-change="redirect.updateExampleResult()" placeholder="The url you want to redirect requests to" /></div>
+				</div>
+				<div>
+					<label>Pattern type:</label>
+					<div class="input-cell">
+						<label id="wildcardtype">
+						<input type="radio" ng-change="redirect.updateExampleResult()" ng-model="redirect.patternType" name="patterntype" value="W">Wildcard</label>
+						<label id="regextype">
+							<input type="radio" ng-change="redirect.updateExampleResult()" ng-model="redirect.patternType" name="patterntype" value="R">Regular Expression</label>
+					</div>
+				</div>
+				<div>
+					<label>Example result:</label>
+					<div class="input-cell"><span class="error example-result-error" ng-show="redirect.error">{{redirect.error}}</span><span class="edit-example-result" ng-show="redirect.exampleResult">{{redirect.exampleResult}}</span></div>
+				</div>
 			</div>
 			<div id="advanced-toggle">
 				<a ng-click="showAdvanced=true" ng-show="!showAdvanced">Show advanced options...</a>
 				<a ng-click="showAdvanced=false" ng-show="showAdvanced">Hide advanced options...</a>
 			</div>
-			<div id="advanced" ng-show="showAdvanced">
+			<div class="form-grid advanced" ng-show="showAdvanced">
 				<div>
 					<label>Exclude pattern:</label>
-					<input type="text" ng-change="redirect.updateExampleResult()" ng-model="redirect.excludePattern" placeholder="Pattern to exclude certain urls from the redirection"/>
+					<div class="input-cell"><input type="text" ng-change="redirect.updateExampleResult()" ng-model="redirect.excludePattern" placeholder="Pattern to exclude certain urls from the redirection"/></div>
 				</div>
 				<div>
 					<label for="unescape-matches">Unescape matches:</label>
-					<input id="unescape-matches" ng-change="redirect.updateExampleResult()" ng-model="redirect.unescapeMatches" type="checkbox"><span class="placeholder">E.g. turn %2Fbar%2Ffoo%3Fx%3D2 into /bar/foo?x=2</span>
+					<div class="input-cell"><input id="unescape-matches" ng-change="redirect.updateExampleResult()" ng-model="redirect.unescapeMatches" type="checkbox"><span class="placeholder">E.g. turn %2Fbar%2Ffoo%3Fx%3D2 into /bar/foo?x=2</span></div>
 				</div>	
 				<div>
 					<label for="escape-matches">Escape matches:</label>
-					<input id="escape-matches" ng-change="redirect.updateExampleResult()" ng-model="redirect.escapeMatches" type="checkbox"><span class="placeholder">E.g. turn /bar/foo?x=2 into %2Fbar%2Ffoo%3Fx%3D2</span>
+					<div class="input-cell"><input id="escape-matches" ng-change="redirect.updateExampleResult()" ng-model="redirect.escapeMatches" type="checkbox"><span class="placeholder">E.g. turn /bar/foo?x=2 into %2Fbar%2Ffoo%3Fx%3D2</span></div>
 				</div>
 				<div>
 					<label>Apply to:</label>
-
-					<label ng-repeat="(key,value) in requestTypes " ng-class="{'second-column' : !$first}"><input type="checkbox" ng-checked="appliesTo(key)" ng-click="toggleApplies(key)">{{value}}</label>
+					<div class="input-cell">
+						<label ng-repeat="(key,value) in requestTypes"><input type="checkbox" ng-checked="appliesTo(key)" ng-click="toggleApplies(key)">{{value}}</label>
+					</div>
 
 				</div>
 			</div>
@@ -107,7 +116,7 @@
 
 		<div id="blur-wrapper" ng-class="{blur: showEditForm || showDeleteForm}">
 			
-			<h1><span style="font-size:100px; position:relative; top:4px">☈</span>edirector</h1>
+			<h1>REDIRECTOR</h1>
 			<h5>Go where <em>YOU</em> want!</h5>
 
 			<div id="menu">
@@ -132,20 +141,23 @@
 			<div class="redirect-table" ng-controller="ListRedirectsCtrl">
 				<div class="redirect-row" ng-class="{disabled: r.disabled}" ng-repeat="r in redirects">
 					<h4><span class="disabled-marker" ng-show="r.disabled">[Disabled] </span><span>{{r.description}}</span></h4>
-					<div>
-						<label>Redirect:</label> <span>{{r.includePattern}}</span>
-					</div>
-					<div>
-						<label>to:</label> <span>{{r.redirectUrl}}</span>
-					</div>
-					<div ng-show="r.excludePattern">
-						<label>excluding:</label> <span>asdfasdf</span>
-					</div>
-					<div>
-						<label>Example:</label> <span class="error" ng-show="r.error">{{r.error}}</span><span ng-show="r.exampleResult">{{r.exampleUrl}} <span class="arrow">&rarr;</span> {{r.exampleResult}}</span>
-					</div>
-					<div>
-						<label>Applies to:</label> <span>{{r.appliesTo|requestTypeDisplay}}</span>
+					<div class="redirect-info">
+						<div>
+							<label>Redirect:</label>
+							<p>{{r.includePattern}}</p>
+						</div>
+						<div>
+							<label>to:</label><p>{{r.redirectUrl}}</p>
+						</div>
+						<div ng-show="r.excludePattern">
+							<label>excluding:</label><p>asdfasdf</p>
+						</div>
+						<div>
+							<label>Example:</label> <p><span class="error" ng-show="r.error">{{r.error}}</span><span ng-show="r.exampleResult">{{r.exampleUrl}} <span class="arrow">&rarr;</span> {{r.exampleResult}}</span></p>
+						</div>
+						<div>
+							<label>Applies to:</label> <p>{{r.appliesTo|requestTypeDisplay}}</p>
+						</div>
 					</div>
 					<div>
 						<a class="btn blue" ng-click="toggleDisabled(r)">{{r.disabled ? "Enable" : "Disable"}}</a>
