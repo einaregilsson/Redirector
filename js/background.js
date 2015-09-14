@@ -19,6 +19,13 @@ var tabIdToIcon = {
 
 };
 
+//Cache of urls that have just been redirected to. They will not be redirected again, to
+//stop recursive redirects, and endless redirect chains.
+//Key is url, value is timestamp of redirect.
+var ignoreNextRequest = {
+
+};
+
 function log(msg) {
 	if (log.enabled) {
 		console.log('REDIRECTOR: ' + msg);
@@ -48,8 +55,6 @@ function setIcon(image19, image38, tabId) {
 //This is the actual function that gets called for each request and must
 //decide whether or not we want to redirect.
 function checkRedirects(details) {
-
-	log('Checking: ' + details.type + ': ' + details.url);
 	
 	//We only allow GET request to be redirected, don't want to accidentally redirect
 	//sensitive POST parameters
@@ -57,10 +62,19 @@ function checkRedirects(details) {
 		return null;
 	}
 
+	log('Checking: ' + details.type + ': ' + details.url);
+
 	var list = partitionedRedirects[details.type];
 	if (!list) {
 		log('No list for type: ' + details.type);
-		return;
+		return null;
+	}
+
+	var timestamp = ignoreNextRequest[details.url];
+	if (timestamp) {
+		log('Ignoring ' + details.url + ', was just redirected ' + (new Date().getTime()-timestamp) + 'ms ago');
+		delete ignoreNextRequest[details.url];
+		return null;
 	}
 
 	for (var i = 0; i < list.length; i++) {
@@ -69,26 +83,19 @@ function checkRedirects(details) {
 
 		if (result.isMatch) {
 
-			//Have to check if the result also matches, which would cause a loop...
-			//Based on tests in chrome it actually looks like we don't get passed the redirect url back into our listener so
-			//this should be unneccessary. But lets verify on Firefox and Opera first, before removing this code (and the recursive warning in the 
-			//edit box)
-			var recursiveResult = r.getMatch(result.redirectTo);
-			if (recursiveResult.isMatch) {
-				log('Ignoring pattern ' + r.includePattern + ' for url ' + details.url + ', because it would also match the result: ' + result.redirectTo);
-			} else {
-				log('Redirecting ' + details.url + ' ===> ' + result.redirectTo + ', type: ' + details.type + ', pattern: ' + r.includePattern);
+			log('Redirecting ' + details.url + ' ===> ' + result.redirectTo + ', type: ' + details.type + ', pattern: ' + r.includePattern);
 
-				/* Unfortunately the setBrowserIcon for a specific tab function is way too unreliable, fails all the time with tab not found,
-				   even though the tab is there. So, for now I'm cancelling this feature, which would have been pretty great ... :/
-				if (details.type == 'main_frame') {
-					log('Setting icon on tab ' + details.tabId + ' to green');
-					
-					setIcon("images/icon19redirected.png", "images/icon38redirected.png", details.tabId);
-				  	tabIdToIcon[details.tabId] = true;				
-				}*/
-				return { redirectUrl: result.redirectTo };
-			}
+			/* Unfortunately the setBrowserIcon for a specific tab function is way too unreliable, fails all the time with tab not found,
+			   even though the tab is there. So, for now I'm cancelling this feature, which would have been pretty great ... :/
+			if (details.type == 'main_frame') {
+				log('Setting icon on tab ' + details.tabId + ' to green');
+				
+				setIcon("images/icon19redirected.png", "images/icon38redirected.png", details.tabId);
+			  	tabIdToIcon[details.tabId] = true;				
+			}*/
+			ignoreNextRequest[result.redirectTo] = new Date().getTime();
+			
+			return { redirectUrl: result.redirectTo };
 		}
 	}
 

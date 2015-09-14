@@ -48,6 +48,7 @@
 		load <span class="url">http://def.com</span> instead. This can be useful for instance to always redirect articles to printer friendly
 		versions, redirect http:// to https:// for sites that support both, bypass advertising pages that appear before
 		being able to view certain pages and more.</p>
+		<p>A new feature in v3.0 is that the result of a redirect will never be redirected again, even if it matches another include pattern. This is to prevent endless loops, for example if you have a pattern that redirects from a -> b and another that redirects from b -> a. This also removes the annoying message that the include pattern matches the result and therefore you can't create the redirect. That doesn't matter anymore because the result will never be redirected, even if it matches the include pattern again, so this should make it simpler for people to create redirects.</p> 
 		
 		<a name="basicusage"></a>
 		<h4>Basic usage</h4>

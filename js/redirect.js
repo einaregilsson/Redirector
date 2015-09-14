@@ -155,11 +155,6 @@ Redirect.prototype = {
 		}
 
 		this.exampleResult = match.redirectTo;
-
-		if (this.getMatch(this.exampleResult, true).isMatch) {
-			this.exampleResult = '';
-			this.error = 'Result matches the redirect again, causing endless loop.'
-		}
 	},
 
 	isRegex: function() {
