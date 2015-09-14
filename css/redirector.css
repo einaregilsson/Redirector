@@ -169,9 +169,7 @@ input[type="radio"] {
 /* Table of redirects */
 
 .redirect-table {
-  width:intrinsic;
-  max-width:1024px;
-  min-width:600px;
+  max-width:800px;
   border:solid 1px #bbb;
   margin:0px auto;
   border-radius:3px;
@@ -202,7 +200,7 @@ input[type="radio"] {
 .redirect-info div p {
   display:table-cell;
   word-wrap:break-word;
-  max-width:900px;
+  max-width:700px;
 }
 
 .redirect-row:last-child {
