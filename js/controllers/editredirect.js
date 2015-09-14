@@ -35,7 +35,7 @@ redirectorApp.controller('EditRedirectCtrl', ['$scope', function($s) {
 		if ($s.editIndex >= 0) {
 			$s.redirects[$s.editIndex] = $s.redirect;
 		} else {
-			$s.redirects.push($s.redirect);
+			$s.redirects.unshift($s.redirect);
 		}
 		closeEditForm();
 		$s.saveChanges();
