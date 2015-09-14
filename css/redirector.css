@@ -3,6 +3,7 @@
 
 body {
   font-family: Arial, sans-serif;
+  font-size:14px;
   background:white;
   color:rgb(43, 38, 38);
 }
@@ -223,6 +224,35 @@ input[type="radio"] {
   width:60px;
 }
 
+.redirect-row h4 span.disabled-marker {
+  color:red !important;
+}
+
+.move-up-btn, .move-down-btn {
+  width:35px !important;
+}
+
+
+.redirect-row label {
+  display:inline-block;
+  width:80px;
+  font-weight:bold;
+  text-align: right;
+}
+
+.arrow {
+  font-size:18px;
+}
+
+a.disabled:hover {
+  cursor:default;
+  color:#bbb !important;
+  border:solid 1px #bbb !important;
+  background:white !important;
+}
+
+/* Popup form for deleting redirects */
+
 #delete-redirect-form {
   position: fixed;
   padding:10px;
@@ -252,39 +282,12 @@ input[type="radio"] {
 }
 
 #delete-redirect-form div span {
-    display:inline-block;
-    width: 330px;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-    vertical-align: top;
-}
-
-.redirect-row h4 span.disabled-marker {
-  color:red !important;
-}
-
-.move-up-btn, .move-down-btn {
-  width:35px !important;
-}
-
-
-.redirect-row label {
   display:inline-block;
-  width:80px;
-  font-weight:bold;
-  text-align: right;
-}
-
-.arrow {
-  font-size:18px;
-}
-
-a.disabled:hover {
-  cursor:default;
-  color:#bbb !important;
-  border:solid 1px #bbb !important;
-  background:white !important;
+  width: 330px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  vertical-align: top;
 }
 
 /* Edit form */
@@ -317,7 +320,6 @@ a.disabled:hover {
   margin-left:-350px;
   top:50%;
   margin-top:-258px;
-  font-size:12px;
 }
 
 .form-grid {
@@ -334,36 +336,51 @@ a.disabled:hover {
   text-align: right;
   padding:6px;
   white-space: nowrap;
-  width:120px;
+  width:140px;
   vertical-align:top;
 }
 
-.edit-example-result {
+.input-cell {
+  padding-top:1px;
+} 
+
+.form-grid div input[type='text'] {
+  width:510px;
+  font-size:14px;
+}
+
+.example-result {
   width:500px;
   display:inline-block;
   word-wrap:break-word;
-  margin-top:4px;
+  margin-top:5px;
 }
 
 .example-result-error {
-  margin-top:4px;
+  margin-top:5px;
   display:inline-block;
 }
 
 #unescape-matches, #escape-matches {
-  margin-top:5px;
+  margin-top:7px;
+  margin-left:0px;
 }
-
-.form-grid div input[type='text'] {
-  width:510px;
-}
-
-.input-cell {
-  padding-top:2px;
-} 
 
 .input-cell label {
   display:block;
+}
+
+#apply-to {
+  padding-top:3px;
+}
+
+#apply-to label span {
+  position: relative;
+  top:1px;
+}
+
+.input-cell label input {
+  margin-left:0px;
 }
 
 .error {
@@ -408,7 +425,7 @@ a[ng-click] {
 #wildcardtype, #regextype {
   margin-right:10px;
   display:inline-block;
-  margin-top:1px;
+  margin-top:4px;
 }
 
 .button-container {
@@ -416,6 +433,8 @@ a[ng-click] {
   text-align: center;
   padding-bottom:10px;
 }
+
+
 
 /* Footer with link */
 footer {

@@ -79,7 +79,7 @@
 				</div>
 				<div>
 					<label>Example result:</label>
-					<div class="input-cell"><span class="error example-result-error" ng-show="redirect.error">{{redirect.error}}</span><span class="edit-example-result" ng-show="redirect.exampleResult">{{redirect.exampleResult}}</span></div>
+					<div class="input-cell"><span class="error example-result-error" ng-show="redirect.error">{{redirect.error}}</span><span class="example-result" ng-show="redirect.exampleResult">{{redirect.exampleResult}}</span></div>
 				</div>
 			</div>
 			<div id="advanced-toggle">
@@ -101,8 +101,8 @@
 				</div>
 				<div>
 					<label>Apply to:</label>
-					<div class="input-cell">
-						<label ng-repeat="(key,value) in requestTypes"><input type="checkbox" ng-checked="appliesTo(key)" ng-click="toggleApplies(key)">{{value}}</label>
+					<div class="input-cell" id="apply-to">
+						<label ng-repeat="(key,value) in requestTypes"><input type="checkbox" ng-checked="appliesTo(key)" ng-click="toggleApplies(key)"><span>{{value}}</span></label>
 					</div>
 
 				</div>
@@ -160,11 +160,11 @@
 						</div>
 					</div>
 					<div>
-						<a class="btn blue" ng-click="toggleDisabled(r)">{{r.disabled ? "Enable" : "Disable"}}</a>
-						<a class="btn green" ng-click="editRedirect($index)">Edit</a>
-						<a class="btn red" ng-click="confirmDeleteRedirect($index)">Delete</a>
-						<a class="btn grey move-up-btn" ng-class="{disabled:$first}" ng-click="moveUp($index)">▲</a>
-						<a class="btn grey move-down-btn" ng-class="{disabled:$last}" ng-click="moveDown($index)">▼</a>
+						<a class="btn medium blue" ng-click="toggleDisabled(r)">{{r.disabled ? "Enable" : "Disable"}}</a>
+						<a class="btn medium green" ng-click="editRedirect($index)">Edit</a>
+						<a class="btn medium red" ng-click="confirmDeleteRedirect($index)">Delete</a>
+						<a class="btn medium grey move-up-btn" ng-class="{disabled:$first}" ng-click="moveUp($index)">▲</a>
+						<a class="btn medium grey move-down-btn" ng-class="{disabled:$last}" ng-click="moveDown($index)">▼</a>
 					</div>
 				</div>
 			</div>
