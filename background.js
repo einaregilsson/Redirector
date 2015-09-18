@@ -5,12 +5,11 @@
 //TODO: Better browser detection...
 var isFirefox = false;
 
-if (!this.chrome) {
+if (typeof chrome == 'undefined') {
 	isFirefox = true;
-	var firefoxShim = require('./firefox/background-shim');
+	var firefoxShim = require('./firefox/shim');
 	chrome = firefoxShim.chrome;
 	Redirect = firefoxShim.Redirect;
-	console.log(this.Redirect)
 }
 //Hopefully Firefox will fix this at some point and we can just use onBeforeRequest everywhere...
 var redirectEvent = isFirefox ? chrome.webRequest.onBeforeSendHeaders : chrome.webRequest.onBeforeRequest;

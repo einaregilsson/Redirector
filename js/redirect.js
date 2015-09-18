@@ -3,6 +3,11 @@ function Redirect(o) {
 	this._init(o);
 }
 
+//temp, allow addon sdk to require this.
+if (typeof exports !== 'undefined') {
+	exports.Redirect = Redirect;
+}
+
 //Static
 Redirect.WILDCARD = 'W';
 Redirect.REGEX = 'R';

@@ -36,7 +36,7 @@ def create_addon(files, browser):
 				del manifest['applications'] #Firefox specific, and causes warnings in other browsers...
 
 			if browser == 'opera':
-				manifest['options_ui']['page'] = 'redirector.html' #Opera opens options in new tab, where the popup would look really ugly
+				manifest['options_ui']['page'] = 'data/redirector.html' #Opera opens options in new tab, where the popup would look really ugly
 				manifest['options_ui']['chrome_style'] = False
 
 			zf.writestr(f[2:], json.dumps(manifest, indent=2)) 

@@ -1,0 +1,14 @@
+{
+  "title": "Redirector",
+  "name": "redirector",
+  "id" : "redirector@einaregilsson.com",
+  "version": "3.0.0",
+  "description": "A basic add-on",
+  "main": "js/background.js",
+  "author": "Einar Egilsson",
+  "engines": {
+    "firefox": ">=38.0a1",
+    "fennec": ">=38.0a1"
+  },
+  "license": "MIT"
+}

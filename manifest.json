@@ -2,6 +2,7 @@
 
   "manifest_version": 2,
   "name": "Redirector",
+  "description": "Redirect pages based on user-defined patterns.",
   "version": "3.0",
   
   "icons": {   "16": "images/icon16active.png",

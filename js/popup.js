@@ -20,7 +20,7 @@ angular.module('popupApp', []).controller('PopupCtrl', ['$scope', function($s) {
 
 		//switch to open one if we have it to minimize conflicts
 		var url = chrome.extension.getURL('redirector.html');
-		
+
 		chrome.tabs.query({currentWindow:true, url:url}, function(tabs) {
 			if (tabs.length > 0) {
 				chrome.tabs.update(tabs[0].id, {active:true}, function(tab) {
