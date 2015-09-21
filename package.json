@@ -3,9 +3,13 @@
   "name": "redirector",
   "id" : "redirector@einaregilsson.com",
   "version": "3.0.0",
+  "homepage" : "http://einaregilsson.com/redirector",
+  "icon" : "images/icon-active-48.png",
+  "icon64" : "images/icon-active-64.png",
   "description": "A basic add-on",
   "main": "js/background.js",
   "author": "Einar Egilsson",
+  "permissions" : { "multiprocess" : true },
   "engines": {
     "firefox": ">=38.0a1",
     "fennec": ">=38.0a1"

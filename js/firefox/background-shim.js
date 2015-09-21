@@ -27,7 +27,6 @@ var button = ToggleButton({
 	}
 });
 
-
 var extensionId = require('../../package.json').id;
 
 var chrome = {
@@ -59,8 +58,8 @@ var chrome = {
 	browserAction : {
 		setIcon : function(data, callback) {
 			var icon = {};
-			for (var key in data.path) {
-				icon[key] = makeUrl(data.path[key]);
+			for (var s of ['16','32','48', '64']) {
+				icon[s] = makeUrl(data.path['19'].replace('19', s));
 			}
 			button.icon = icon;
 		}
@@ -71,7 +70,7 @@ var pageMod = require("sdk/page-mod");
 
 var panel = panels.Panel({
 	width: 200,
-	height: 130,
+	height: 110,
 	contentURL: makeUrl('popup.html'),
 	contentScriptFile : makeUrl('js/firefox/content-script-proxy.js'),
 	onHide: function() {
@@ -89,7 +88,6 @@ function attachedPage(worker) {
 		console.info('background got message: ' + JSON.stringify(message));
 
 		if (message.messageType == 'storage.get') {
-			console.info('Getting from storage');
 			chrome.storage.local.get(message.payload, function(data) {
 				sendReply(message, data);
 			});
@@ -99,7 +97,9 @@ function attachedPage(worker) {
 			});
 		} else if (message.messageType == 'tabs.query') {
 			var result = [];
-			for (let tab of tabs) {
+			var windows = require("sdk/windows").browserWindows;
+			
+			for (let tab of windows.activeWindow.tabs) {
 				if (tab.url == message.payload.url) {
 					result.push({id:tab.id, url:tab.url});
 				}
@@ -109,12 +109,14 @@ function attachedPage(worker) {
 			for (let tab of tabs) {
 				if (tab.id == message.payload.tabId) {
 					tab.activate();
+					panel.hide();
 					sendReply(message, tab);
 				}
 			}
 			sendReply(message, null);
 		} else if (message.messageType == 'tabs.create') {
 			tabs.open(message.payload.url);
+			panel.hide();
 			sendReply(message, null);
 		} 
 	});

@@ -33,11 +33,13 @@ function log(msg) {
 log.enabled = true;
 
 function setIcon(image) {
-	var sizes = [16,19,32,38,48,64];
-	var data = { path: {}};
-	for (var s of sizes) {
-		data.path[s] = 'images/' + image + '-' + s + '.png';
-	} 
+	var data = { 
+		path: {
+			19 : 'images/' + image + '-19.png',
+			38 : 'images/' + image + '-38.png'
+		}
+	};
+
 	chrome.browserAction.setIcon(data, function() {
 		var err = chrome.runtime.lastError;
 		if (err) {
@@ -132,7 +134,7 @@ function createFilter(redirects) {
 	//FIXME: The Firefox implementation of the url matching is seriously broken still,
 	//so we can't filter by url on Firefox for now, have to cut non http urls out in checkRedirects.
 	return {
-		urls: isFirefox ? null : ["https://*", "http://*"],
+		urls: isFirefox ? null : ["https://*/*", "http://*/*"],
 		types : types
 	};
 }
