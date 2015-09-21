@@ -1,0 +1,10 @@
+.DS_Store
+*.zip
+*.xpi
+manifest.json
+.git/*
+.gitignore
+*.py
+devprofile/*
+debug.sh
+

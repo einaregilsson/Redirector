@@ -4,7 +4,7 @@ import os, os.path, re, zipfile, json
 
 def get_files_to_zip():
 	#Exclude git stuff, build scripts etc.
-	exclude = [r'(\\|/)\.git(\\|/)', r'\.(py|sh)$', r'\.DS_Store$', r'\.gitignore$',r'(\\|/)build(\\|/)']
+	exclude = [r'(\\|/)\.git(\\|/)', r'\.(py|sh)$', r'\.DS_Store$', r'\.gitignore$',r'(\\|/)build(\\|/)', '.*devprofile.*', r'debug\.sh']
 
 	zippable_files = []
 	for root, folders, files in os.walk('.'):

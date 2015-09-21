@@ -16,8 +16,8 @@ var button = ToggleButton({
 	id: "redirector",
 	label: "Redirector",
 	icon: {
-		"16": makeUrl("images/icon16active.png"),
-		"32": makeUrl("images/icon32active.png")
+		"16": makeUrl("images/icon-active-16.png"),
+		"32": makeUrl("images/icon-active-32.png")
 	},
 	onChange: function(state) {
 		if (state.checked) {
@@ -26,15 +26,6 @@ var button = ToggleButton({
 	}
 });
 
-var panel = panels.Panel({
-	width: 200,
-	height: 130,
-	contentURL: makeUrl('popup.html'),
-	contentScriptFile : makeUrl('js/firefox/content-script-proxy.js'),
-	onHide: function() {
-		button.state('window', {checked: false});
-	}
-});
 
 var extensionId = require('../../package.json').id;
 
@@ -66,37 +57,58 @@ var chrome = {
 	
 	browserAction : {
 		setIcon : function(data, callback) {
-
+			var icon = {};
+			for (var key in data.path) {
+				icon[key] = makeUrl(data.path[key]);
+			}
+			button.icon = icon;
 		}
 	}
 };
 
 var pageMod = require("sdk/page-mod");
 
+var panel = panels.Panel({
+	width: 200,
+	height: 130,
+	contentURL: makeUrl('popup.html'),
+	contentScriptFile : makeUrl('js/firefox/content-script-proxy.js'),
+	onHide: function() {
+		button.state('window', {checked: false});
+	}
+});
+
 function attachedPage(worker) {
+	function sendReply(originalMessage, reply) {
+		if (JSON.stringify(reply) == "{}") {
+			throw 'fuck';
+		}
+		var msg = {messageId:originalMessage.messageId, payload:reply};
+		console.info('background sending message: ' + JSON.stringify(msg));
+		worker.port.emit('message', msg);
+	}
     worker.port.on('message', function(message) {
 		console.info('background got message: ' + JSON.stringify(message));
 
 		if (message.messageType == 'storage.get') {
 			console.info('Getting from storage');
 			chrome.storage.local.get(message.payload, function(data) {
-				var resultMsg = { messageId: message.messageId, payload: data };
-				console.info('background sending message: ' + JSON.stringify(resultMsg));
-				worker.port.emit('message', resultMsg);
+				sendReply(message, data);
 			});
 		} else if (message.messageType == 'storage.set') {
 			chrome.storage.local.set(message.payload, function(data) {
-				var resultMsg = { messageId: message.messageId, payload: data };
-				console.info('background sending message: ' + JSON.stringify(resultMsg));
-				worker.port.emit('message', resultMsg);
+				sendReply(message, data);
 			});
-		}    
+		} 
 	});
 }
+
+attachedPage(panel);
 
 pageMod.PageMod({
   include: makeUrl('redirector.html'),
   contentScriptFile: makeUrl('js/firefox/content-script-proxy.js'),
+  contentScriptWhen: 'start',
   onAttach : attachedPage
 });
 

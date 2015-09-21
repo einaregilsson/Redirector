@@ -5,7 +5,7 @@
 	var callbacks = {};
 	function send(type, message, callback) {
 		var id = messageId++;
-		window.postMessage({sender:'page', messageId:id, messageType:type, payload:message}, '*');
+		window.postMessage({sender:'page', url:location.href, messageId:id, messageType:type, payload:message}, '*');
 		callbacks[id] = callback;
 	}
 
@@ -22,6 +22,12 @@
 			delete callbacks[message.data.messageId];
 		}
 	});
+
+	var req = new XMLHttpRequest();
+	req.overrideMimeType('application/json');
+	req.open("GET", 'package.json', false);
+	req.send();	
+	var manifest = JSON.parse(req.responseText);
 
 	window.chrome = {
 		storage : {
@@ -53,7 +59,7 @@
 
 		runtime : { 
 			getManifest : function() {
-				return { version : '3.0' };
+				return manifest;
 			}
 		}
 	};

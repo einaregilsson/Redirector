@@ -3,5 +3,6 @@
 *.zip
 build/*
 ffox.sh
-
+devprofile/*
+debug.sh
 

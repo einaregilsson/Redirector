@@ -5,12 +5,11 @@
 //TODO: Better browser detection...
 var isFirefox = false;
 
-if (!this.chrome) {
+if (typeof chrome == 'undefined') {
 	isFirefox = true;
 	var firefoxShim = require('./firefox/background-shim');
 	chrome = firefoxShim.chrome;
 	Redirect = firefoxShim.Redirect;
-	console.log(this.Redirect)
 }
 //Hopefully Firefox will fix this at some point and we can just use onBeforeRequest everywhere...
 var redirectEvent = isFirefox ? chrome.webRequest.onBeforeSendHeaders : chrome.webRequest.onBeforeRequest;
@@ -18,12 +17,6 @@ var redirectEvent = isFirefox ? chrome.webRequest.onBeforeSendHeaders : chrome.w
 //Redirects partitioned by request type, so we have to run through
 //the minimum number of redirects for each request.
 var partitionedRedirects = {};
-
-//Keep track of tabids where the main_frame url has been redirected.
-//Mark it as green until a new url is loaded.
-var tabIdToIcon = {
-
-};
 
 //Cache of urls that have just been redirected to. They will not be redirected again, to
 //stop recursive redirects, and endless redirect chains.
@@ -39,17 +32,13 @@ function log(msg) {
 }
 log.enabled = true;
 
-function setIcon(image19, image38, tabId) {
-	var data = {
-  		path: {
-    		19: image19,
-    		38: image38  
-  		}
-  	};
-  	if (typeof tabId !== 'undefined') {
-  		data.tabId = tabId;
-  	}
-	chrome.browserAction.setIcon(data, function(tab) {
+function setIcon(image) {
+	var sizes = [16,19,32,38,48,64];
+	var data = { path: {}};
+	for (var s of sizes) {
+		data.path[s] = 'images/' + image + '-' + s + '.png';
+	} 
+	chrome.browserAction.setIcon(data, function() {
 		var err = chrome.runtime.lastError;
 		if (err) {
 			//If not checked we will get unchecked errors in the background page console...
@@ -61,26 +50,31 @@ function setIcon(image19, image38, tabId) {
 //This is the actual function that gets called for each request and must
 //decide whether or not we want to redirect.
 function checkRedirects(details) {
-	
+
+	//Oh Firefox, please fix your broken url matching soon...
+	if (isFirefox && !details.url.match(/^https?:\/\//)) {
+		log('Not http: ' + details.url);
+		return {};
+	}
+
 	//We only allow GET request to be redirected, don't want to accidentally redirect
 	//sensitive POST parameters
 	if (details.method != 'GET') {
-		return null;
+		return {};
 	}
-
 	log('Checking: ' + details.type + ': ' + details.url);
 
 	var list = partitionedRedirects[details.type];
 	if (!list) {
 		log('No list for type: ' + details.type);
-		return null;
+		return {};
 	}
 
 	var timestamp = ignoreNextRequest[details.url];
 	if (timestamp) {
 		log('Ignoring ' + details.url + ', was just redirected ' + (new Date().getTime()-timestamp) + 'ms ago');
 		delete ignoreNextRequest[details.url];
-		return null;
+		return {};
 	}
 
 	for (var i = 0; i < list.length; i++) {
@@ -91,28 +85,13 @@ function checkRedirects(details) {
 
 			log('Redirecting ' + details.url + ' ===> ' + result.redirectTo + ', type: ' + details.type + ', pattern: ' + r.includePattern);
 
-			/* Unfortunately the setBrowserIcon for a specific tab function is way too unreliable, fails all the time with tab not found,
-			   even though the tab is there. So, for now I'm cancelling this feature, which would have been pretty great ... :/
-			if (details.type == 'main_frame') {
-				log('Setting icon on tab ' + details.tabId + ' to green');
-				
-				setIcon("images/icon19redirected.png", "images/icon38redirected.png", details.tabId);
-			  	tabIdToIcon[details.tabId] = true;				
-			}*/
 			ignoreNextRequest[result.redirectTo] = new Date().getTime();
 			
 			return { redirectUrl: result.redirectTo };
 		}
 	}
 
-	/* Cancelled for now because of setBrowserIcon being really unreliable...
-	if (details.type == 'main_frame' && tabIdToIcon[details.tabId]) {
-		log('Setting icon on tab ' + details.tabId + ' back to active');
-		setIcon("images/icon19active.png", "images/icon38active.png", details.tabId);
-	  	delete tabIdToIcon[details.tabId];
-	}*/
-
-  	return null; 
+  	return {}; 
 }
 
 //Monitor changes in data, and setup everything again.
@@ -150,8 +129,10 @@ function createFilter(redirects) {
 	}
 	types.sort();
 
+	//FIXME: The Firefox implementation of the url matching is seriously broken still,
+	//so we can't filter by url on Firefox for now, have to cut non http urls out in checkRedirects.
 	return {
-		urls: ["http://*/*", "https://*/*"],
+		urls: isFirefox ? null : ["https://*", "http://*"],
 		types : types
 	};
 }
@@ -179,16 +160,11 @@ function setUpRedirectListener() {
 
 	redirectEvent.removeListener(checkRedirects); //Unsubscribe first, in case there are changes...
 
-	chrome.storage.local.get({redirects:'firstrun'}, function(obj) {
+	chrome.storage.local.get({redirects:[]}, function(obj) {
 		var redirects = obj.redirects;
 
-		if (redirects ===  'firstrun') {
-			log('No redirects to set up, first run of extension');
-			//TODO: import old Firefox redirects
-			return;
-		}
-
 		if (redirects.length == 0) {
+			log('No redirects defined, not setting up listener');
 			return;
 		}
 
@@ -202,16 +178,13 @@ function setUpRedirectListener() {
 
 function updateIcon() {
 	chrome.storage.local.get({disabled:false}, function(obj) {
-		if (obj.disabled) {
-			setIcon("images/icon19disabled.png", "images/icon38disabled.png");
-		} else {
-			setIcon("images/icon19active.png", "images/icon38active.png");
-		}
+		setIcon(obj.disabled ? 'icon-disabled' : 'icon-active');
 	});	
 }
 
 //First time setup
 updateIcon();
+
 chrome.storage.local.get({disabled:false}, function(obj) {
 	if (!obj.disabled) {
 		setUpRedirectListener();

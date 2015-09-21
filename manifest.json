@@ -5,10 +5,11 @@
   "description": "Redirect pages based on user-defined patterns.",
   "version": "3.0",
   
-  "icons": {   "16": "images/icon16active.png",
-               "32": "images/icon32active.png",
-               "48": "images/icon48active.png",
-              "128": "images/icon128active.png" },
+  "icons": {   "16": "images/icon-active-16.png",
+               "32": "images/icon-active-32.png",
+               "48": "images/icon-active-48.png",
+               "64": "images/icon-active-64.png",
+              "128": "images/icon-active-128.png" },
 
   "permissions" : ["webRequest", "webRequestBlocking", "storage", "tabs", "http://*/*", "https://*/*"],
   
@@ -30,8 +31,8 @@
 
   "browser_action": {
     "default_icon": {
-      "19": "images/icon19active.png",
-      "38": "images/icon38active.png" 
+      "19": "images/icon-active-19.png",
+      "38": "images/icon-active-38.png" 
     },
     "default_title": "Redirector",
     "default_popup": "popup.html"
