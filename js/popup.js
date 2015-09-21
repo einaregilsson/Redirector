@@ -27,7 +27,7 @@ angular.module('popupApp', []).controller('PopupCtrl', ['$scope', function($s) {
 					close();
 				});
 			} else {
-				open(url);
+				chrome.tabs.create({url:url, active:true});
 			}
 		});
 	};

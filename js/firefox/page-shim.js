@@ -1,6 +1,10 @@
 (function() {
 	//Communication functions for
 
+	if (typeof chrome !== 'undefined') {
+		return;
+	}
+
 	var messageId = 1;
 	var callbacks = {};
 	function send(type, message, callback) {
@@ -49,11 +53,21 @@
 
 		tabs : {
 			query : function(data, callback) {
+				send('tabs.query', data, callback);
+			},
 
+			create : function(data, callback) {
+				send('tabs.create', data, callback);
 			},
 
 			update : function(tabId, options, callback) {
+				if (!options.active) {
+					throw 'Unexpected update call';
+				}
 
+				options.tabId = tabId;
+
+				send('tabs.update', options, callback);
 			}
 		},
 

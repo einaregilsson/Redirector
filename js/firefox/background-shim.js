@@ -1,4 +1,5 @@
-var self = require("sdk/self");
+var self = require('sdk/self');
+var tabs = require('sdk/tabs');
 
 const {Cu} = require('chrome');
 
@@ -80,9 +81,6 @@ var panel = panels.Panel({
 
 function attachedPage(worker) {
 	function sendReply(originalMessage, reply) {
-		if (JSON.stringify(reply) == "{}") {
-			throw 'fuck';
-		}
 		var msg = {messageId:originalMessage.messageId, payload:reply};
 		console.info('background sending message: ' + JSON.stringify(msg));
 		worker.port.emit('message', msg);
@@ -99,6 +97,25 @@ function attachedPage(worker) {
 			chrome.storage.local.set(message.payload, function(data) {
 				sendReply(message, data);
 			});
+		} else if (message.messageType == 'tabs.query') {
+			var result = [];
+			for (let tab of tabs) {
+				if (tab.url == message.payload.url) {
+					result.push({id:tab.id, url:tab.url});
+				}
+			}
+			sendReply(message, result);
+		} else if (message.messageType == 'tabs.update') {
+			for (let tab of tabs) {
+				if (tab.id == message.payload.tabId) {
+					tab.activate();
+					sendReply(message, tab);
+				}
+			}
+			sendReply(message, null);
+		} else if (message.messageType == 'tabs.create') {
+			tabs.open(message.payload.url);
+			sendReply(message, null);
 		} 
 	});
 }
