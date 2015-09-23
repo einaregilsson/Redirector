@@ -9,7 +9,6 @@ function log(msg) {
 log.enabled = false;
 
 
-//TODO: Better browser detection...
 var isFirefox = false;
 
 if (typeof chrome == 'undefined') {
@@ -36,6 +35,12 @@ var partitionedRedirects = {};
 var ignoreNextRequest = {
 
 };
+
+//url => { timestamp:ms, count:1...n};
+var justRedirected = {
+
+};
+var redirectThreshold = 3;
 
 function setIcon(image) {
 	var data = { 
@@ -84,11 +89,29 @@ function checkRedirects(details) {
 		return {};
 	}
 
+
 	for (var i = 0; i < list.length; i++) {
 		var r = list[i];
 		var result = r.getMatch(details.url);
 
 		if (result.isMatch) {
+
+			//Check if we're stuck in a loop where we keep redirecting this, in that
+			//case ignore!
+			var data = justRedirected[details.url];
+
+			var threshold = 3000;
+			if(!data || ((new Date().getTime()-data.timestamp) > threshold)) { //Obsolete after 3 seconds
+				justRedirected[details.url] = { timestamp : new Date().getTime(), count: 1};
+			} else {
+				data.count++;
+				justRedirected[details.url] = data;
+				if (data.count >= redirectThreshold) {
+					log('Ignoring ' + details.url + ' because we have redirected it ' + data.count + ' times in the last ' + threshold + 'ms');
+					return {};
+				} 
+			}
+
 
 			log('Redirecting ' + details.url + ' ===> ' + result.redirectTo + ', type: ' + details.type + ', pattern: ' + r.includePattern);
 
