@@ -2,7 +2,7 @@
 
   "manifest_version": 2,
   "name": "Redirector",
-  "description": "Redirect pages based on user-defined patterns.",
+  "description": "Automatically redirect pages based on user-defined rules. E.g. always redirect an article url to its printer-friendly version.",
   "version": "3.0",
   
   "icons": {   "16": "images/icon-active-16.png",

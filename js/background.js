@@ -1,6 +1,13 @@
 
 //This is the background script. It is responsible for actually redirecting requests,
 //as well as monitoring changes in the redirects and the disabled status and reacting to them.
+function log(msg) {
+	if (log.enabled) {
+		console.log('REDIRECTOR: ' + msg);
+	}
+}
+log.enabled = false;
+
 
 //TODO: Better browser detection...
 var isFirefox = false;
@@ -8,6 +15,7 @@ var isFirefox = false;
 if (typeof chrome == 'undefined') {
 	isFirefox = true;
 	var firefoxShim = require('./firefox/background-shim');
+	firefoxShim.setLogger(log);
 	chrome = firefoxShim.chrome;
 	Redirect = firefoxShim.Redirect;
 }
@@ -24,13 +32,6 @@ var partitionedRedirects = {};
 var ignoreNextRequest = {
 
 };
-
-function log(msg) {
-	if (log.enabled) {
-		console.log('REDIRECTOR: ' + msg);
-	}
-}
-log.enabled = true;
 
 function setIcon(image) {
 	var data = { 

@@ -4,15 +4,15 @@
   "id" : "redirector@einaregilsson.com",
   "version": "3.0.0",
   "homepage" : "http://einaregilsson.com/redirector",
-  "icon" : "images/icon-active-48.png",
-  "icon64" : "images/icon-active-64.png",
-  "description": "A basic add-on",
+  "icon" : "resource://redirector-at-einaregilsson-dot-com/images/icon-active-48.png",
+  "icon64" : "iresource://redirector-at-einaregilsson-dot-com/images/icon-active-64.png",
+  "description": "Automatically redirect pages based on user-defined rules. E.g. always redirect an article url to its printer-friendly version.",
   "main": "js/background.js",
   "author": "Einar Egilsson",
   "permissions" : { "multiprocess" : true },
   "engines": {
-    "firefox": ">=38.0a1",
-    "fennec": ">=38.0a1"
+    "firefox": ">=41.0",
+    "fennec": ">=41.0"
   },
   "license": "MIT"
 }

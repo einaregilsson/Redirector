@@ -4,7 +4,14 @@ import os, os.path, re, zipfile, json
 
 def get_files_to_zip():
 	#Exclude git stuff, build scripts etc.
-	exclude = [r'(\\|/)\.git(\\|/)', r'\.(py|sh)$', r'\.DS_Store$', r'\.gitignore$',r'(\\|/)build(\\|/)', '.*devprofile.*', r'debug\.sh']
+	exclude = [
+		r'(\\|/)\.git(\\|/)', 
+		r'\.(py|sh)$', 
+		r'\.DS_Store$', 
+		r'\.gitignore$',
+		r'(\\|/)build(\\|/)', 
+		r'debug\.sh'
+	]
 
 	zippable_files = []
 	for root, folders, files in os.walk('.'):
@@ -13,6 +20,13 @@ def get_files_to_zip():
 			if not any(re.search(p, file) for p in exclude):
 				zippable_files.append(file)
 	return zippable_files
+
+def create_firefox_addon():
+	os.system('jpm xpi')
+	import glob, shutil
+	name = glob.glob('*.xpi')[0]
+	shutil.move(name, os.path.join('build', 'redirector-firefox.xpi'))
+
 
 def create_addon(files, browser):
 	output_folder = 'build'
@@ -56,6 +70,7 @@ if __name__ == '__main__':
 	print ''
 
 	browsers = ['chrome', 'firefox', 'opera']
-	for b in browsers:
-		create_addon(files, b)
+	create_addon(files, 'chrome')
+	create_addon(files, 'opera')
+	create_firefox_addon()
 

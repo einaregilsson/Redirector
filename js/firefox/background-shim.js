@@ -3,6 +3,66 @@ var tabs = require('sdk/tabs');
 
 const {Cu} = require('chrome');
 
+exports.setLogger = function(logger){
+	log = logger;
+} 
+
+
+function migrateFromOlderVersion() {
+	const { pathFor } = require('sdk/system');
+	const path = require('sdk/fs/path');
+	const file = require('sdk/io/file');
+
+	var oldRedirectsFile = path.join(pathFor('ProfD'), 'Redirector.rjson');
+	if (!file.exists(oldRedirectsFile)) {
+		return;
+	}
+
+	var extensionId = require('sdk/self').id;
+	var newFolder = path.join(pathFor('ProfD'), 'browser-extension-data', extensionId);
+	file.mkpath(newFolder);
+	var newFile = path.join(newFolder, 'storage.js');
+	
+	if (file.exists(newFile)) {
+		return;
+	}	
+
+
+	var textReader = file.open(oldRedirectsFile, 'r');
+	var jsonData = JSON.parse(textReader.read());
+	textReader.close();
+	var Redirect = require('../redirect').Redirect;
+	var newData = {redirects:[]};
+	for (var r of jsonData.redirects) {
+		newData.redirects.push(new Redirect(r).toObject());
+	}
+
+	Cu.import("resource://gre/modules/Services.jsm");
+
+	var enabled = true;
+	try {
+		enabled = Services.prefs.getBoolPref('extensions.redirector.enabled');
+	} catch(e) {}
+	newData.disabled = !!enabled;
+
+	//Kill old prefs:
+	var oldPrefs = ['enabled', 'debugEnabled', 'enableShortcutKey', 'version', 'defaultDir'];
+	for (var p of oldPrefs) {
+		try {
+			Services.prefs.deleteBranch('extensions.redirector.' + oldPrefs);
+		} catch(e) {}
+	}
+
+	
+	var textWriter = file.open(newFile, 'w');
+	textWriter.write(JSON.stringify(newData));
+	textWriter.close();
+
+	file.remove(oldRedirectsFile);
+}
+
+migrateFromOlderVersion();
+
 function makeUrl(relativeUrl) {
 	return self.data.url(relativeUrl).replace('/data/', '/');
 } 
@@ -18,7 +78,9 @@ var button = ToggleButton({
 	label: "Redirector",
 	icon: {
 		"16": makeUrl("images/icon-active-16.png"),
-		"32": makeUrl("images/icon-active-32.png")
+		"32": makeUrl("images/icon-active-32.png"),
+		"48": makeUrl("images/icon-active-48.png"),
+		"64": makeUrl("images/icon-active-64.png")
 	},
 	onChange: function(state) {
 		if (state.checked) {
@@ -27,7 +89,7 @@ var button = ToggleButton({
 	}
 });
 
-var extensionId = require('../../package.json').id;
+var extensionId = require('sdk/self').id;
 
 var chrome = {
 	webRequest : Cu.import('resource://gre/modules/WebRequest.jsm', {}),
@@ -35,10 +97,10 @@ var chrome = {
 	storage : {
 		local : {
 			get : function(query, callback) {
-				ExtensionStorage.get(extensionId, query).then(callback);
+				ExtensionStorage.get(extensionId, query).then(callback || function(){});
 			},
 			set : function(data, callback) {
-				ExtensionStorage.set(extensionId, data).then(callback);
+				ExtensionStorage.set(extensionId, data).then(callback || function(){});
 			}
 		},
 
@@ -81,11 +143,17 @@ var panel = panels.Panel({
 function attachedPage(worker) {
 	function sendReply(originalMessage, reply) {
 		var msg = {messageId:originalMessage.messageId, payload:reply};
-		console.info('background sending message: ' + JSON.stringify(msg));
+		log('background sending message: ' + JSON.stringify(msg));
 		worker.port.emit('message', msg);
 	}
+
+	//We proxy all logging over here so we can control it with one switch
+	worker.port.on('log', function(logMessage) {
+		log(logMessage);
+	});
+
     worker.port.on('message', function(message) {
-		console.info('background got message: ' + JSON.stringify(message));
+		log('background got message: ' + JSON.stringify(message));
 
 		if (message.messageType == 'storage.get') {
 			chrome.storage.local.get(message.payload, function(data) {
@@ -95,6 +163,14 @@ function attachedPage(worker) {
 			chrome.storage.local.set(message.payload, function(data) {
 				sendReply(message, data);
 			});
+		} else if (message.messageType == 'log.enabled') {
+			if (!message.payload.enabled) {
+				log('Logging has been disabled for Redirector');
+			}
+			log.enabled = message.payload.enabled;
+			if (log.enabled) {
+				log('Logging has been enabled for Redirector');
+			}
 		} else if (message.messageType == 'tabs.query') {
 			var result = [];
 			var windows = require("sdk/windows").browserWindows;
@@ -136,4 +212,5 @@ exports.chrome = chrome;
 
 //Get redirect.js, which is included in the background page in webextensions.
 exports.Redirect = require('../redirect').Redirect;
+
 

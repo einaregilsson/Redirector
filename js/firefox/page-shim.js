@@ -5,6 +5,10 @@
 		return;
 	}
 
+	function log(msg) {
+		window.postMessage({sender:'page', logMessage: msg}, '*');	
+	}
+
 	var messageId = 1;
 	var callbacks = {};
 	function send(type, message, callback) {
@@ -17,8 +21,7 @@
 		if (message.data.sender == 'page') {
 			return; //Ignore messages we sent ourselves
 		}
-
-		console.info('page got message: ' + JSON.stringify(message.data));
+		log('page got message: ' + JSON.stringify(message.data));
 		
 		var callback = callbacks[message.data.messageId];
 		if (callback) {
@@ -26,6 +29,17 @@
 			delete callbacks[message.data.messageId];
 		}
 	});
+
+	//Allow Firefox users to turn on logging
+	window.logging = {
+		enable : function() {
+			send('log.enabled', {enabled:true});
+		},
+
+		disable : function() {
+			send('log.enabled', {enabled:false});
+		}
+	}
 
 	var req = new XMLHttpRequest();
 	req.overrideMimeType('application/json');
