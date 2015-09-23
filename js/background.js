@@ -18,6 +18,10 @@ if (typeof chrome == 'undefined') {
 	firefoxShim.setLogger(log);
 	chrome = firefoxShim.chrome;
 	Redirect = firefoxShim.Redirect;
+	exports.onUnload = function (reason) { 
+		redirectEvent.removeListener(checkRedirects);
+		chrome.storage.onChanged.removeListener(monitorChanges);	
+	};
 }
 //Hopefully Firefox will fix this at some point and we can just use onBeforeRequest everywhere...
 var redirectEvent = isFirefox ? chrome.webRequest.onBeforeSendHeaders : chrome.webRequest.onBeforeRequest;
@@ -100,7 +104,7 @@ function checkRedirects(details) {
 //Monitor changes in data, and setup everything again.
 //This could probably be optimized to not do everything on every change
 //but why bother?
-chrome.storage.onChanged.addListener(function(changes, namespace) {
+function monitorChanges(changes, namespace) {
 	if (changes.disabled) {
 		updateIcon();
 
@@ -117,7 +121,8 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
 		log('Redirects have changed, setting up listener again');
 		setUpRedirectListener();
 	}
-});
+}
+chrome.storage.onChanged.addListener(monitorChanges);
 
 //Creates a filter to pass to the listener so we don't have to run through
 //all the redirects for all the request types we don't have any redirects for anyway.

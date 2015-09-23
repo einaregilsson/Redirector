@@ -34,7 +34,9 @@ function migrateFromOlderVersion() {
 	var Redirect = require('../redirect').Redirect;
 	var newData = {redirects:[]};
 	for (var r of jsonData.redirects) {
-		newData.redirects.push(new Redirect(r).toObject());
+		var redirect = new Redirect(r);
+		redirect.updateExampleResult();
+		newData.redirects.push(redirect.toObject());
 	}
 
 	Cu.import("resource://gre/modules/Services.jsm");
@@ -49,8 +51,9 @@ function migrateFromOlderVersion() {
 	var oldPrefs = ['enabled', 'debugEnabled', 'enableShortcutKey', 'version', 'defaultDir'];
 	for (var p of oldPrefs) {
 		try {
-			Services.prefs.deleteBranch('extensions.redirector.' + oldPrefs);
-		} catch(e) {}
+			Services.prefs.deleteBranch('extensions.redirector.' + p);
+		} catch(e) {
+		}
 	}
 
 	
@@ -147,12 +150,13 @@ function attachedPage(worker) {
 		worker.port.emit('message', msg);
 	}
 
-	//We proxy all logging over here so we can control it with one switch
-	worker.port.on('log', function(logMessage) {
+	function logger(logMessage) {
 		log(logMessage);
-	});
+	}
+	//We proxy all logging over here so we can control it with one switch
+	worker.port.on('log', logger);
 
-    worker.port.on('message', function(message) {
+	function receive(message) {
 		log('background got message: ' + JSON.stringify(message));
 
 		if (message.messageType == 'storage.get') {
@@ -195,7 +199,13 @@ function attachedPage(worker) {
 			panel.hide();
 			sendReply(message, null);
 		} 
-	});
+	}
+    worker.port.on('message', receive);
+
+    worker.on('detach', function() {
+    	worker.port.removeListener('message', receive);
+    	worker.port.removeListener('log', logger);
+    });
 }
 
 attachedPage(panel);

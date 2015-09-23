@@ -3,7 +3,8 @@
 function log(msg) {
 	self.port.emit('log', msg);
 }
-window.addEventListener('message', function(message) {
+
+function receiveWindowMessage(message) {
 	if (message.data.sender !== 'page') {
 		return;
 	}
@@ -18,9 +19,20 @@ window.addEventListener('message', function(message) {
 
 	//Forward the message to the background script
 	self.port.emit('message', message.data);
-})
+}
 
-self.port.on('message', function(message) {
+window.addEventListener('message', receiveWindowMessage);
+
+function receiveMessage(message) {
 	log('proxy got chrome message: ' + JSON.stringify(message));
 	window.postMessage(message, '*');
-});
+}
+self.port.on('message', receiveMessage);
+
+function cleanup() {
+	window.removeEventListener('message', receiveWindowMessage);
+	self.port.removeListener('message', receiveMessage);
+	self.port.removeListener('detach', cleanup);
+}
+
+self.port.on('detach', cleanup);
