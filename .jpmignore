@@ -7,4 +7,5 @@ manifest.json
 *.py
 devprofile/*
 debug.sh
+promo/*
 
