@@ -45,7 +45,7 @@ function migrateFromOlderVersion() {
 	try {
 		enabled = Services.prefs.getBoolPref('extensions.redirector.enabled');
 	} catch(e) {}
-	newData.disabled = !!enabled;
+	newData.disabled = !enabled;
 
 	//Kill old prefs:
 	var oldPrefs = ['enabled', 'debugEnabled', 'enableShortcutKey', 'version', 'defaultDir'];
