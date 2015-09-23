@@ -14,9 +14,9 @@ var isFirefox = false;
 if (typeof chrome == 'undefined') {
 	isFirefox = true;
 	var firefoxShim = require('./firefox/background-shim');
-	firefoxShim.setLogger(log);
 	chrome = firefoxShim.chrome;
 	Redirect = firefoxShim.Redirect;
+	log = firefoxShim.log;
 	exports.onUnload = function (reason) { 
 		redirectEvent.removeListener(checkRedirects);
 		chrome.storage.onChanged.removeListener(monitorChanges);	

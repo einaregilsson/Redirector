@@ -3,10 +3,9 @@ var tabs = require('sdk/tabs');
 
 const {Cu} = require('chrome');
 
-exports.setLogger = function(logger){
-	log = logger;
-} 
-
+function log(msg) {
+	console.log(msg);
+}
 
 function migrateFromOlderVersion() {
 	const { pathFor } = require('sdk/system');
@@ -146,15 +145,15 @@ var panel = panels.Panel({
 function attachedPage(worker) {
 	function sendReply(originalMessage, reply) {
 		var msg = {messageId:originalMessage.messageId, payload:reply};
+		if (typeof log == 'undefined') {
+			Cu.reportError('LOG IS DEAD DEAD DEAD');
+		}
 		log('background sending message: ' + JSON.stringify(msg));
 		worker.port.emit('message', msg);
 	}
 
-	function logger(logMessage) {
-		log(logMessage);
-	}
 	//We proxy all logging over here so we can control it with one switch
-	worker.port.on('log', logger);
+	worker.port.on('log', log);
 
 	function receive(message) {
 		log('background got message: ' + JSON.stringify(message));
@@ -204,7 +203,7 @@ function attachedPage(worker) {
 
     worker.on('detach', function() {
     	worker.port.removeListener('message', receive);
-    	worker.port.removeListener('log', logger);
+    	worker.port.removeListener('log', log);
     });
 }
 
@@ -223,4 +222,4 @@ exports.chrome = chrome;
 //Get redirect.js, which is included in the background page in webextensions.
 exports.Redirect = require('../redirect').Redirect;
 
-
+exports.log = log;

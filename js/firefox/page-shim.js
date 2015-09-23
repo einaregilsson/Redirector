@@ -30,17 +30,6 @@
 		}
 	});
 
-	//Allow Firefox users to turn on logging
-	window.logging = {
-		enable : function() {
-			send('log.enabled', {enabled:true});
-		},
-
-		disable : function() {
-			send('log.enabled', {enabled:false});
-		}
-	}
-
 	var req = new XMLHttpRequest();
 	req.overrideMimeType('application/json');
 	req.open("GET", 'package.json', false);
