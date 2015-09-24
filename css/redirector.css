@@ -256,8 +256,7 @@ a.disabled:hover {
 #delete-redirect-form {
   position: fixed;
   padding:10px;
-  min-width:500px;
-  width:intrinsic;
+  width:500px;
   background:white;
   border:solid 1px #bbb;
   border-radius:3px;

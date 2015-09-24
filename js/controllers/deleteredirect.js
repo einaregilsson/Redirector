@@ -11,14 +11,14 @@ redirectorApp.controller('DeleteRedirectCtrl', ['$scope', function($s) {
 
 	$s.cancelDelete = function(index) {
 		delete $s.redirect;
-		delete $s.deletingIndex;
+		delete $s.deleteIndex;
 		$s.$parent.showDeleteForm = false;
 	}
 
 	$s.deleteRedirect = function() {
-		$s.redirects.splice($s.deletingIndex, 1);
+		$s.redirects.splice($s.deleteIndex, 1);
 		delete $s.redirect;
-		delete $s.deletingIndex;
+		delete $s.deleteIndex;
 		$s.$parent.showDeleteForm = false;
 		$s.saveChanges();
 	};

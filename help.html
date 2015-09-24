@@ -4,7 +4,7 @@
 		<title>REDIRECTOR HELP</title>
 		<meta charset="UTF-8">
 		<link rel="stylesheet" href="css/help.css" />
-		<link rel="shortcut icon" href="images/icon32active.png">
+		<link rel="shortcut icon" href="images/icon-active-32.png">
 	</head>
 	<body>
 		
@@ -77,8 +77,8 @@
             <li><a name="redirectto"></a><strong>Redirect to:</strong> This is the url that you will be redirected to when you open any page where the url matches the
             include pattern. You can use the special signs $1, $2, $3 etc. in the url, they will be replaced by the results of captures with regular
             expressions or stars with wildcards. For instance, if you have the include pattern <span class="pattern">http://google.com/*</span>, redirect to <span class="pattern">http://froogle.com/$1</span>
-            and you open the page <span class="url">http://google.com/foobar</span>, then you will be redireced to <span class="url">http://froogle.com/foobar</span>, since 'foobar' was what the star replaced. $1 is for the
-            first star in the pattern, $2 for the second and so on. For regular expression $1 is for the first parantheses, $2 for the second etc.</li>
+            and you open the page <span class="url">http://google.com/foobar</span>, then you will be redirected to <span class="url">http://froogle.com/foobar</span>, since 'foobar' was what the star replaced. $1 is for the
+            first star in the pattern, $2 for the second and so on. For regular expression $1 is for the first parentheses, $2 for the second etc.</li>
 		
             <li><a name="patterntype"></a><strong>Pattern type:</strong> This specifies how Redirector should interpret the patterns, either as
             <a href="#wildcards">wildcards</a> or <a href="#regularexpressions#">regular expressions</a>.</li>
@@ -91,7 +91,7 @@
             matches will be unescaped (turned from e.g. <span class="url">http%3A%2F%2Fbar%2Ecom</span> to <span class="url">http://bar.com</span>) before being inserted into the target url.
             </li>
         
-            <li><a name="escapematches"></a><strong>Escape matches:</strong> The opposite of <a href="unescapematches">Unescape matches</a>. Let's say you want to redirect all requests to
+            <li><a name="escapematches"></a><strong>Escape matches:</strong> The opposite of <a href="#unescapematches">Unescape matches</a>. Let's say you want to redirect all requests to
             a domain like <span class="url">http://example.com</span> to some proxy site that took the url to proxy as an url parameter. Then you might do something like the regular expression pattern
             <span class="pattern">^(http://example\.com/.*)</span> and redirect it to <span class="pattern">http://proxysite.com?url=$1</span>. If you used the Escape matches option then the
             final url would become <span class="url">http://proxysite.com?url=http%3A%2F%2Fexample.com%2Ffoo%2Fbar</span>.
@@ -132,7 +132,7 @@
 		<p>Regular expressions allow for more complicated patterns but they are a lot harder to learn than wildcards. I'm not gonna
 		create a regex tutorial here but normal javascript regex syntax works, look at <a href="http://regular-expressions.info" target="_blank">http://regular-expressions.info</a> for
 		an introduction to regular expressions. $1,$2 etc. can be used in the redirect url and will be replaced with contents of captures in
-		the regular expressions. Captures are specified with parantheses. Example: <span class="pattern">http://example.com/index.asp\?id=(\d+)</span> will match the url
+		the regular expressions. Captures are specified with parentheses. Example: <span class="pattern">http://example.com/index.asp\?id=(\d+)</span> will match the url
 		<span class="url">http://example.com/index.asp?id=12345</span> and $1 will be replaced by 12345. (A common mistake in regex patterns is to forget to escape
 		the ? sign in the querystring of the url. ? is a special character in regular expressions so if you want to match an url with a querystring
 		you should escape it as \?).</p>
@@ -180,7 +180,7 @@
 					</tr>
 					<tr>
 						<th>Redirect to:</th>
-						<td class="pattern">http://example.com/printerfriendly.com?id=$1&amp;a=b</td>
+						<td class="pattern">http://example.com/printerfriendly.php?id=$1&amp;a=b</td>
 					</tr>
 					<tr>
 						<th>Pattern type:</th>
@@ -206,7 +206,7 @@
 					</tr>
 					<tr>
 						<th>Redirect to:</th>
-						<td class="pattern">http://example.com/printerfriendly.com?id=$1&amp;a=b</td>
+						<td class="pattern">http://example.com/printerfriendly.php?id=$1&amp;a=b</td>
 					</tr>
 					<tr>
 						<th>Pattern type:</th>
@@ -238,7 +238,7 @@
 					</tr>
 					<tr>
 						<th>Redirect to:</th>
-						<td class="pattern">http://example.com/category/cats/index.php</td>
+						<td class="pattern">http://example.com/category/cat/index.php</td>
 					</tr>
 					<tr>
 						<th>Pattern type:</th>
@@ -246,7 +246,7 @@
 					</tr>
 					<tr>
 						<th>Example result:</th>
-						<td class="url">http://example.com/category/cats/index.php</td>
+						<td class="url">http://example.com/category/cat/index.php</td>
 					</tr>
 				</table>
 			</li>
