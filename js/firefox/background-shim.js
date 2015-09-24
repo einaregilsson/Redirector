@@ -106,6 +106,10 @@ var chrome = {
 			}
 		},
 
+		clearCache : function() {
+			ExtensionStorage.clearCache();
+		},
+
 		onChanged : {
 			addListener : function(listener) {
 				ExtensionStorage.addOnChangedListener(extensionId, listener);
@@ -136,7 +140,11 @@ var panel = panels.Panel({
 	width: 200,
 	height: 110,
 	contentURL: makeUrl('popup.html'),
-	contentScriptFile : makeUrl('js/firefox/content-script-proxy.js'),
+	contentScriptFile : [
+		makeUrl('js/firefox/page-shim.js'),
+		makeUrl('js/angular.min.js'),
+		makeUrl('js/popup.js')
+	],
 	onHide: function() {
 		button.state('window', {checked: false});
 	}
@@ -145,9 +153,6 @@ var panel = panels.Panel({
 function attachedPage(worker) {
 	function sendReply(originalMessage, reply) {
 		var msg = {messageId:originalMessage.messageId, payload:reply};
-		if (typeof log == 'undefined') {
-			Cu.reportError('LOG IS DEAD DEAD DEAD');
-		}
 		log('background sending message: ' + JSON.stringify(msg));
 		worker.port.emit('message', msg);
 	}
@@ -210,10 +215,20 @@ function attachedPage(worker) {
 attachedPage(panel);
 
 pageMod.PageMod({
-  include: makeUrl('redirector.html'),
-  contentScriptFile: makeUrl('js/firefox/content-script-proxy.js'),
-  contentScriptWhen: 'start',
-  onAttach : attachedPage
+	include: makeUrl('redirector.html'),
+	contentScriptFile: [
+		makeUrl("js/firefox/page-shim.js"),
+		makeUrl("js/angular.min.js"),
+		makeUrl("js/redirect.js"),
+		makeUrl("js/app.js"),
+		makeUrl("js/controllers/redirectorpage.js"),
+		makeUrl("js/controllers/editredirect.js"),
+		makeUrl("js/controllers/deleteredirect.js"),
+		makeUrl("js/controllers/importexport.js"),
+		makeUrl("js/controllers/listredirects.js")
+	],
+	contentScriptWhen: 'start',
+	onAttach : attachedPage
 });
 
 

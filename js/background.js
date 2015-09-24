@@ -12,14 +12,17 @@ log.enabled = false;
 var isFirefox = false;
 
 if (typeof chrome == 'undefined') {
+	console.log('Creating fake chrome...');
 	isFirefox = true;
 	var firefoxShim = require('./firefox/background-shim');
 	chrome = firefoxShim.chrome;
 	Redirect = firefoxShim.Redirect;
 	log = firefoxShim.log;
 	exports.onUnload = function (reason) { 
+		log('Unloading (' + reason + '), removing listeners');
 		redirectEvent.removeListener(checkRedirects);
 		chrome.storage.onChanged.removeListener(monitorChanges);	
+		chrome.storage.clearCache(); //<-Firefox specific
 	};
 }
 //Hopefully Firefox will fix this at some point and we can just use onBeforeRequest everywhere...
@@ -193,7 +196,6 @@ function setUpRedirectListener() {
 
 	chrome.storage.local.get({redirects:[]}, function(obj) {
 		var redirects = obj.redirects;
-
 		if (redirects.length == 0) {
 			log('No redirects defined, not setting up listener');
 			return;

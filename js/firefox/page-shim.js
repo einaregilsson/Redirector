@@ -1,32 +1,27 @@
 (function() {
-	//Communication functions for
-
-	if (typeof chrome !== 'undefined') {
-		return;
-	}
 
 	function log(msg) {
-		window.postMessage({sender:'page', logMessage: msg}, '*');	
+		self.port.emit('log', msg);
 	}
+	var parts = location.pathname.split('/');
+	var urlName = parts[parts.length-1];
 
 	var messageId = 1;
 	var callbacks = {};
 	function send(type, message, callback) {
 		var id = messageId++;
-		window.postMessage({sender:'page', url:location.href, messageId:id, messageType:type, payload:message}, '*');
-		callbacks[id] = callback;
+		self.port.emit('message', {url:urlName, messageId:id, messageType:type, payload:message});
+		callbacks[id] = callback || function(){};
 	}
 
-	window.addEventListener('message', function(message) {
-		if (message.data.sender == 'page') {
-			return; //Ignore messages we sent ourselves
-		}
-		log('page got message: ' + JSON.stringify(message.data));
+
+	self.port.on('message', function(message) {
+		log('page got message: ' + JSON.stringify(message));
 		
-		var callback = callbacks[message.data.messageId];
+		var callback = callbacks[message.messageId];
 		if (callback) {
-			callback(message.data.payload);
-			delete callbacks[message.data.messageId];
+			callback(message.payload);
+			delete callbacks[message.messageId];
 		}
 	});
 

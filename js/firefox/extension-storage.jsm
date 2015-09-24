@@ -36,6 +36,10 @@ this.ExtensionStorage = {
     return Path.join(this.extensionDir, extensionId, "storage.js");
   },
 
+  clearCache : function() {
+    this.cache = new Map();
+  },
+
   read(extensionId) {
     if (this.cache.has(extensionId)) {
       return this.cache.get(extensionId);
