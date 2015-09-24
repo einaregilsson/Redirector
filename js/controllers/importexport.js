@@ -65,7 +65,7 @@ redirectorApp.config([
  			var imported = 0, existing = 0;
  			for (var i = 0; i < data.redirects.length; i++) {
  				var r = new Redirect(data.redirects[i]);
-
+ 				r.updateExampleResult();
  				if ($s.redirects.some(function(i) { return new Redirect(i).equals(r);})) {
  					existing++;
  				} else {
