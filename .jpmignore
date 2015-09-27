@@ -4,8 +4,11 @@
 manifest.json
 .git/*
 .gitignore
+.jpmignore
 *.py
+icon.html
 devprofile/*
+unittest/*
 debug.sh
 promo/*
 

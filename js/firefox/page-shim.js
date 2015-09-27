@@ -25,11 +25,10 @@
 		}
 	});
 
-	var req = new XMLHttpRequest();
-	req.overrideMimeType('application/json');
-	req.open("GET", 'package.json', false);
-	req.send();	
-	var manifest = JSON.parse(req.responseText);
+	var manifest = { version:'unknown' };
+	send('manifest.get', {}, function(data) {
+		manifest = data;
+	})
 
 	window.chrome = {
 		storage : {

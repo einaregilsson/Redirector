@@ -171,6 +171,9 @@ function attachedPage(worker) {
 			chrome.storage.local.set(message.payload, function(data) {
 				sendReply(message, data);
 			});
+		} else if (message.messageType == 'manifest.get') {
+			var p = require('package.json');
+			sendReply(message, p);
 		} else if (message.messageType == 'log.enabled') {
 			if (!message.payload.enabled) {
 				log('Logging has been disabled for Redirector');

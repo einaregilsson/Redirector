@@ -9,6 +9,10 @@ def get_files_to_zip():
 		r'\.(py|sh)$', 
 		r'\.DS_Store$', 
 		r'\.gitignore$',
+		r'\.jpmignore$',
+		r'package\.json$',
+		r'icon\.html',
+		r'.*unittest.*',
 		r'(\\|/)promo(\\|/)',
 		r'(\\|/)build(\\|/)', 
 		r'debug\.sh'
