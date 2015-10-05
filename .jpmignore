@@ -3,6 +3,7 @@
 *.xpi
 manifest.json
 .git/*
+*.pem
 .gitignore
 .jpmignore
 *.py
