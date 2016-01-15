@@ -416,6 +416,10 @@ a.disabled:hover {
   margin-top:2px;
 }
 
+.advanced div .input-cell select {
+  margin-top:4px;
+  width:160px;
+}
 
 a[ng-click] {
   cursor:pointer;

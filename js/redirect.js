@@ -23,6 +23,7 @@ Redirect.requestTypes = {
 	other : "Other"
 };
 
+
 Redirect.prototype = {
 	
 	//attributes
@@ -34,8 +35,7 @@ Redirect.prototype = {
 	excludePattern : '',
 	redirectUrl : '',
 	patternType : '',
-	unescapeMatches : false,
-	escapeMatches : false,
+	processMatches : 'noProcessing',
 	disabled : false,
 	
 	compile : function() {
@@ -58,8 +58,7 @@ Redirect.prototype = {
 			&& this.excludePattern == redirect.excludePattern
 			&& this.redirectUrl == redirect.redirectUrl
 			&& this.patternType == redirect.patternType
-			&& this.unescapeMatches == redirect.unescapeMatches
-			&& this.escapeMatches == redirect.escapeMatches
+			&& this.processMatches == redirect.processMatches
 			&& this.appliesTo.toString() == redirect.appliesTo.toString();
 	},
 	
@@ -73,8 +72,7 @@ Redirect.prototype = {
 			excludePattern : this.excludePattern,
 			redirectUrl : this.redirectUrl,
 			patternType : this.patternType,
-			unescapeMatches : this.unescapeMatches,
-			escapeMatches : this.escapeMatches,
+			processMatches : this.processMatches,
 			disabled : this.disabled,
 			appliesTo : this.appliesTo.slice(0)
 		};
@@ -210,8 +208,14 @@ Redirect.prototype = {
 		this.excludePattern = o.excludePattern || '';
 		this.redirectUrl = o.redirectUrl || '';
 		this.patternType = o.patternType || Redirect.WILDCARD;
-		this.unescapeMatches = !!o.unescapeMatches;
-		this.escapeMatches = !!o.escapeMatches;
+		this.processMatches = o.processMatches || 'noProcessing';
+		if (!o.processMatches && o.unescapeMatches) {
+			this.processMatches = 'urlDecode';
+		}
+		if (!o.processMatches && o.escapeMatches) {
+			this.processMatches = 'urlEncode';
+		}
+
 		this.disabled = !!o.disabled;
 		if (o.appliesTo && o.appliesTo.length) {
 			this.appliesTo = o.appliesTo.slice(0);
@@ -235,11 +239,14 @@ Redirect.prototype = {
 		var resultUrl = this.redirectUrl;
 		for (var i = 1; i < matches.length; i++) {
 			var repl = matches[i] || '';
-			if (this.unescapeMatches) {
+			if (this.processMatches == 'urlDecode') {
 				repl = unescape(repl);
 			}
-			if (this.escapeMatches) {
+			if (this.processMatches == 'urlEncode') {
 				repl = encodeURIComponent(repl);
+			}
+			if (this.processMatches == 'base64decode') {
+				repl = atob(repl);
 			}
 			resultUrl = resultUrl.replace(new RegExp('\\$' + i, 'gi'), repl);
 		}

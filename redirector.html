@@ -85,12 +85,19 @@
 					<div class="input-cell"><input type="text" ng-change="redirect.updateExampleResult()" ng-model="redirect.excludePattern" placeholder="Pattern to exclude certain urls from the redirection"/></div>
 				</div>
 				<div>
-					<label for="unescape-matches">Unescape matches:</label>
-					<div class="input-cell"><input id="unescape-matches" ng-change="redirect.updateExampleResult()" ng-model="redirect.unescapeMatches" type="checkbox"><span class="placeholder">E.g. turn %2Fbar%2Ffoo%3Fx%3D2 into /bar/foo?x=2</span></div>
-				</div>	
-				<div>
-					<label for="escape-matches">Escape matches:</label>
-					<div class="input-cell"><input id="escape-matches" ng-change="redirect.updateExampleResult()" ng-model="redirect.escapeMatches" type="checkbox"><span class="placeholder">E.g. turn /bar/foo?x=2 into %2Fbar%2Ffoo%3Fx%3D2</span></div>
+					<label for="process-matches">Process matches:</label>
+					<div class="input-cell">
+						<select id="process-matches" ng-model="redirect.processMatches" ng-change="redirect.updateExampleResult()">
+							<option value="noProcessing">No Processing</option>
+							<option value="urlEncode">URL Encode</option>
+							<option value="urlDecode">URL Decode</option>
+							<option value="base64decode">Base64 Decode</option>
+						</select>
+						<span class="placeholder" ng-show="redirect.processMatches=='noProcessing'">Use matches as they are</span>
+						<span class="placeholder" ng-show="redirect.processMatches=='urlEncode'">E.g. turn /bar/foo?x=2 into %2Fbar%2Ffoo%3Fx%3D2</span>
+						<span class="placeholder" ng-show="redirect.processMatches=='urlDecode'">E.g. turn %2Fbar%2Ffoo%3Fx%3D2 into /bar/foo?x=2</span>
+						<span class="placeholder" ng-show="redirect.processMatches=='base64decode'">E.g. turn aHR0cDovL2Nubi5jb20= into http://cnn.com</span>
+					</div>
 				</div>
 				<div>
 					<label>Apply to:</label>
