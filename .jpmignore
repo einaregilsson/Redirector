@@ -11,5 +11,6 @@ icon.html
 devprofile/*
 unittest/*
 debug.sh
+*.sh
 promo/*
 
