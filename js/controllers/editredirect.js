@@ -10,8 +10,7 @@ redirectorApp.controller('EditRedirectCtrl', ['$scope', function($s) {
 		$s.redirect = new Redirect($s.redirects[index]); 
 		$s.editIndex = index;
 		$s.redirect.updateExampleResult();
-		if ($s.redirect.escapeMatches || $s.redirect.unescapeMatches || $s.redirect.excludePattern
-			|| !($s.redirect.appliesTo.length == 1 && $s.redirect.appliesTo[0] == "main_frame")) {
+		if ($s.redirect.processMatches != 'noProcessing' || !($s.redirect.appliesTo.length == 1 && $s.redirect.appliesTo[0] == "main_frame")) {
 			$s.showAdvanced = true; //Auto show advanced if redirect uses advanced options
 		}
 		$s.$parent.showEditForm = true;
