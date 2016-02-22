@@ -20,8 +20,14 @@
 					<li><a href="#excludepattern">Exclude pattern</a></li>
 					<li><a href="#redirectto">Redirect to</a></li>
 					<li><a href="#patterntype">Pattern type</a></li>
-					<li><a href="#unescapematches">Unescape matches</a></li>
-					<li><a href="#escapematches">Escape matches</a></li>
+					<li><a href="#processmatches">Process Matches</a>
+						<ol>
+							<li><a href="#noprocessing">No Processing</a></li>
+							<li><a href="#urldecodematches">URL decode matches</a></li>
+							<li><a href="#urlencodematches">URL encode matches</a></li>
+							<li><a href="#base64decodematches">Base64 decode matches</a></li>
+						</ol>
+					</li>
 					<li><a href="#applyto">Apply to</a></li>
 				</ul>
 			</li>
@@ -83,19 +89,28 @@
             <li><a name="patterntype"></a><strong>Pattern type:</strong> This specifies how Redirector should interpret the patterns, either as
             <a href="#wildcards">wildcards</a> or <a href="#regularexpressions#">regular expressions</a>.</li>
 
-            <li><a name="unescapematches"></a><strong>Unescape matches:</strong> A common usage of Redirector is to catch urls like
-            <span class="url">http://foo.com/redirect.php?url=http%3A%2F%2Fbar%2Ecom%2Fpath</span> and try to catch the url parameter and redirect to it. A pattern
-            like <span class="pattern">http://foo.com/redirect.php?url=*</span> might be used for that purpose. However, if the url parameter is <em>escaped</em> (also known
-            as <em>urlencoded</em>) then that won't work. In the url above we see that it starts with <span class="url">http%3A%2F%2F</span> instead of <span class="url">http://</span>, and Firefox
-            won't accept this as a new url to redirect to. So, in cases like these you can check the <em>Unescape matches</em> option and then all
-            matches will be unescaped (turned from e.g. <span class="url">http%3A%2F%2Fbar%2Ecom</span> to <span class="url">http://bar.com</span>) before being inserted into the target url.
-            </li>
-        
-            <li><a name="escapematches"></a><strong>Escape matches:</strong> The opposite of <a href="#unescapematches">Unescape matches</a>. Let's say you want to redirect all requests to
-            a domain like <span class="url">http://example.com</span> to some proxy site that took the url to proxy as an url parameter. Then you might do something like the regular expression pattern
-            <span class="pattern">^(http://example\.com/.*)</span> and redirect it to <span class="pattern">http://proxysite.com?url=$1</span>. If you used the Escape matches option then the
-            final url would become <span class="url">http://proxysite.com?url=http%3A%2F%2Fexample.com%2Ffoo%2Fbar</span>.
-        	</li>
+            <li><a name="processmatches"></a><strong>Process Matches:</strong> In some cases parameters in urls are encoded in different ways. The Process Matches option allows you to select a few 
+            	different ways to process the Regular expression matches before using them. The decoding options available are:
+            	<ul>
+            		<li><a name="noprocessing"></a><strong>No Processing:</strong> This is the default. Just use the matches from the original url exactly as they are.</li>
+		            <li><a name="urldecodematches"></a><strong>URL Decode matches:</strong> A common usage of Redirector is to catch urls like
+		            <span class="url">http://foo.com/redirect.php?url=http%3A%2F%2Fbar%2Ecom%2Fpath</span> and try to catch the url parameter and redirect to it. A pattern
+		            like <span class="pattern">http://foo.com/redirect.php?url=*</span> might be used for that purpose. However, if the url parameter is <em>escaped</em> (also known
+		            as <em>urlencoded</em>) then that won't work. In the url above we see that it starts with <span class="url">http%3A%2F%2F</span> instead of <span class="url">http://</span>, and Firefox
+		            won't accept this as a new url to redirect to. So, in cases like these you can select the <em>URL Decode matches</em> option and then all
+		            matches will be URL decoded (turned from e.g. <span class="url">http%3A%2F%2Fbar%2Ecom</span> to <span class="url">http://bar.com</span>) before being inserted into the target url.
+		            </li>
+		        
+		            <li><a name="urlencodematches"></a><strong>URL Encode matches:</strong> The opposite of <a href="#urldecodematches">URL Decode matches</a>. Let's say you want to redirect all requests to
+		            a domain like <span class="url">http://example.com</span> to some proxy site that took the url to proxy as an url parameter. Then you might do something like the regular expression pattern
+		            <span class="pattern">^(http://example\.com/.*)</span> and redirect it to <span class="pattern">http://proxysite.com?url=$1</span>. If you used the Escape matches option then the
+		            final url would become <span class="url">http://proxysite.com?url=http%3A%2F%2Fexample.com%2Ffoo%2Fbar</span>.
+		        	</li>
+
+		            <li><a name="base64decodematches"></a><strong>Base64 Decode matches:</strong> Similar to URL Decoding, in some cases a parameter in a url might be Base64 encoded. This option will decode that parameter before using it in the target url.
+		            </li>
+		        </ul>
+		    </li>
 
             <li><a name="applyto"></a><strong>Apply to:</strong> The Apply to option is new in version 3.0 of Redirector. For 99% of cases you won't need this, so don't worry about it.
             	By default Redirector only redirects requests from the address bar of your browser, the page you're viewing. It doesn't redirect requests for scripts, iframes, images
