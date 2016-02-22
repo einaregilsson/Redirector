@@ -3,8 +3,10 @@
 //are used by multiple controllers then we'll define them here.
 var redirectorApp = angular.module('redirectorApp', []);
 
-
-
+//To make the private stuff in Firefox work properly
+window.addEventListener('DOMContentLoaded', function() {
+	document.body.classList.remove('private');
+});
 
 
 

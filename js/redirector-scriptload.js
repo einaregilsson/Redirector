@@ -17,8 +17,3 @@ if (typeof chrome !== 'undefined') {
 	loadScript("js/controllers/importexport.js");
 	loadScript("js/controllers/listredirects.js");
 }
-
-//To make the private stuff in Firefox work properly
-window.addEventListener('DOMContentLoaded', function() {
-	document.body.classList.remove('private');
-});
