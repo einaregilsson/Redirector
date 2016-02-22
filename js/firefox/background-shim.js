@@ -68,8 +68,8 @@ migrateFromOlderVersion();
 function makeUrl(relativeUrl) {
 	return self.data.url(relativeUrl).replace('/data/', '/');
 } 
-//Get the extension storage from Nightly.
-Cu.import(makeUrl('js/firefox/extension-storage.jsm'));
+
+Cu.import('resource://gre/modules/ExtensionStorage.jsm');
 
 //Create the browser action:
 var { ToggleButton } = require("sdk/ui/button/toggle");
@@ -107,7 +107,7 @@ var chrome = {
 		},
 
 		clearCache : function() {
-			ExtensionStorage.clearCache();
+			ExtensionStorage.cache.clear();
 		},
 
 		onChanged : {
