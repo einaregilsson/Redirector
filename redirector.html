@@ -8,8 +8,12 @@
 		<link rel="shortcut icon" href="images/icon-active-32.png">
 		<script src="js/redirector-scriptload.js"></script>
 	</head>
-	<body ng-app="redirectorApp" ng-controller="RedirectorPageCtrl">
-		<div id="cover" ng-show="showEditForm || showDeleteForm"></div>
+	<body ng-app="redirectorApp" ng-controller="RedirectorPageCtrl" class="private">
+		<div id="cover" ng-show="showEditForm || showDeleteForm">
+			<div id="private-mode-message" ng-show="false">
+				Redirector does not work in Private Mode
+			</div>			
+		</div>
 		
 		<!-- Confirmation form for deleting redirects -->
 		<div id="delete-redirect-form" ng-show="showDeleteForm" ng-controller="DeleteRedirectCtrl">
@@ -132,13 +136,14 @@
 				<a class="btn blue large" href="help.html" target="_blank">Help</a>
 			</div>
 
-			<div id="message-box" ng-class="{visible : message, error : messageType == 'error', success : messageType == 'success'}">
+
+			<div id="message-box" ng-show="true" ng-class="{visible : message, error : messageType == 'error', success : messageType == 'success'}">
 				{{message}}
 				<a ng-click="message=null">&#x2716;</a>
 			</div>
 
 			<!-- List of existing redirects -->
-			<div class="redirect-table" ng-controller="ListRedirectsCtrl">
+			<div class="redirect-table" ng-show="true" ng-controller="ListRedirectsCtrl">
 				<div class="redirect-row" ng-class="{disabled: r.disabled}" ng-repeat="r in redirects">
 					<h4><span class="disabled-marker" ng-show="r.disabled">[Disabled] </span><span>{{r.description}}</span></h4>
 					<div class="redirect-info">

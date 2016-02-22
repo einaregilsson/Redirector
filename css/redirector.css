@@ -458,3 +458,22 @@ footer small a, footer small a:visited {
 footer small a:hover {
   text-decoration: underline;
 }
+
+
+/* Hide by default so we can show a message in private mode where angular won't load */
+
+.private #edit-redirect-form, .private #delete-redirect-form, .private .redirect-table, .private #message-box, .private #menu {
+  display:none;
+}
+
+#private-mode-message {
+  background-color:white;
+  margin:auto;
+  border:solid 4px red;
+  border-radius:4px;
+  font-size: 30px;
+  width: 600px;
+  padding: 20px;
+  margin-top: 200px;
+  border-width: 4px;  
+}
