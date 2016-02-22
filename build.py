@@ -26,7 +26,22 @@ def create_firefox_addon():
 	os.system('jpm xpi')
 	import glob, shutil
 	name = glob.glob('*.xpi')[0]
-	shutil.move(name, os.path.join('build', 'redirector-firefox.xpi'))
+	new_name = os.path.join('build', 'redirector-firefox.xpi')
+	#Manually update the install.rdf to get the preferences button working...
+
+	#jpm created the install.rdf during build, but doesn't allow adding a options url
+	#so we patch it here
+	with zipfile.ZipFile(name, 'r') as zin:
+		with zipfile.ZipFile(new_name, 'w') as zout:
+			zout.comment = zin.comment 
+			for item in zin.infolist():
+				bytes = zin.read(item.filename)
+				if item.filename == 'install.rdf':
+					bytes = bytes.replace('</em:creator>', '</em:creator>\n          <em:optionsURL>resource://redirector-at-einaregilsson-dot-com/redirector.html</em:optionsURL>\n          <em:optionsType>2</em:optionsType>\n')
+				
+				zout.writestr(item, bytes)
+
+	os.remove(name)
 
 
 def create_addon(files, browser):
