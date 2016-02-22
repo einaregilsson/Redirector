@@ -37,7 +37,7 @@ def create_firefox_addon():
 			for item in zin.infolist():
 				bytes = zin.read(item.filename)
 				if item.filename == 'install.rdf':
-					bytes = bytes.replace('</em:creator>', '</em:creator>\n          <em:optionsURL>resource://redirector-at-einaregilsson-dot-com/redirector.html</em:optionsURL>\n          <em:optionsType>2</em:optionsType>\n')
+					bytes = bytes.replace('</em:creator>', '</em:creator>\n          <em:optionsURL>resource://redirector-at-einaregilsson-dot-com/redirector.html</em:optionsURL>\n          <em:optionsType>3</em:optionsType>\n')
 				
 				zout.writestr(item, bytes)
 
