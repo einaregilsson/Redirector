@@ -8,14 +8,6 @@ function log(msg) {
 }
 log.enabled = true;
 
-
-var isFirefox = !!navigator.userAgent.match(/Firefox/i);
-
-log('Is Firefox: ' + isFirefox);
-
-//Hopefully Firefox will fix this at some point and we can just use onBeforeRequest everywhere...
-var redirectEvent = isFirefox ? chrome.webRequest.onBeforeSendHeaders : chrome.webRequest.onBeforeRequest;
-
 //Redirects partitioned by request type, so we have to run through
 //the minimum number of redirects for each request.
 var partitionedRedirects = {};
@@ -53,12 +45,6 @@ function setIcon(image) {
 //This is the actual function that gets called for each request and must
 //decide whether or not we want to redirect.
 function checkRedirects(details) {
-
-	//Oh Firefox, please fix your broken url matching soon...
-	if (isFirefox && !details.url.match(/^https?:\/\//)) {
-		log('Not http: ' + details.url);
-		return {};
-	}
 
 	//We only allow GET request to be redirected, don't want to accidentally redirect
 	//sensitive POST parameters
@@ -109,8 +95,6 @@ function checkRedirects(details) {
 			ignoreNextRequest[result.redirectTo] = new Date().getTime();
 			
 			return { redirectUrl: result.redirectTo };
-		} else {
-			log(details.url + ' is not a match for ' + r.includePattern + ', type ' + r.patternType);
 		}
 	}
 
@@ -126,7 +110,7 @@ function monitorChanges(changes, namespace) {
 
 		if (changes.disabled.newValue == true) {
 			log('Disabling Redirector, removing listener');
-			redirectEvent.removeListener(checkRedirects);
+			chrome.webRequest.onBeforeRequest.removeListener(checkRedirects);
 		} else {
 			log('Enabling Redirector, setting up listener');
 			setUpRedirectListener();
@@ -180,7 +164,7 @@ function createPartitionedRedirects(redirects) {
 //Sets up the listener, partitions the redirects, creates the appropriate filters etc.
 function setUpRedirectListener() {
 
-	redirectEvent.removeListener(checkRedirects); //Unsubscribe first, in case there are changes...
+	chrome.webRequest.onBeforeRequest.removeListener(checkRedirects); //Unsubscribe first, in case there are changes...
 
 	chrome.storage.local.get({redirects:[]}, function(obj) {
 		var redirects = obj.redirects;
@@ -193,7 +177,7 @@ function setUpRedirectListener() {
 		var filter = createFilter(redirects);
 
 		log('Setting filter for listener: ' + JSON.stringify(filter));
-		redirectEvent.addListener(checkRedirects, filter, ["blocking"]);
+		chrome.webRequest.onBeforeRequest.addListener(checkRedirects, filter, ["blocking"]);
 	});
 }
 
