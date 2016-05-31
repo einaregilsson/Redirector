@@ -18,19 +18,22 @@ redirectorApp.controller('RedirectorPageCtrl', ['$scope', '$timeout', function($
 		// Clean them up so angular $$hash things and stuff don't get serialized.
 		var arr = $s.redirects.map(normalize);
 
-		storage.set({redirects:arr}, function() {
-			console.log('Saved ' + arr.length + ' redirects at ' + new Date());
+		chrome.runtime.sendMessage({type:"saveredirects", redirects:arr}, function(response) {
+			console.log('Saved ' + arr.length + ' redirects at ' + new Date() + '. Message from background page:' + response.message);
 		});
 	}
  
  	$s.redirects = [];
- 	storage.get({redirects:[]}, function(results) {
-
- 		for (var i=0; i < results.redirects.length; i++) {
-			$s.redirects.push(normalize(results.redirects[i]));
+	
+	//Need to proxy this through the background page, because Firefox gives us dead objects
+	//nonsense when accessing chrome.storage directly.
+	chrome.runtime.sendMessage({type: "getredirects"}, function(response) {
+		console.log('Received redirects message, count=' + response.redirects.length);
+ 		for (var i=0; i < response.redirects.length; i++) {
+			$s.redirects.push(normalize(response.redirects[i]));
 		}
 		$s.$apply();
- 	});
+	}); 	
 
  	// Shows a message bar above the list of redirects.
  	$s.showMessage = function(message, success) {

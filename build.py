@@ -20,36 +20,18 @@ def get_files_to_zip():
 				zippable_files.append(file)
 	return zippable_files
 
-def create_firefox_addon():
-	print ''
-	print '**** Creating addon for Firefox ****'
-	os.system('jpm xpi')
-	import glob, shutil
-	name = glob.glob('*.xpi')[0]
-	new_name = os.path.join('build', 'redirector-firefox.xpi')
-	#Manually update the install.rdf to get the preferences button working...
-
-	#jpm created the install.rdf during build, but doesn't allow adding a options url
-	#so we patch it here
-	with zipfile.ZipFile(name, 'r') as zin:
-		with zipfile.ZipFile(new_name, 'w') as zout:
-			zout.comment = zin.comment 
-			for item in zin.infolist():
-				bytes = zin.read(item.filename)
-				if item.filename == 'install.rdf':
-					bytes = bytes.replace('</em:creator>', '</em:creator>\n          <em:optionsURL>resource://redirector-at-einaregilsson-dot-com/redirector.html</em:optionsURL>\n          <em:optionsType>3</em:optionsType>\n')
-				
-				zout.writestr(item, bytes)
-
-	os.remove(name)
-
 
 def create_addon(files, browser):
 	output_folder = 'build'
 	if not os.path.isdir(output_folder):
 		os.mkdir(output_folder)
 
-	output_file = os.path.join(output_folder, 'redirector-%s.zip' % browser)
+	if browser == 'firefox':
+		ext = 'xpi'
+	else:
+		ext = 'zip'
+
+	output_file = os.path.join(output_folder, 'redirector-%s.%s' % (browser,ext))
 	zf = zipfile.ZipFile(output_file, 'w', zipfile.ZIP_STORED)
 	cert = 'extension-certificate.pem'
 
@@ -66,6 +48,10 @@ def create_addon(files, browser):
 			manifest = json.load(open(f))
 			if browser != 'firefox':
 				del manifest['applications'] #Firefox specific, and causes warnings in other browsers...
+
+
+			if browser == 'firefox':
+				del manifest['background']['persistent'] #Firefox chokes on this, is always persistent anyway
 
 			if browser == 'opera':
 				manifest['options_ui']['page'] = 'redirector.html' #Opera opens options in new tab, where the popup would look really ugly
@@ -93,8 +79,7 @@ if __name__ == '__main__':
 	print '******* REDIRECTOR BUILD SCRIPT *******'
 	print ''
 
-	browsers = ['chrome', 'firefox', 'opera']
 	create_addon(files, 'chrome')
 	create_addon(files, 'opera')
-	create_firefox_addon()
+	create_addon(files, 'firefox')
 

@@ -6,25 +6,13 @@ function log(msg) {
 		console.log('REDIRECTOR: ' + msg);
 	}
 }
-log.enabled = false;
+log.enabled = true;
 
 
-var isFirefox = false;
+var isFirefox = !!navigator.userAgent.match(/Firefox/i);
 
-if (typeof chrome == 'undefined') {
-	console.log('Creating fake chrome...');
-	isFirefox = true;
-	var firefoxShim = require('./firefox/background-shim');
-	chrome = firefoxShim.chrome;
-	Redirect = firefoxShim.Redirect;
-	log = firefoxShim.log;
-	exports.onUnload = function (reason) { 
-		log('Unloading (' + reason + '), removing listeners');
-		redirectEvent.removeListener(checkRedirects);
-		chrome.storage.onChanged.removeListener(monitorChanges);	
-		chrome.storage.clearCache(); //<-Firefox specific
-	};
-}
+log('Is Firefox: ' + isFirefox);
+
 //Hopefully Firefox will fix this at some point and we can just use onBeforeRequest everywhere...
 var redirectEvent = isFirefox ? chrome.webRequest.onBeforeSendHeaders : chrome.webRequest.onBeforeRequest;
 
@@ -121,6 +109,8 @@ function checkRedirects(details) {
 			ignoreNextRequest[result.redirectTo] = new Date().getTime();
 			
 			return { redirectUrl: result.redirectTo };
+		} else {
+			log(details.url + ' is not a match for ' + r.includePattern + ', type ' + r.patternType);
 		}
 	}
 
@@ -163,10 +153,8 @@ function createFilter(redirects) {
 	}
 	types.sort();
 
-	//FIXME: The Firefox implementation of the url matching is seriously broken still,
-	//so we can't filter by url on Firefox for now, have to cut non http urls out in checkRedirects.
 	return {
-		urls: isFirefox ? null : ["https://*/*", "http://*/*"],
+		urls: ["https://*/*", "http://*/*"],
 		types : types
 	};
 }
@@ -214,6 +202,38 @@ function updateIcon() {
 		setIcon(obj.disabled ? 'icon-disabled' : 'icon-active');
 	});	
 }
+
+
+//Firefox doesn't allow the "content script" which is actually privileged
+//to access the objects it gets from chrome.storage directly, so we
+//proxy it through here.
+chrome.runtime.onMessage.addListener(
+	function(request, sender, sendResponse) {
+		log('Received background message: ' + JSON.stringify(request));
+		if (request.type == 'getredirects') {
+			log('Getting redirects from storage');
+			chrome.storage.local.get({redirects:[]}, function(obj) {
+				log('Got redirects from storage: ' + JSON.stringify(obj));
+				sendResponse(obj);
+				log('Sent redirects to content page');
+			});
+		} else if (request.type == 'saveredirects') {
+			console.log('Saving redirects, count=' + request.redirects.length);
+			delete request.type;
+			chrome.storage.local.set(request, function(a) {
+				log('Finished saving redirects to storage');
+				sendResponse({message:"Redirects saved"});
+			});
+		} else {
+			log('Unexpected message: ' + JSON.stringify(request));
+			return false;
+		}
+
+		return true; //This tells the browser to keep sendResponse alive because
+		//we're sending the response asynchronously.
+	}
+);
+
 
 //First time setup
 updateIcon();
