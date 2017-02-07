@@ -246,6 +246,9 @@ Redirect.prototype = {
 				repl = encodeURIComponent(repl);
 			}
 			if (this.processMatches == 'base64decode') {
+				if (repl.indexOf('%') > -1) {
+					repl = unescape(repl);
+				}
 				repl = atob(repl);
 			}
 			resultUrl = resultUrl.replace(new RegExp('\\$' + i, 'gi'), repl);
