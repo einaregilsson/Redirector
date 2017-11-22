@@ -30,3 +30,10 @@ button {
 	height:13px;
 	font-size:12px;
 }
+
+label {
+    display:inline-block;
+    position: relative;
+    top:5px;
+    margin-top:4px;
+}

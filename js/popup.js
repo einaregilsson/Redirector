@@ -14,6 +14,20 @@ angular.module('popupApp', []).controller('PopupCtrl', ['$scope', function($s) {
 		  	$s.disabled = !obj.disabled;
 		  	$s.$apply();
 		});
+    };
+    
+
+	storage.get({logging:false}, function(obj) {
+		$s.logging = obj.logging;
+		$s.$apply();
+	});
+
+    $s.toggleLogging = function() {
+		storage.get({logging:false}, function(obj) {
+			storage.set({logging:!obj.logging});
+		  	$s.logging = !obj.logging;
+		  	$s.$apply();
+		});
 	};
 
 	$s.openRedirectorSettings = function() {

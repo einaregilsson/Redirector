@@ -6,7 +6,7 @@ function log(msg) {
 		console.log('REDIRECTOR: ' + msg);
 	}
 }
-log.enabled = true;
+log.enabled = false;
 
 //Redirects partitioned by request type, so we have to run through
 //the minimum number of redirects for each request.
@@ -120,7 +120,12 @@ function monitorChanges(changes, namespace) {
 	if (changes.redirects) {
 		log('Redirects have changed, setting up listener again');
 		setUpRedirectListener();
-	}
+    }
+
+    if (changes.logging) {
+        log('Logging settings have changed, updating...');
+        updateLogging();
+    }
 }
 chrome.storage.onChanged.addListener(monitorChanges);
 
@@ -221,6 +226,13 @@ chrome.runtime.onMessage.addListener(
 
 //First time setup
 updateIcon();
+
+function updateLogging() {
+    chrome.storage.local.get({logging:false}, function(obj) {
+        log.enabled = obj.logging;
+    });
+}
+updateLogging();
 
 chrome.storage.local.get({disabled:false}, function(obj) {
 	if (!obj.disabled) {
