@@ -33,6 +33,7 @@ Redirect.prototype = {
 	error : null,
 	includePattern : '',
 	excludePattern : '',
+	patternDesc:'',
 	redirectUrl : '',
 	patternType : '',
 	processMatches : 'noProcessing',
@@ -56,6 +57,7 @@ Redirect.prototype = {
 			&& this.exampleUrl == redirect.exampleUrl
 			&& this.includePattern == redirect.includePattern
 			&& this.excludePattern == redirect.excludePattern
+			&& this.patternDesc == redirect.patternDesc
 			&& this.redirectUrl == redirect.redirectUrl
 			&& this.patternType == redirect.patternType
 			&& this.processMatches == redirect.processMatches
@@ -70,6 +72,7 @@ Redirect.prototype = {
 			error : this.error,
 			includePattern : this.includePattern,
 			excludePattern : this.excludePattern,
+			patternDesc : this.patternDesc,
 			redirectUrl : this.redirectUrl,
 			patternType : this.patternType,
 			processMatches : this.processMatches,
@@ -208,6 +211,7 @@ Redirect.prototype = {
 		this.excludePattern = o.excludePattern || '';
 		this.redirectUrl = o.redirectUrl || '';
 		this.patternType = o.patternType || Redirect.WILDCARD;
+		this.patternDesc = o.patternDesc || '';
 		this.processMatches = o.processMatches || 'noProcessing';
 		if (!o.processMatches && o.unescapeMatches) {
 			this.processMatches = 'urlDecode';

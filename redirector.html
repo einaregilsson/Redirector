@@ -46,7 +46,11 @@
 			<div>
 				<label>Pattern type:</label>
 				<span>{{redirect.patternType == 'W' ? 'Wildcard' : 'Regular Expression'}}</span>
-			</div>			
+			</div>
+			<div>
+				<label>Pattern Description:</label>
+				<span>{{redirect.patternDesc}}</span>
+			</div>				
 			<div class="button-container">
 				<a class="btn red large" ng-click="deleteRedirect()">Yes, delete it</a>
 				<a class="btn grey large" ng-click="cancelDelete()">No, don't delete it</a>
@@ -82,6 +86,10 @@
 						<label id="regextype">
 							<input type="radio" ng-change="redirect.updateExampleResult()" ng-model="redirect.patternType" name="patterntype" value="R">Regular Expression</label>
 					</div>
+				</div>
+				<div>
+					<label>Pattern Description:</label>
+					<div class="input-cell"><input type="text" ng-model="redirect.patternDesc" placeholder="Describe your pattern" /></div>
 				</div>
 				<div>
 					<label>Example result:</label>
@@ -165,6 +173,9 @@
 						</div>
 						<div ng-show="r.excludePattern">
 							<label>excluding:</label><p>{{r.excludePattern}}</p>
+						</div>
+						<div ng-if="r.patternDesc">
+							<label>Hint:</label><p>{{r.patternDesc}}</p>
 						</div>
 						<div>
 							<label>Example:</label> <p><span class="error" ng-show="r.error">{{r.error}}</span><span ng-show="r.exampleResult">{{r.exampleUrl}} <span class="arrow">&rarr;</span> {{r.exampleResult}}</span></p>
