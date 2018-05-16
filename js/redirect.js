@@ -200,7 +200,7 @@ Redirect.prototype = {
 	},
 	
 	_init : function(o) {
-		this.description = o.description || '',
+		this.description = o.description || '';
 		this.exampleUrl = o.exampleUrl || '';
 		this.exampleResult = o.exampleResult || '';
 		this.error = o.error || null;
