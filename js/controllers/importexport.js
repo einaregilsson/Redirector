@@ -51,7 +51,7 @@ redirectorApp.config([
  		reader.onload = function(e) {
  			var data;
  			try {
-	 			var data = JSON.parse(reader.result);
+	 			data = JSON.parse(reader.result);
  			} catch(e) {
  				$s.showMessage('Failed to parse JSON data, invalid JSON: ' + (e.message||'').substr(0,100));
 	 			return $s.$parent.$apply();
