@@ -136,9 +136,14 @@ function createFilter(redirects) {
 	var types = [];
 	for (var i = 0; i < redirects.length; i++) {
 		redirects[i].appliesTo.forEach(function(type) { 
+			// Added this condition below as part of fix for issue 115 https://github.com/einaregilsson/Redirector/issues/115
+			// Firefox considers responsive web images request as imageset. Chrome doesn't.
+			// Chrome throws an error for imageset type, so let's add to 'types' only for the values that chrome or firefox supports
+			if(chrome.webRequest.ResourceType[type.toUpperCase()]!== undefined){
 			if (types.indexOf(type) == -1) {
 				types.push(type);
 			}
+		}
 		});
 	}
 	types.sort();
