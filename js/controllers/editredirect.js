@@ -66,7 +66,7 @@ redirectorApp.controller('EditRedirectCtrl', ['$scope', function($s) {
 			arr.splice(index, 1);
 		}
 
-		var order = 'main_frame,sub_frame,stylesheet,script,image,object,xmlhttprequest,other';
+		var order = 'main_frame,sub_frame,stylesheet,script,image,imageset,object,xmlhttprequest,other';
 
 		arr.sort(function(a,b) {
 			return order.indexOf(a) - order.indexOf(b);
