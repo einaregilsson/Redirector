@@ -33,6 +33,7 @@
 			</li>
 			<li><a href="#wildcards">Wildcards</a></li>
 			<li><a href="#regularexpressions">Regular expressions</a></li>
+			<li><a href="#storageArea">Storage Area (Sync vs Local)</a></li>
 			<li><a href="#examples">Examples</a>
 				<ol>
 					<li><a href="#ex1">Static redirect</a></li>
@@ -149,7 +150,28 @@
 		the regular expressions. Captures are specified with parentheses. Example: <span class="pattern">http://example.com/index.asp\?id=(\d+)</span> will match the url
 		<span class="url">http://example.com/index.asp?id=12345</span> and $1 will be replaced by 12345. (A common mistake in regex patterns is to forget to escape
 		the ? sign in the querystring of the url. ? is a special character in regular expressions so if you want to match an url with a querystring
-		you should escape it as \?).</p>
+		you should escape it as \?). To test your regular expressions, you may use any website or service. For example, <a href="https://regexr.com" target="_blank">regexr.com</a> </p>
+		
+		<a name="storageArea"></a>
+		<h4>Storage Area (Sync vs Local)</h4>
+
+		<p>Storage Area, by default, is set to Local. If you wish to sync your redirector rules across devices, you may choose to enable Sync from Settings page.
+		When you toggle to Sync, data will be copied over to Sync storage and local storage will be deleted. 
+		Similary, sync storage will be deleted if you disable sync and data will be moved to Local storage.
+		<div>	
+		<em>Note:</em><ol> <li>Google Chrome Sync and Mozilla Firefox Sync limits the storage size as per below. 
+		This limit is decided by browser vendors and Redirector addon cannot do anything about changing the below.</li>
+		<li>You need to use chrome/firefox settings to setup a sync account for syncing to work. 
+			If that is not completed, Sync will just act like local storage - take note of the storage sizes below.
+			If sync account is not setup in chrome/firefox browser settings, leave the storage area to LOCAL as it has much larger size than Sync storage size.
+		</li> </ol>		
+		
+		<ul>
+			<li>Local Storage: 5 MB  - Redirector uses this as Default upon its installation</li>
+			<li>Sync Storage : 0.008192 MB to store "Redirects" (8192 bytes) </li>
+		</ul>
+</div>
+		</p>
 
 		<a name="examples"></a>
 		<h4>Examples</h4>

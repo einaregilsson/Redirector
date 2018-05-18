@@ -8,6 +8,7 @@ function log(msg) {
 }
 log.enabled = false;
 
+var storageArea = chrome.storage.local;
 //Redirects partitioned by request type, so we have to run through
 //the minimum number of redirects for each request.
 var partitionedRedirects = {};
@@ -171,7 +172,7 @@ function setUpRedirectListener() {
 
 	chrome.webRequest.onBeforeRequest.removeListener(checkRedirects); //Unsubscribe first, in case there are changes...
 
-	chrome.storage.local.get({redirects:[]}, function(obj) {
+	storageArea.get({redirects:[]}, function(obj) {
 		var redirects = obj.redirects;
 		if (redirects.length == 0) {
 			log('No redirects defined, not setting up listener');
@@ -201,7 +202,9 @@ chrome.runtime.onMessage.addListener(
 		log('Received background message: ' + JSON.stringify(request));
 		if (request.type == 'getredirects') {
 			log('Getting redirects from storage');
-			chrome.storage.local.get({redirects:[]}, function(obj) {
+			storageArea.get({
+				redirects: []
+			}, function (obj) {
 				log('Got redirects from storage: ' + JSON.stringify(obj));
 				sendResponse(obj);
 				log('Sent redirects to content page');
@@ -209,10 +212,95 @@ chrome.runtime.onMessage.addListener(
 		} else if (request.type == 'saveredirects') {
 			console.log('Saving redirects, count=' + request.redirects.length);
 			delete request.type;
-			chrome.storage.local.set(request, function(a) {
+			storageArea.set(request, function (a) {
+				if(chrome.runtime.lastError) {
+				 if(chrome.runtime.lastError.message.indexOf("QUOTA_BYTES_PER_ITEM quota exceeded")>-1){
+					log("Redirects failed to save as size of redirects larger than allowed limit per item by Sync");
+					sendResponse({
+						message: "Redirects failed to save as size of redirects larger than what's allowed by Sync. Refer Help Page"
+					});
+				 }
+				} else {
 				log('Finished saving redirects to storage');
-				sendResponse({message:"Redirects saved"});
+				sendResponse({
+					message: "Redirects saved"
+				});
+			}
 			});
+		} else if (request.type == 'ToggleSync') {
+			// Notes on Toggle Sync feature here https://github.com/einaregilsson/Redirector/issues/86#issuecomment-389943854
+			// This provides for feature request - issue 86
+			delete request.type;
+			log('toggling sync to ' + request.isSyncEnabled);
+			// Setting for Sync enabled or not, resides in Local.
+			chrome.storage.local.set({
+					isSyncEnabled: request.isSyncEnabled
+				},
+				function () {
+					if (request.isSyncEnabled) {
+						storageArea = chrome.storage.sync;
+						log('storageArea size for sync is 5 MB but one object (redirects) is allowed to hold only ' + storageArea.QUOTA_BYTES_PER_ITEM  / 1000000 + ' MB, that is .. ' + storageArea.QUOTA_BYTES_PER_ITEM  + " bytes");
+						chrome.storage.local.getBytesInUse("redirects",
+							function (size) {
+								log("size of redirects is " + size + " bytes");
+								if (size > storageArea.QUOTA_BYTES_PER_ITEM) {
+									log("size of redirects " + size + " is greater than allowed for Sync which is " + storageArea.QUOTA_BYTES_PER_ITEM);
+									// Setting storageArea back to Local.
+									storageArea = chrome.storage.local; 
+									sendResponse({
+										message: "Sync Not Possible - size of Redirects larger than what's allowed by Sync. Refer Help page"
+									});
+								} else {
+									chrome.storage.local.get({
+										redirects: []
+									}, function (obj) {
+										//check if at least one rule is there.
+										if (obj.redirects.length>0) {
+											chrome.storage.sync.set(obj, function (a) {
+												log('redirects moved from Local to Sync Storage Area');
+												//Remove Redirects from Local storage
+												chrome.storage.local.remove("redirects");
+												// Call setupRedirectListener to setup the redirects 
+												setUpRedirectListener();
+												sendResponse({
+													message: "syncEnabled"
+												});
+											});
+										} else {
+											log('No redirects are setup currently in Local, just enabling Sync');
+											sendResponse({
+												message: "syncEnabled"
+											});
+										}
+									});
+								}
+							});
+						} else {
+						storageArea = chrome.storage.local;
+						log('storageArea size for local is ' + storageArea.QUOTA_BYTES / 1000000 + ' MB, that is .. ' + storageArea.QUOTA_BYTES + " bytes");
+						chrome.storage.sync.get({
+							redirects: []
+						}, function (obj) {
+							if (obj.redirects.length>0) {
+								chrome.storage.local.set(obj, function (a) {
+									log('redirects moved from Sync to Local Storage Area');
+									//Remove Redirects from sync storage
+									chrome.storage.sync.remove("redirects");
+									// Call setupRedirectListener to setup the redirects 
+									setUpRedirectListener();
+									sendResponse({
+										message: "syncDisabled"
+									});
+								});
+							} else {
+								sendResponse({
+									message: "syncDisabled"
+								});
+							}
+						});
+					}
+				});
+
 		} else {
 			log('Unexpected message: ' + JSON.stringify(request));
 			return false;
@@ -234,12 +322,31 @@ function updateLogging() {
 }
 updateLogging();
 
-chrome.storage.local.get({disabled:false}, function(obj) {
-	if (!obj.disabled) {
-		setUpRedirectListener();
+chrome.storage.local.get({
+	isSyncEnabled: false
+}, function (obj) {
+	if (obj.isSyncEnabled) {
+		storageArea = chrome.storage.sync;
 	} else {
-		log('Redirector is disabled');
+		storageArea = chrome.storage.local;
 	}
+	// Now we know which storageArea to use, call setupInitial function
+	setupInitial(); 
 });
+
+//wrapped the below inside a function so that we can call this once we know the value of storageArea from above. 
+
+function setupInitial() {
+
+	chrome.storage.local.get({
+		disabled: false
+	}, function (obj) {
+		if (!obj.disabled) {
+			setUpRedirectListener();
+		} else {
+			log('Redirector is disabled');
+		}
+	});
+}
 log('Redirector starting up...');
        
