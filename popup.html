@@ -12,6 +12,8 @@
 		<div class="disabled"><span ng-show="disabled">Disabled</span></div>
 		<button ng-click="toggleDisabled()">{{disabled ? 'Enable Redirector' : 'Disable Redirector'}}</button>
         <button ng-click="openRedirectorSettings()">Edit Redirects</button>
-        <label><input type="checkbox" ng-model="logging" ng-click="toggleLogging()" /> Logging enabled</label>
+		<label><input type="checkbox" ng-model="logging" ng-click="toggleLogging()" /> Logging enabled</label>
+		<br/>
+		<label><input type="checkbox" ng-model="enableNotifications" ng-click="toggleNotifications()" /> Enable Notifications</label>
 	</body>
 </html>

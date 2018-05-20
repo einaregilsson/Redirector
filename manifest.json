@@ -11,7 +11,7 @@
                "64": "images/icon-active-64.png",
               "128": "images/icon-active-128.png" },
 
-  "permissions" : ["webRequest", "webRequestBlocking", "storage", "tabs", "http://*/*", "https://*/*"],
+  "permissions" : ["webRequest", "webRequestBlocking", "storage", "tabs", "http://*/*", "https://*/*", "notifications"],
   
   "applications": {
     "gecko": {

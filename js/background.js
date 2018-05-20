@@ -7,6 +7,7 @@ function log(msg) {
 	}
 }
 log.enabled = false;
+var enableNotifications=false;
 
 var storageArea = chrome.storage.local;
 //Redirects partitioned by request type, so we have to run through
@@ -67,7 +68,7 @@ function checkRedirects(details) {
 		return {};
 	}
 
-
+	
 	for (var i = 0; i < list.length; i++) {
 		var r = list[i];
 		var result = r.getMatch(details.url);
@@ -91,8 +92,10 @@ function checkRedirects(details) {
 			}
 
 
-			log('Redirecting ' + details.url + ' ===> ' + result.redirectTo + ', type: ' + details.type + ', pattern: ' + r.includePattern);
-
+			log('Redirecting ' + details.url + ' ===> ' + result.redirectTo + ', type: ' + details.type + ', pattern: ' + r.includePattern + ' which is in Rule : ' + r.description);
+			if(enableNotifications){
+				sendNotifications(r, details.url, result.redirectTo);
+			}
 			ignoreNextRequest[result.redirectTo] = new Date().getTime();
 			
 			return { redirectUrl: result.redirectTo };
@@ -126,7 +129,11 @@ function monitorChanges(changes, namespace) {
     if (changes.logging) {
         log('Logging settings have changed, updating...');
         updateLogging();
-    }
+	}
+	if (changes.enableNotifications){
+		log('notifications setting changed');
+		enableNotifications=changes.enableNotifications.newValue;
+	}
 }
 chrome.storage.onChanged.addListener(monitorChanges);
 
@@ -342,6 +349,9 @@ chrome.storage.local.get({
 //wrapped the below inside a function so that we can call this once we know the value of storageArea from above. 
 
 function setupInitial() {
+	chrome.storage.local.get({enableNotifications:false},function(obj){
+		enableNotifications = obj.enableNotifications;
+	});
 
 	chrome.storage.local.get({
 		disabled: false
@@ -354,4 +364,48 @@ function setupInitial() {
 	});
 }
 log('Redirector starting up...');
-       
+	
+// Below is a feature request by an user who wished to see visual indication for an Redirect rule being applied on URL 
+// https://github.com/einaregilsson/Redirector/issues/72
+// By default, we will have it as false. If user wishes to enable it from settings page, we can make it true until user disables it (or browser is restarted)
+
+// Upon browser startup, just set enableNotifications to false.
+// Listen to a message from Settings page to change this to true.
+function sendNotifications(redirect, originalUrl, redirectedUrl ){
+	//var message = "Applied rule : " + redirect.description + " and redirected original page " + originalUrl + " to " + redirectedUrl;
+	log("Showing redirect success notification");
+	//Firefox and other browsers does not yet support "list" type notification like in Chrome.
+	// Console.log(JSON.stringify(chrome.notifications)); -- This will still show "list" as one option but it just won't work as it's not implemented by Firefox yet
+	// Can't check if "chrome" typeof either, as Firefox supports both chrome and browser namespace.
+	// So let's use useragent. 
+	// Opera UA has both chrome and OPR. So check against that ( Only chrome which supports list) - other browsers to get BASIC type notifications.
+
+	if(navigator.userAgent.toLowerCase().indexOf("chrome") > -1 && navigator.userAgent.toLowerCase().indexOf("OPR")<0){
+		var items = [{title:"Original page: ", message: originalUrl},{title:"Redirected to: ",message:redirectedUrl}];
+		var head = "Redirector - Applied rule : " + redirect.description;
+		chrome.notifications.create({
+			"type": "list",
+			"items": items,
+			"title": head,
+			"message": head,
+			"iconUrl": "images/icon-active-38.png"
+		  });	}
+	else{
+		var message = "Applied rule : " + redirect.description + " and redirected original page " + originalUrl + " to " + redirectedUrl;
+
+		chrome.notifications.create({
+        	"type": "basic",
+        	"title": "Redirector",
+			"message": message,
+			"iconUrl": "images/icon-active-38.png"
+		});
+	}
+}
+
+chrome.runtime.onStartup.addListener(handleStartup);
+function handleStartup(){
+	enableNotifications=false;
+	chrome.storage.local.set({
+		enableNotifications: false
+	});
+}
