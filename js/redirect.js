@@ -266,7 +266,7 @@ Redirect.prototype = {
 		if (!this._rxExclude) {
 			return false;	
 		}
-		var shouldExclude = !!this._rxExclude.exec(url);	
+		var shouldExclude = this._rxExclude.test(url);	
 		this._rxExclude.lastIndex = 0;
 		return shouldExclude;
 	}
