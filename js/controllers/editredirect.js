@@ -30,7 +30,7 @@ redirectorApp.controller('EditRedirectCtrl', ['$scope', function($s) {
 	$s.$parent.duplicateRedirect = function (index) {
 		var redirect = new Redirect($s.redirects[index]);
 
-		$s.redirects.push(redirect);
+		$s.redirects.splice(index + 1, 0, redirect);
 
 		redirect.updateExampleResult();
 		$s.saveChanges();
