@@ -193,7 +193,7 @@
 						<a class="btn medium grey padded" ng-click="duplicateRedirect($index)">Duplicate</a>
 					</div>
 				</div>
-				<label id="storage-sync-option"><input type="checkbox" ng-model="isSyncEnabled" ng-click="toggleSyncSetting()" /> Enable Storage Sync</label>
+				<label id="storage-sync-option" ng-if="showSyncOption"><input type="checkbox" ng-model="isSyncEnabled" ng-click="toggleSyncSetting()" /> Enable Storage Sync</label>
 			</div>
 
 			<footer>

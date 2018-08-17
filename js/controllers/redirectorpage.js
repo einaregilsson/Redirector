@@ -12,6 +12,10 @@ redirectorApp.controller('RedirectorPageCtrl', ['$scope', '$timeout', function($
 		return new Redirect(r).toObject(); //Cleans out any extra props, and adds default values for missing ones.
 	}
 
+	$s.showSyncOption = false;
+	if(navigator.userAgent.toLowerCase().indexOf("chrome") > -1){
+		$s.showSyncOption = true;
+	}
 	// Saves the entire list of redirects to storage.
 	$s.saveChanges = function() {
 
