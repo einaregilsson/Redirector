@@ -32,8 +32,8 @@ button {
 }
 
 label {
-    display:inline-block;
-    position: relative;
-    top:5px;
-    margin-top:4px;
+    display:block;
+    width:85%;
+    text-align:left;
+    margin:4px auto;
 }

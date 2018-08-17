@@ -481,3 +481,8 @@ footer small a:hover {
   margin-top: 200px;
   border-width: 4px;  
 }
+
+
+#storage-sync-option input {
+    margin:10px;
+}
