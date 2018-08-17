@@ -18,6 +18,7 @@ Redirect.requestTypes = {
 	stylesheet : "Stylesheets",
 	script : "Scripts",
 	image : "Images",
+	imageset: "Responsive Images in Firefox",
 	object : "Objects (e.g. Flash videos, Java applets)",
 	xmlhttprequest : "XMLHttpRequests (Ajax)",
 	other : "Other"
@@ -33,6 +34,7 @@ Redirect.prototype = {
 	error : null,
 	includePattern : '',
 	excludePattern : '',
+	patternDesc:'',
 	redirectUrl : '',
 	patternType : '',
 	processMatches : 'noProcessing',
@@ -56,6 +58,7 @@ Redirect.prototype = {
 			&& this.exampleUrl == redirect.exampleUrl
 			&& this.includePattern == redirect.includePattern
 			&& this.excludePattern == redirect.excludePattern
+			&& this.patternDesc == redirect.patternDesc
 			&& this.redirectUrl == redirect.redirectUrl
 			&& this.patternType == redirect.patternType
 			&& this.processMatches == redirect.processMatches
@@ -70,6 +73,7 @@ Redirect.prototype = {
 			error : this.error,
 			includePattern : this.includePattern,
 			excludePattern : this.excludePattern,
+			patternDesc : this.patternDesc,
 			redirectUrl : this.redirectUrl,
 			patternType : this.patternType,
 			processMatches : this.processMatches,
@@ -208,6 +212,7 @@ Redirect.prototype = {
 		this.excludePattern = o.excludePattern || '';
 		this.redirectUrl = o.redirectUrl || '';
 		this.patternType = o.patternType || Redirect.WILDCARD;
+		this.patternDesc = o.patternDesc || '';
 		this.processMatches = o.processMatches || 'noProcessing';
 		if (!o.processMatches && o.unescapeMatches) {
 			this.processMatches = 'urlDecode';
@@ -261,7 +266,7 @@ Redirect.prototype = {
 		if (!this._rxExclude) {
 			return false;	
 		}
-		var shouldExclude = !!this._rxExclude.exec(url);	
+		var shouldExclude = this._rxExclude.test(url);	
 		this._rxExclude.lastIndex = 0;
 		return shouldExclude;
 	}

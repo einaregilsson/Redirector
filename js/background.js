@@ -7,7 +7,9 @@ function log(msg) {
 	}
 }
 log.enabled = false;
+var enableNotifications=false;
 
+var storageArea = chrome.storage.local;
 //Redirects partitioned by request type, so we have to run through
 //the minimum number of redirects for each request.
 var partitionedRedirects = {};
@@ -66,7 +68,7 @@ function checkRedirects(details) {
 		return {};
 	}
 
-
+	
 	for (var i = 0; i < list.length; i++) {
 		var r = list[i];
 		var result = r.getMatch(details.url);
@@ -90,8 +92,10 @@ function checkRedirects(details) {
 			}
 
 
-			log('Redirecting ' + details.url + ' ===> ' + result.redirectTo + ', type: ' + details.type + ', pattern: ' + r.includePattern);
-
+			log('Redirecting ' + details.url + ' ===> ' + result.redirectTo + ', type: ' + details.type + ', pattern: ' + r.includePattern + ' which is in Rule : ' + r.description);
+			if(enableNotifications){
+				sendNotifications(r, details.url, result.redirectTo);
+			}
 			ignoreNextRequest[result.redirectTo] = new Date().getTime();
 			
 			return { redirectUrl: result.redirectTo };
@@ -125,7 +129,11 @@ function monitorChanges(changes, namespace) {
     if (changes.logging) {
         log('Logging settings have changed, updating...');
         updateLogging();
-    }
+	}
+	if (changes.enableNotifications){
+		log('notifications setting changed');
+		enableNotifications=changes.enableNotifications.newValue;
+	}
 }
 chrome.storage.onChanged.addListener(monitorChanges);
 
@@ -135,9 +143,14 @@ function createFilter(redirects) {
 	var types = [];
 	for (var i = 0; i < redirects.length; i++) {
 		redirects[i].appliesTo.forEach(function(type) { 
+			// Added this condition below as part of fix for issue 115 https://github.com/einaregilsson/Redirector/issues/115
+			// Firefox considers responsive web images request as imageset. Chrome doesn't.
+			// Chrome throws an error for imageset type, so let's add to 'types' only for the values that chrome or firefox supports
+			if(chrome.webRequest.ResourceType[type.toUpperCase()]!== undefined){
 			if (types.indexOf(type) == -1) {
 				types.push(type);
 			}
+		}
 		});
 	}
 	types.sort();
@@ -171,7 +184,7 @@ function setUpRedirectListener() {
 
 	chrome.webRequest.onBeforeRequest.removeListener(checkRedirects); //Unsubscribe first, in case there are changes...
 
-	chrome.storage.local.get({redirects:[]}, function(obj) {
+	storageArea.get({redirects:[]}, function(obj) {
 		var redirects = obj.redirects;
 		if (redirects.length == 0) {
 			log('No redirects defined, not setting up listener');
@@ -201,7 +214,9 @@ chrome.runtime.onMessage.addListener(
 		log('Received background message: ' + JSON.stringify(request));
 		if (request.type == 'getredirects') {
 			log('Getting redirects from storage');
-			chrome.storage.local.get({redirects:[]}, function(obj) {
+			storageArea.get({
+				redirects: []
+			}, function (obj) {
 				log('Got redirects from storage: ' + JSON.stringify(obj));
 				sendResponse(obj);
 				log('Sent redirects to content page');
@@ -209,10 +224,95 @@ chrome.runtime.onMessage.addListener(
 		} else if (request.type == 'saveredirects') {
 			console.log('Saving redirects, count=' + request.redirects.length);
 			delete request.type;
-			chrome.storage.local.set(request, function(a) {
+			storageArea.set(request, function (a) {
+				if(chrome.runtime.lastError) {
+				 if(chrome.runtime.lastError.message.indexOf("QUOTA_BYTES_PER_ITEM quota exceeded")>-1){
+					log("Redirects failed to save as size of redirects larger than allowed limit per item by Sync");
+					sendResponse({
+						message: "Redirects failed to save as size of redirects larger than what's allowed by Sync. Refer Help Page"
+					});
+				 }
+				} else {
 				log('Finished saving redirects to storage');
-				sendResponse({message:"Redirects saved"});
+				sendResponse({
+					message: "Redirects saved"
+				});
+			}
 			});
+		} else if (request.type == 'ToggleSync') {
+			// Notes on Toggle Sync feature here https://github.com/einaregilsson/Redirector/issues/86#issuecomment-389943854
+			// This provides for feature request - issue 86
+			delete request.type;
+			log('toggling sync to ' + request.isSyncEnabled);
+			// Setting for Sync enabled or not, resides in Local.
+			chrome.storage.local.set({
+					isSyncEnabled: request.isSyncEnabled
+				},
+				function () {
+					if (request.isSyncEnabled) {
+						storageArea = chrome.storage.sync;
+						log('storageArea size for sync is 5 MB but one object (redirects) is allowed to hold only ' + storageArea.QUOTA_BYTES_PER_ITEM  / 1000000 + ' MB, that is .. ' + storageArea.QUOTA_BYTES_PER_ITEM  + " bytes");
+						chrome.storage.local.getBytesInUse("redirects",
+							function (size) {
+								log("size of redirects is " + size + " bytes");
+								if (size > storageArea.QUOTA_BYTES_PER_ITEM) {
+									log("size of redirects " + size + " is greater than allowed for Sync which is " + storageArea.QUOTA_BYTES_PER_ITEM);
+									// Setting storageArea back to Local.
+									storageArea = chrome.storage.local; 
+									sendResponse({
+										message: "Sync Not Possible - size of Redirects larger than what's allowed by Sync. Refer Help page"
+									});
+								} else {
+									chrome.storage.local.get({
+										redirects: []
+									}, function (obj) {
+										//check if at least one rule is there.
+										if (obj.redirects.length>0) {
+											chrome.storage.sync.set(obj, function (a) {
+												log('redirects moved from Local to Sync Storage Area');
+												//Remove Redirects from Local storage
+												chrome.storage.local.remove("redirects");
+												// Call setupRedirectListener to setup the redirects 
+												setUpRedirectListener();
+												sendResponse({
+													message: "syncEnabled"
+												});
+											});
+										} else {
+											log('No redirects are setup currently in Local, just enabling Sync');
+											sendResponse({
+												message: "syncEnabled"
+											});
+										}
+									});
+								}
+							});
+						} else {
+						storageArea = chrome.storage.local;
+						log('storageArea size for local is ' + storageArea.QUOTA_BYTES / 1000000 + ' MB, that is .. ' + storageArea.QUOTA_BYTES + " bytes");
+						chrome.storage.sync.get({
+							redirects: []
+						}, function (obj) {
+							if (obj.redirects.length>0) {
+								chrome.storage.local.set(obj, function (a) {
+									log('redirects moved from Sync to Local Storage Area');
+									//Remove Redirects from sync storage
+									chrome.storage.sync.remove("redirects");
+									// Call setupRedirectListener to setup the redirects 
+									setUpRedirectListener();
+									sendResponse({
+										message: "syncDisabled"
+									});
+								});
+							} else {
+								sendResponse({
+									message: "syncDisabled"
+								});
+							}
+						});
+					}
+				});
+
 		} else {
 			log('Unexpected message: ' + JSON.stringify(request));
 			return false;
@@ -234,12 +334,78 @@ function updateLogging() {
 }
 updateLogging();
 
-chrome.storage.local.get({disabled:false}, function(obj) {
-	if (!obj.disabled) {
-		setUpRedirectListener();
+chrome.storage.local.get({
+	isSyncEnabled: false
+}, function (obj) {
+	if (obj.isSyncEnabled) {
+		storageArea = chrome.storage.sync;
 	} else {
-		log('Redirector is disabled');
+		storageArea = chrome.storage.local;
 	}
+	// Now we know which storageArea to use, call setupInitial function
+	setupInitial(); 
 });
+
+//wrapped the below inside a function so that we can call this once we know the value of storageArea from above. 
+
+function setupInitial() {
+	chrome.storage.local.get({enableNotifications:false},function(obj){
+		enableNotifications = obj.enableNotifications;
+	});
+
+	chrome.storage.local.get({
+		disabled: false
+	}, function (obj) {
+		if (!obj.disabled) {
+			setUpRedirectListener();
+		} else {
+			log('Redirector is disabled');
+		}
+	});
+}
 log('Redirector starting up...');
-       
+	
+// Below is a feature request by an user who wished to see visual indication for an Redirect rule being applied on URL 
+// https://github.com/einaregilsson/Redirector/issues/72
+// By default, we will have it as false. If user wishes to enable it from settings page, we can make it true until user disables it (or browser is restarted)
+
+// Upon browser startup, just set enableNotifications to false.
+// Listen to a message from Settings page to change this to true.
+function sendNotifications(redirect, originalUrl, redirectedUrl ){
+	//var message = "Applied rule : " + redirect.description + " and redirected original page " + originalUrl + " to " + redirectedUrl;
+	log("Showing redirect success notification");
+	//Firefox and other browsers does not yet support "list" type notification like in Chrome.
+	// Console.log(JSON.stringify(chrome.notifications)); -- This will still show "list" as one option but it just won't work as it's not implemented by Firefox yet
+	// Can't check if "chrome" typeof either, as Firefox supports both chrome and browser namespace.
+	// So let's use useragent. 
+	// Opera UA has both chrome and OPR. So check against that ( Only chrome which supports list) - other browsers to get BASIC type notifications.
+
+	if(navigator.userAgent.toLowerCase().indexOf("chrome") > -1 && navigator.userAgent.toLowerCase().indexOf("OPR")<0){
+		var items = [{title:"Original page: ", message: originalUrl},{title:"Redirected to: ",message:redirectedUrl}];
+		var head = "Redirector - Applied rule : " + redirect.description;
+		chrome.notifications.create({
+			"type": "list",
+			"items": items,
+			"title": head,
+			"message": head,
+			"iconUrl": "images/icon-active-38.png"
+		  });	}
+	else{
+		var message = "Applied rule : " + redirect.description + " and redirected original page " + originalUrl + " to " + redirectedUrl;
+
+		chrome.notifications.create({
+        	"type": "basic",
+        	"title": "Redirector",
+			"message": message,
+			"iconUrl": "images/icon-active-38.png"
+		});
+	}
+}
+
+chrome.runtime.onStartup.addListener(handleStartup);
+function handleStartup(){
+	enableNotifications=false;
+	chrome.storage.local.set({
+		enableNotifications: false
+	});
+}
