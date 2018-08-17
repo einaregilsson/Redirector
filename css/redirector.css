@@ -81,6 +81,10 @@ input[type="radio"] {
   text-decoration: none;
 }
 
+.btn.padded {
+  padding-left: 12px;
+  padding-right: 12px;
+}
 
 .btn.grey {
   color:#333;

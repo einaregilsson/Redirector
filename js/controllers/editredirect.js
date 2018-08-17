@@ -23,6 +23,19 @@ redirectorApp.controller('EditRedirectCtrl', ['$scope', function($s) {
 		$s.$parent.showEditForm = true;
 	};
 
+	/**
+	 * Duplicates a redirect.
+	 * @param {Number} index 
+	 */
+	$s.$parent.duplicateRedirect = function (index) {
+		var redirect = new Redirect($s.redirects[index]);
+
+		$s.redirects.splice(index + 1, 0, redirect);
+
+		redirect.updateExampleResult();
+		$s.saveChanges();
+	}
+
 	$s.saveRedirect = function() {
 		if ($s.redirect.error) {
 			return; //Button is already disabled, but we still get the click
