@@ -3,7 +3,7 @@
   "manifest_version": 2,
   "name": "Redirector",
   "description": "Automatically redirect pages based on user-defined rules. E.g. always redirect an article url to its printer-friendly version.",
-  "version": "3.1.1",
+  "version": "3.2",
   
   "icons": {   "16": "images/icon-active-16.png",
                "32": "images/icon-active-32.png",
