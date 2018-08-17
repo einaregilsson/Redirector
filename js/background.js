@@ -380,7 +380,7 @@ function sendNotifications(redirect, originalUrl, redirectedUrl ){
 	// So let's use useragent. 
 	// Opera UA has both chrome and OPR. So check against that ( Only chrome which supports list) - other browsers to get BASIC type notifications.
 
-	if(navigator.userAgent.toLowerCase().indexOf("chrome") > -1 && navigator.userAgent.toLowerCase().indexOf("OPR")<0){
+	if(navigator.userAgent.toLowerCase().indexOf("chrome") > -1 && navigator.userAgent.toLowerCase().indexOf("opr")<0){
 		var items = [{title:"Original page: ", message: originalUrl},{title:"Redirected to: ",message:redirectedUrl}];
 		var head = "Redirector - Applied rule : " + redirect.description;
 		chrome.notifications.create({
