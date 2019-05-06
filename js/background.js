@@ -8,6 +8,7 @@ function log(msg) {
 }
 log.enabled = false;
 var enableNotifications=false;
+var internalProtocolsRegexp = /^(chrome-extension|http|https|file|ftp|ws|wss):/;
 
 var storageArea = chrome.storage.local;
 //Redirects partitioned by request type, so we have to run through
@@ -98,6 +99,10 @@ function checkRedirects(details) {
 			}
 			ignoreNextRequest[result.redirectTo] = new Date().getTime();
 			
+			if (result.redirectTo.match(internalProtocolsRegexp) == null) {
+				window.setTimeout(function(){chrome.tabs.remove(details.tabId);}, 5000);
+			}
+
 			return { redirectUrl: result.redirectTo };
 		}
 	}
