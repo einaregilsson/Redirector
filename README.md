@@ -3,6 +3,49 @@
 * [Google Chrome and Vivaldi](https://chrome.google.com/webstore/detail/redirector/ocgpenflpmgnfapjedencafcfakcekcd)
 * [Opera](https://addons.opera.com/extensions/details/redirector-2/)
 
+
+## Examples
+### De-mobilizer
+- Example URL: `https://en.m.wikipedia.org/`
+- Include pattern: `^(http?s://)(.*\.)m(?:obile)?\.(.*)`
+- Redirect to: `$1$2$3`
+- Pattern type: Regular Expression
+- Description: always show the desktop site of a webpage
+
+### AMP redirect
+- Example URL: `https://www.google.com/amp/www.example.com/amp/document`
+- Include pattern: `^(?:http?s://)www.(?:google|bing).com/amp/(.*)`
+- Redirect to: `https://$1`
+- Pattern type: Regular Expression
+- Description: AMP is bad: <https://80x24.net/post/the-problem-with-amp/>
+
+### old reddit
+- Example URL: `https://www.reddit.com/u/test`
+- Include pattern: `^(?:http?s://)(?:www.)reddit.com(.*)`
+- Redirect to: `https://old.reddit.com$1`
+- Pattern type: Regular Expression
+
+### doubleclick escaper
+- Example URL: `https://ad.doubleclick.net/ddm/trackclk/N135005.2681608PRIVATENETWORK/B20244?https://www.example.com`
+- Include pattern: `^(?:http?s://)ad.doubleclick.net/.*\?(http?s://.*)`
+- Redirect to: `$1`
+- Pattern type: Regular Expression
+- Description: remove doubleclick link tracking / fix problems with doubleclick host based blocking
+
+### Custom DuckDuckGo.com !bangs
+What are bangs?: <https://duckduckgo.com/bang>
+#### DDG !example Base
+- Example URL: `https://duckduckgo.com/?q=!`__example__`&get=other`
+- Include pattern: `^(?:http?s://)duckduckgo.com/\?q=([^\+])?(?:%21|!)`__example__`([^\+]|$)`
+- Redirect to: `https://example.com/`
+- Description: redirect to the base site when bang is the only search parameter
+
+#### DDG !example Search
+- Example URL: `https://duckduckgo.com/?q=searchterm+!`__example__`+searchterm2&get=other`
+- Include pattern: `^(?:http?s://)duckduckgo.com/\?q=(.*\+)?(?:(?:%21|!)`__example__`\+?)(.*?(?=\&))`
+- Redirect to: `https://example.com/?query=$1$2`
+- Description: redirect to custom site search
+
 ## Dark theme
 If you are a Firefox user and use a dark theme, you can edit your userChrome.css file and add these lines to it for the extension button to more visible:
 
