@@ -3,7 +3,6 @@
 * [Google Chrome and Vivaldi](https://chrome.google.com/webstore/detail/redirector/ocgpenflpmgnfapjedencafcfakcekcd)
 * [Opera](https://addons.opera.com/extensions/details/redirector-2/)
 
-
 ## Examples
 ### De-mobilizer
 - Example URL: `https://en.m.wikipedia.org/`
@@ -36,15 +35,26 @@
 What are bangs?: <https://duckduckgo.com/bang>
 #### DDG !example Base
 - Example URL: `https://duckduckgo.com/?q=!`__example__`&get=other`
-- Include pattern: `^(?:http?s://)duckduckgo.com/\?q=([^\+])?(?:%21|!)`__example__`([^\+]|$)`
+- Include pattern: `^(?:http?s://)duckduckgo.com/\?q=(?:%21|!)`__example__`(?=\&|$)(?=\W|$)`
 - Redirect to: `https://example.com/`
+- Pattern type: Regular Expression
 - Description: redirect to the base site when bang is the only search parameter
 
 #### DDG !example Search
 - Example URL: `https://duckduckgo.com/?q=searchterm+!`__example__`+searchterm2&get=other`
-- Include pattern: `^(?:http?s://)duckduckgo.com/\?q=(.*\+)?(?:(?:%21|!)`__example__`\+?)(.*?(?=\&))`
+- Include pattern: `^(?:http?s://)duckduckgo.com/\?q=(.*\+)?(?:(?:%21|!)`__example__`)(?:\W|$)((\w|\+)*)`
 - Redirect to: `https://example.com/?query=$1$2`
+- Pattern type: Regular Expression
 - Description: redirect to custom site search
+
+##### !ghh git-history
+- Example URL: `https://duckduckgo.com/?q=!ghh+https%3A%2F%2Fgithub.com%2Fbabel%2Fbabel%2Fblob%2Fmaster%2Fpackages%2Fbabel-core%2FREADME.md&adfasfasd`
+- Include pattern: `^(?:http?s://)ad.doubleclick.net/.*\?(http?s://.*)`
+- Redirect to: `https://$1.githistory.xyz$2`
+- Pattern type: Regular Expression
+- Description: <https://githistory.xyz>
+- __Advanced:__
+    - Process matches: URL decode
 
 ## Dark theme
 If you are a Firefox user and use a dark theme, you can edit your userChrome.css file and add these lines to it for the extension button to more visible:
