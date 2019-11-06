@@ -49,7 +49,7 @@ What are bangs?: <https://duckduckgo.com/bang>
 
 ##### !ghh git-history
 - Example URL: `https://duckduckgo.com/?q=!ghh+https%3A%2F%2Fgithub.com%2Fbabel%2Fbabel%2Fblob%2Fmaster%2Fpackages%2Fbabel-core%2FREADME.md&adfasfasd`
-- Include pattern: `^(?:http?s://)ad.doubleclick.net/.*\?(http?s://.*)`
+- Include pattern: `^(?:http?s://)duckduckgo.com/\?q=(?:(?:%21|!)ghh\+)(?:.*)(github|gitlab|bitbucket)(?:\.org|\.com)(.*?(?=\&))`
 - Redirect to: `https://$1.githistory.xyz$2`
 - Pattern type: Regular Expression
 - Description: <https://githistory.xyz>
