@@ -31,18 +31,28 @@
 - Pattern type: Regular Expression
 - Description: remove doubleclick link tracking / fix problems with doubleclick host based blocking
 
-### Custom DuckDuckGo.com !bangs
+### Fun with !bangs
 What are bangs?: <https://duckduckgo.com/bang>
+
+#### use DuckDuckGo.com !bangs on Google
+- Example URL: `https://www.google.com/search?&ei=-FvkXcOVMo6RRwW5p5DgBg&q=asdfasdf%21+sadfas&oq=%21asdfasdf+sadfas&gs_l=asdfsadfafsgaf`
+- Include pattern: `^(?:http?s://)(?:www.)google\.(?:com|au|de|co\.uk)/search\?(?:.*)?(?:oq|q)=([^\&]*\+)?((?:%21|!)[^\&]*)`
+- Redirect to: `https://duckduckgo.com/?q=$1$2`
+- Pattern type: Regular Expression
+- Description: redirect any querry to google with a !bang to DDG
+
+### Custom DuckDuckGo.com !bangs
+
 #### DDG !example Base
 - Example URL: `https://duckduckgo.com/?q=!`__example__`&get=other`
-- Include pattern: `^(?:http?s://)duckduckgo.com/\?q=(?:%21|!)`__example__`(?=\&|$)(?=\W|$)`
+- Include pattern: `^(?:http?s://)(?:.*\.)?duckduckgo.com/\?q=(?:%21|!)`__example__`(?=[^\+]|$)(?=\W|$)`
 - Redirect to: `https://example.com/`
 - Pattern type: Regular Expression
 - Description: redirect to the base site when bang is the only search parameter
 
 #### DDG !example Search
 - Example URL: `https://duckduckgo.com/?q=searchterm+!`__example__`+searchterm2&get=other`
-- Include pattern: `^(?:http?s://)duckduckgo.com/\?q=(.*\+)?(?:(?:%21|!)`__example__`)(?:\W|$)((\w|\+)*)`
+- Include pattern: `^(?:http?s://)(?:.*\.)?duckduckgo.com/\?q=(.*\+)?(?:(?:%21|!)`__example__`)(?:\+([^\&\?\#]*))?(?:\W|$)`
 - Redirect to: `https://example.com/?query=$1$2`
 - Pattern type: Regular Expression
 - Description: redirect to custom site search
