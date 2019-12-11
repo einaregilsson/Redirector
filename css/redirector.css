@@ -53,7 +53,7 @@ input[type="radio"] {
 .btn {
   background:white;
   border:solid 1px #bbb;
-  border-radius:2px;
+  border-radius:3px;
   cursor: pointer;
   font-weight: bold;
   display:inline-block;
@@ -72,19 +72,11 @@ input[type="radio"] {
   padding:2px 6px;
 }
 
-.btn.small {
-
-}
-
 .btn:hover {
   color:white !important;
   text-decoration: none;
 }
 
-.btn.padded {
-  padding-left: 12px;
-  padding-right: 12px;
-}
 
 .btn.grey {
   color:#333;
@@ -120,6 +112,11 @@ input[type="radio"] {
 .btn.green:hover {
   background:green;
   border:solid 1px green;
+}
+
+
+#redirect-row-template {
+  display: none;
 }
 
 /* Main menu with buttons */
@@ -169,6 +166,7 @@ input[type="radio"] {
   position: absolute;
   right:6px;
   top:0px;
+  cursor:pointer;
 }
 
 /* Table of redirects */
@@ -216,16 +214,21 @@ input[type="radio"] {
   background:#f8f8f8;
 }
 
-.redirect-row.disabled label, .redirect-row.disabled span, .redirect-row.disabled p, a.disabled {
+.redirect-info.disabled label, .redirect-info.disabled span, span.disabled, .redirect-info.disabled p, a.disabled, button[disabled] {
   color:#bbb !important;
 }
 
+button[disabled]:hover {
+
+}
+
 /* Edit, Delete, Disable buttons */
-.redirect-row a, .redirect-row a:visited {
+.redirect-row button {
   font-size:13px;
   margin-top:5px;
   padding:2px;
-  width:60px;
+  width:80px;
+  display: inline-block;
 }
 
 .redirect-row h4 span.disabled-marker {
@@ -233,7 +236,7 @@ input[type="radio"] {
 }
 
 .move-up-btn, .move-down-btn {
-  width:35px !important;
+  width:45px !important;
 }
 
 
@@ -248,7 +251,7 @@ input[type="radio"] {
   font-size:18px;
 }
 
-a.disabled:hover {
+a.disabled:hover, button[disabled]:hover {
   cursor:default;
   color:#bbb !important;
   border:solid 1px #bbb !important;
@@ -270,6 +273,7 @@ a.disabled:hover {
   top:50%;
   margin-top:-220px;
   height:255px;
+  display:none;
 }
 
 #delete-redirect-form div{
@@ -304,6 +308,7 @@ a.disabled:hover {
   z-index: 5000;
   background: #333;
   opacity: 0.5;
+  display: none;
 }
 
 .blur {
@@ -314,6 +319,7 @@ a.disabled:hover {
 #edit-redirect-form {
   position: fixed;
   display:table;
+  display:none;
   width:700px;
   background:white;
   border:solid 1px #bbb;
@@ -403,6 +409,10 @@ a.disabled:hover {
   margin-top:8px;
 }
 
+.hidden {
+  display:none;
+}
+
 #advanced-toggle {
   padding-top:3px;
   text-align: center;
@@ -410,6 +420,7 @@ a.disabled:hover {
 
 #advanced-toggle a {
   color:rgb(21,90,233);
+  cursor: pointer;
 }
 
 #advanced-toggle a:hover {
@@ -441,8 +452,6 @@ a[ng-click] {
   padding-bottom:10px;
 }
 
-
-
 /* Footer with link */
 footer {
   margin-top:30px;
@@ -463,26 +472,11 @@ footer small a:hover {
   text-decoration: underline;
 }
 
-
-/* Hide by default so we can show a message in private mode where angular won't load */
-
-.private #edit-redirect-form, .private #delete-redirect-form, .private .redirect-table, .private #message-box, .private #menu {
-  display:none;
+#storage-sync-option {
+  border-top: solid 1px #bbb;
+  display: none;
 }
-
-#private-mode-message {
-  background-color:white;
-  margin:auto;
-  border:solid 4px red;
-  border-radius:4px;
-  font-size: 30px;
-  width: 600px;
-  padding: 20px;
-  margin-top: 200px;
-  border-width: 4px;  
-}
-
 
 #storage-sync-option input {
-    margin:10px;
+  margin:10px;
 }

@@ -93,9 +93,8 @@ Redirect.prototype = {
 			redirectTo : '',
 			toString : function() { return JSON.stringify(this); }
 		};
-		var redirectTo = null;
+		var redirectTo = this._includeMatch(url);
 
-		redirectTo = this._includeMatch(url);
 		if (redirectTo !== null) {
 			if (this.disabled && !forceIgnoreDisabled) {
 				result.isDisabledMatch = true;
@@ -204,6 +203,7 @@ Redirect.prototype = {
 	},
 	
 	_init : function(o) {
+		o = o || {};
 		this.description = o.description || '';
 		this.exampleUrl = o.exampleUrl || '';
 		this.exampleResult = o.exampleResult || '';
@@ -212,6 +212,9 @@ Redirect.prototype = {
 		this.excludePattern = o.excludePattern || '';
 		this.redirectUrl = o.redirectUrl || '';
 		this.patternType = o.patternType || Redirect.WILDCARD;
+
+		this.patternTypeText = this.patternType == 'W' ? 'Wildcard' : 'Regular Expression'
+
 		this.patternDesc = o.patternDesc || '';
 		this.processMatches = o.processMatches || 'noProcessing';
 		if (!o.processMatches && o.unescapeMatches) {
@@ -228,7 +231,22 @@ Redirect.prototype = {
 			this.appliesTo = ['main_frame'];
 		}
 	},
+
+	get appliesToText() {
+		return this.appliesTo.map(type => Redirect.requestTypes[type]).join(', ');
+	},
 	
+	get processMatchesExampleText() {
+		let examples = {
+			noProcessing : 'Use matches as they are',
+			urlEncode : 'E.g. turn /bar/foo?x=2 into %2Fbar%2Ffoo%3Fx%3D2',
+			urlDecode : 'E.g. turn %2Fbar%2Ffoo%3Fx%3D2 into /bar/foo?x=2',
+			base64Decode : 'E.g. turn aHR0cDovL2Nubi5jb20= into http://cnn.com'
+		};
+
+		return examples[this.processMatches];
+	},
+
 	toString : function() {
 		return JSON.stringify(this.toObject(), null, 2);
 	},

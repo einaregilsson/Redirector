@@ -4,15 +4,16 @@
 		<title>REDIRECTOR</title>
 		<link rel="stylesheet" href="css/popup.css" />
 		<meta charset="UTF-8">
-		<script src="js/angular.min.js"></script>
-		<script src="js/popup.js"></script>
 	</head>
-	<body ng-app="popupApp" ng-controller="PopupCtrl">
+	<body>
 		<h1>REDIRECTOR</h1>
-		<div class="disabled"><span ng-show="disabled">Disabled</span></div>
-		<button ng-click="toggleDisabled()">{{disabled ? 'Enable Redirector' : 'Disable Redirector'}}</button>
-        <button ng-click="openRedirectorSettings()">Edit Redirects</button>
-		<label><input type="checkbox" ng-model="logging" ng-click="toggleLogging()" /> Enable logging</label>
-		<label><input type="checkbox" ng-model="enableNotifications" ng-click="toggleNotifications()" /> Enable notifications</label>
+		<div class="disabled"><span data-show="disabled" style="display: none;">Disabled</span></div>
+		<button onclick="toggle('disabled')"><span data-show="disabled">Enable Redirector</span><span data-show="!disabled">Disable Redirector</span></button>
+        <button onclick="openRedirectorSettings()">Edit Redirects</button>
+		<label><input type="checkbox" data-bind="logging" onclick="toggle('logging')" /> Enable logging</label>
+		<label><input type="checkbox" data-bind="enableNotifications" onclick="toggle('enableNotifications')" /> Enable notifications</label>
+		<script src="js/stub.js"></script>
+		<script src="js/util.js"></script>
+		<script src="js/popup.js"></script>
 	</body>
 </html>

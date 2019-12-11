@@ -212,7 +212,7 @@ function updateIcon() {
 chrome.runtime.onMessage.addListener(
 	function(request, sender, sendResponse) {
 		log('Received background message: ' + JSON.stringify(request));
-		if (request.type == 'getredirects') {
+		if (request.type == 'get-redirects') {
 			log('Getting redirects from storage');
 			storageArea.get({
 				redirects: []
@@ -221,7 +221,7 @@ chrome.runtime.onMessage.addListener(
 				sendResponse(obj);
 				log('Sent redirects to content page');
 			});
-		} else if (request.type == 'saveredirects') {
+		} else if (request.type == 'save-redirects') {
 			console.log('Saving redirects, count=' + request.redirects.length);
 			delete request.type;
 			storageArea.set(request, function (a) {
@@ -239,7 +239,7 @@ chrome.runtime.onMessage.addListener(
 				});
 			}
 			});
-		} else if (request.type == 'ToggleSync') {
+		} else if (request.type == 'toggle-sync') {
 			// Notes on Toggle Sync feature here https://github.com/einaregilsson/Redirector/issues/86#issuecomment-389943854
 			// This provides for feature request - issue 86
 			delete request.type;
