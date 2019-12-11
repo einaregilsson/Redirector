@@ -15,10 +15,7 @@ function toggle(prop) {
 	});
 }
 
-storage.get({logging:false, enableNotifications:false, disabled: false}, function(obj) {
-	viewModel = obj;
-	applyBinding();
-})
+
 
 function openRedirectorSettings() {
 
@@ -41,3 +38,19 @@ function openRedirectorSettings() {
 	});
 	return;
 };
+
+
+function pageLoad() {
+	storage.get({logging:false, enableNotifications:false, disabled: false}, function(obj) {
+		viewModel = obj;
+		applyBinding();
+	})
+
+	el('#enable-notifications').addEventListener('input', () => toggle('enableNotifications'));
+	el('#enable-logging').addEventListener('input', () => toggle('logging'));
+	el('#toggle-disabled').addEventListener('click', () => toggle('disabled'));
+	el('#open-redirector-settings').addEventListener('click', openRedirectorSettings);
+}
+
+pageLoad();
+//Setup page...

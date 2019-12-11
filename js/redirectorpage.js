@@ -18,7 +18,7 @@ function saveChanges() {
 		console.log(response.message);
 		if(response.message.indexOf("Redirects failed to save") > -1){
 			showMessage(response.message, false);
-		}else{
+		} else{
 			console.log('Saved ' + arr.length + ' redirects at ' + new Date() + '. Message from background page:' + response.message);
 		}
 	});

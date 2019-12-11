@@ -4,7 +4,7 @@
 		<title>REDIRECTOR HELP</title>
 		<meta charset="UTF-8">
 		<link rel="stylesheet" href="css/help.css" />
-		<link rel="shortcut icon" href="images/icon-active-32.png">
+		<link rel="shortcut icon" href="images/icon-dark-32.png">
 	</head>
 	<body>
 		
@@ -24,6 +24,7 @@
 						<ol>
 							<li><a href="#noprocessing">No Processing</a></li>
 							<li><a href="#urldecodematches">URL decode matches</a></li>
+							<li><a href="#doubleurldecodematches">Double URL decode matches</a></li>
 							<li><a href="#urlencodematches">URL encode matches</a></li>
 							<li><a href="#base64decodematches">Base64 decode matches</a></li>
 						</ol>
@@ -101,6 +102,7 @@
 		            won't accept this as a new url to redirect to. So, in cases like these you can select the <em>URL Decode matches</em> option and then all
 		            matches will be URL decoded (turned from e.g. <span class="url">http%3A%2F%2Fbar%2Ecom</span> to <span class="url">http://bar.com</span>) before being inserted into the target url.
 		            </li>
+		            <li><a name="doubleurldecodematches"></a><strong>Double URL Decode matches:</strong> Same as above except apply the decode function twice, if the url has been encoded twice.</li>
 		        
 		            <li><a name="urlencodematches"></a><strong>URL Encode matches:</strong> The opposite of <a href="#urldecodematches">URL Decode matches</a>. Let's say you want to redirect all requests to
 		            a domain like <span class="url">http://example.com</span> to some proxy site that took the url to proxy as an url parameter. Then you might do something like the regular expression pattern

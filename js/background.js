@@ -1,8 +1,8 @@
 
 //This is the background script. It is responsible for actually redirecting requests,
 //as well as monitoring changes in the redirects and the disabled status and reacting to them.
-function log(msg) {
-	if (log.enabled) {
+function log(msg, force) {
+	if (log.enabled || force) {
 		console.log('REDIRECTOR: ' + msg);
 	}
 }
@@ -127,12 +127,12 @@ function monitorChanges(changes, namespace) {
     }
 
     if (changes.logging) {
-        log('Logging settings have changed, updating...');
-        updateLogging();
+		log.enabled = changes.logging.newValue;
+		log('Logging settings have changed to ' + changes.logging.newValue, true); //Always want this to be logged...
 	}
 	if (changes.enableNotifications){
-		log('notifications setting changed');
-		enableNotifications=changes.enableNotifications.newValue;
+		log('notifications setting changed to ' + changes.enableNotifications.newValue);
+		enableNotifications = changes.enableNotifications.newValue;
 	}
 }
 chrome.storage.onChanged.addListener(monitorChanges);
@@ -201,7 +201,12 @@ function setUpRedirectListener() {
 
 function updateIcon() {
 	chrome.storage.local.get({disabled:false}, function(obj) {
-		setIcon(obj.disabled ? 'icon-disabled' : 'icon-active');
+		if (window.matchMedia('(prefers-color-scheme: dark)')) {
+			setIcon('icon-light');
+		} else {
+			setIcon('icon-dark');
+		}
+		//setIcon(obj.disabled ? 'icon-light' : 'icon-dark');
 	});	
 }
 
@@ -327,12 +332,9 @@ chrome.runtime.onMessage.addListener(
 //First time setup
 updateIcon();
 
-function updateLogging() {
-    chrome.storage.local.get({logging:false}, function(obj) {
-        log.enabled = obj.logging;
-    });
-}
-updateLogging();
+chrome.storage.local.get({logging:false}, function(obj) {
+	log.enabled = obj.logging;
+});
 
 chrome.storage.local.get({
 	isSyncEnabled: false
@@ -388,7 +390,7 @@ function sendNotifications(redirect, originalUrl, redirectedUrl ){
 			"items": items,
 			"title": head,
 			"message": head,
-			"iconUrl": "images/icon-active-38.png"
+			"iconUrl": "images/icon-dark-38.png"
 		  });	}
 	else{
 		var message = "Applied rule : " + redirect.description + " and redirected original page " + originalUrl + " to " + redirectedUrl;
@@ -397,7 +399,7 @@ function sendNotifications(redirect, originalUrl, redirectedUrl ){
         	"type": "basic",
         	"title": "Redirector",
 			"message": message,
-			"iconUrl": "images/icon-active-38.png"
+			"iconUrl": "images/icon-dark-38.png"
 		});
 	}
 }

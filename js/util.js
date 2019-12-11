@@ -12,8 +12,10 @@ function dataBind(el, dataObject) {
 		if (tag.tagName.toLowerCase() === 'input') {
 			if (tag.getAttribute('type').toLowerCase() === 'radio') {
 				tag.checked = dataObject[prop] === tag.getAttribute('value');
-			} else {
-				tag.value = dataObject[prop];
+            } else if (tag.getAttribute('type').toLowerCase() === 'checkbox') {
+                tag.checked = dataObject[prop];
+            } else {
+                tag.value = dataObject[prop];
 			}
 		} else if (tag.tagName.toLowerCase() === 'select') {
 			for (let opt of tag.querySelectorAll('option')) {

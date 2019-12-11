@@ -8,10 +8,10 @@
 	<body>
 		<h1>REDIRECTOR</h1>
 		<div class="disabled"><span data-show="disabled" style="display: none;">Disabled</span></div>
-		<button onclick="toggle('disabled')"><span data-show="disabled">Enable Redirector</span><span data-show="!disabled">Disable Redirector</span></button>
-        <button onclick="openRedirectorSettings()">Edit Redirects</button>
-		<label><input type="checkbox" data-bind="logging" onclick="toggle('logging')" /> Enable logging</label>
-		<label><input type="checkbox" data-bind="enableNotifications" onclick="toggle('enableNotifications')" /> Enable notifications</label>
+		<button id="toggle-disabled"><span data-show="disabled" style="display:none">Enable Redirector</span><span data-show="!disabled">Disable Redirector</span></button>
+        <button id="open-redirector-settings">Edit Redirects</button>
+		<label><input id="enable-logging" type="checkbox" data-bind="logging" /> Enable logging</label>
+		<label><input id="enable-notifications" type="checkbox" data-bind="enableNotifications" /> Enable notifications</label>
 		<script src="js/stub.js"></script>
 		<script src="js/util.js"></script>
 		<script src="js/popup.js"></script>

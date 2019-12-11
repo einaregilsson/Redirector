@@ -155,6 +155,10 @@ Redirect.prototype = {
 			return;
 		}
 
+		if (match.isMatch && !match.redirectTo.match(/^https?\:\/\//)) {
+			this.error = 'The redirect result must start with http:// or https://, current result is: "' + match.redirectTo + ".";
+			return;
+		}
 		if (!match.isMatch) {
 			this.error = 'The include pattern does not match the example url.';
 			return;
@@ -241,6 +245,7 @@ Redirect.prototype = {
 			noProcessing : 'Use matches as they are',
 			urlEncode : 'E.g. turn /bar/foo?x=2 into %2Fbar%2Ffoo%3Fx%3D2',
 			urlDecode : 'E.g. turn %2Fbar%2Ffoo%3Fx%3D2 into /bar/foo?x=2',
+			doubleUrlDecode : 'E.g. turn %252Fbar%252Ffoo%253Fx%253D2 into /bar/foo?x=2',
 			base64Decode : 'E.g. turn aHR0cDovL2Nubi5jb20= into http://cnn.com'
 		};
 
@@ -264,11 +269,11 @@ Redirect.prototype = {
 			var repl = matches[i] || '';
 			if (this.processMatches == 'urlDecode') {
 				repl = unescape(repl);
-			}
-			if (this.processMatches == 'urlEncode') {
+			} else if (this.processMatches == 'doubleUrlDecode') {
+				repl = unescape(unescape(repl));
+			} else if (this.processMatches == 'urlEncode') {
 				repl = encodeURIComponent(repl);
-			}
-			if (this.processMatches == 'base64decode') {
+			} else if (this.processMatches == 'base64decode') {
 				if (repl.indexOf('%') > -1) {
 					repl = unescape(repl);
 				}
