@@ -14,7 +14,7 @@ function saveChanges() {
 	// Clean them up so angular $$hash things and stuff don't get serialized.
 	let arr = REDIRECTS.map(normalize);
 
-	chrome.runtime.sendMessage({type:"saveredirects", redirects:arr}, function(response) {
+	chrome.runtime.sendMessage({type:"save-redirects", redirects:arr}, function(response) {
 		console.log(response.message);
 		if(response.message.indexOf("Redirects failed to save") > -1){
 			showMessage(response.message, false);
@@ -41,7 +41,7 @@ function toggleSyncSetting() {
 		}
 		else {
 			alert(response.message)
-			showMessage('Error occured when trying to change Sync settings. Refer logging and raise an issue',false);
+			showMessage('Error occured when trying to change Sync settings. Look at the logs and raise an issue',false);
 		}
 		el('#storage-sync-option').checked = options.isSyncEnabled;
 	});
@@ -145,6 +145,28 @@ function pageLoad() {
 		console.log('Received redirects message, count=' + response.redirects.length);
 		for (var i=0; i < response.redirects.length; i++) {
 			REDIRECTS.push(new Redirect(response.redirects[i]));
+		}
+
+		if (response.redirects.length === 0) {
+			//Add example redirect for first time users...
+			REDIRECTS.push(new Redirect(
+				{
+					"description": "Example redirect, try going to http://example.com/anywordhere",
+					"exampleUrl": "http://example.com/some-word-that-matches-wildcard",
+					"exampleResult": "https://google.com/search?q=some-word-that-matches-wildcard",
+					"error": null,
+					"includePattern": "http://example.com/*",
+					"excludePattern": "",
+					"patternDesc": "Any word after example.com leads to google search for that word.",
+					"redirectUrl": "https://google.com/search?q=$1",
+					"patternType": "W",
+					"processMatches": "noProcessing",
+					"disabled": false,
+					"appliesTo": [
+						"main_frame"
+					]
+				}
+			));
 		}
 		renderRedirects();
 	}); 

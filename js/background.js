@@ -290,13 +290,13 @@ chrome.runtime.onMessage.addListener(
 												// Call setupRedirectListener to setup the redirects 
 												setUpRedirectListener();
 												sendResponse({
-													message: "syncEnabled"
+													message: "sync-enabled"
 												});
 											});
 										} else {
 											log('No redirects are setup currently in Local, just enabling Sync');
 											sendResponse({
-												message: "syncEnabled"
+												message: "sync-enabled"
 											});
 										}
 									});
@@ -316,12 +316,12 @@ chrome.runtime.onMessage.addListener(
 									// Call setupRedirectListener to setup the redirects 
 									setUpRedirectListener();
 									sendResponse({
-										message: "syncDisabled"
+										message: "sync-disabled"
 									});
 								});
 							} else {
 								sendResponse({
-									message: "syncDisabled"
+									message: "sync-disabled"
 								});
 							}
 						});
