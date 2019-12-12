@@ -75,3 +75,32 @@ table {
 	border-radius:3px;
 	background: #eee;
 }
+
+/* Dark mode support */
+
+@media (prefers-color-scheme: dark) {
+
+	html {
+		background: rgb(32,33,36);
+	}
+	body {
+	  background: rgb(42,43,46);
+	  color: #ddd;
+	  border: solid 1px #888;
+	}
+	th {
+		color: white;
+		font-weight: normal;
+	}
+	a, a:visited, a:hover {
+		color: rgb(138,179,241);
+	}
+
+	h1, h2, h3, h4, strong {
+		color: white;
+	}
+
+	tr .pattern {
+		color: rgb(53,180,75);
+	}
+  }

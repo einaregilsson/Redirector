@@ -47,3 +47,33 @@ label {
         top:1px;
     }
 }
+
+
+@media (prefers-color-scheme: dark) {
+
+	html {
+		background: rgb(52,53,56);
+		color: #ddd;
+	}
+
+	h1 {
+		color: white;
+	}
+
+	label {
+		color: #eee;
+	}
+	th {
+		color: white;
+		font-weight: normal;
+	}
+
+	.disabled span {
+		color: rgb(252,87,84);
+	}
+	button {
+		background-color: rgb(32,33,36) !important;
+		border: solid 1px #777 !important;
+		color: #eee;
+	  }
+  }

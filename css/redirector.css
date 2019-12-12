@@ -480,3 +480,121 @@ footer small a:hover {
 #storage-sync-option input {
   margin:10px;
 }
+
+/* Dark mode support */
+
+@media (prefers-color-scheme: dark) {
+
+  body {
+    background: rgb(32,33,36);
+    color: #bbb;
+  }
+
+  h1 {
+    color: #eee;
+  }
+  h5, footer small {
+    color: #aaa;
+  }
+
+  .redirect-row label {
+    color: white;
+  }
+
+  footer small a, footer small a:visited {
+    color: rgb(138,179,241);
+  }
+
+  .redirect-row:nth-child(odd) {
+    background: rgb(31,32,35);
+  } 
+  .redirect-row:nth-child(even) {
+    background: rgb(41,42,45);
+  } 
+
+  .btn {
+    background-color: rgb(32,33,36);
+    border: solid 1px #777;
+  }
+
+  .btn.grey {
+    color: #ccc;
+  }
+
+  .btn.green {
+    color: rgb(53,180,75);
+  }
+
+  #message-box.success {
+    background-color: rgb(53,203,75);;
+  }
+
+  #message-box.error {
+    background-color: rgb(252,87,84);
+  }
+
+  .redirect-table, .redirect-row {
+    border-color: #555 !important;
+  }
+
+  .redirect-row h4 span.disabled-marker {
+    color:rgb(252,87,84) !important;
+  }
+
+  .btn.red {
+    color: rgb(252,87,84);
+  }
+
+  .btn.grey[disabled]:hover {
+    border: solid 1px #777 !important;
+    background: rgb(32,33,36) !important;
+    color:#555 !important;;
+  }
+
+  .btn.grey:hover {
+    border: solid 1px white;
+    background: black;
+    color: white !important;
+  }
+
+  .btn.blue {
+    color: rgb(138,179,241);
+  }
+
+  [data-bind="description"] {
+    color: #eee;
+  }
+
+  .redirect-info.disabled label, .redirect-info.disabled span, span.disabled, .redirect-info.disabled p, a.disabled, button[disabled] {
+    color:#555 !important;
+  }
+
+  #edit-redirect-form {
+    background:rgb(41,42,45);
+    border: solid 1px #888;
+  }
+
+  #advanced-toggle a, #advanced-toggle a:visited {
+    color: rgb(138,179,241);
+  }
+
+  h3 {
+    color: #eee;
+  }
+
+  #edit-redirect-form label {
+    color: white;
+    font-weight: normal;
+  }
+
+  .example-result-error {
+    color:rgb(252,87,84) !important; 
+  }
+
+  #edit-redirect-form input {
+    background: rgb(68,68,68);
+    color: #ddd;
+    border-color: rgb(68,68,68) !important ;
+    border-radius: 2px;
+  }
+}

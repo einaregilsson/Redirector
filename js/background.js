@@ -210,7 +210,7 @@ function updateIcon() {
 
 		if (obj.disabled) {
 			chrome.browserAction.setBadgeText({text: 'off'});
-			chrome.browserAction.setBadgeBackgroundColor({color: 'red'});
+			chrome.browserAction.setBadgeBackgroundColor({color: '#fc5953'});
 			if (chrome.browserAction.setBadgeTextColor) { //Not supported in Chrome
 				chrome.browserAction.setBadgeTextColor({color: '#fafafa'});
 			}
