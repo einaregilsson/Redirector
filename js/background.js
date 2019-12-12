@@ -29,11 +29,12 @@ var redirectThreshold = 3;
 
 function setIcon(image) {
 	var data = { 
-		path: {
-			19 : 'images/' + image + '-19.png',
-			38 : 'images/' + image + '-38.png'
-		}
+		path: {}
 	};
+
+	for (let nr of [16,19,32,38,48,64,128]) {
+		data.path[nr] = `images/${image}-${nr}.png`;
+	}
 
 	chrome.browserAction.setIcon(data, function() {
 		var err = chrome.runtime.lastError;
@@ -201,12 +202,21 @@ function setUpRedirectListener() {
 
 function updateIcon() {
 	chrome.storage.local.get({disabled:false}, function(obj) {
-		if (window.matchMedia('(prefers-color-scheme: dark)')) {
-			setIcon('icon-light');
+		if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+			setIcon('icon-dark-theme');
 		} else {
-			setIcon('icon-dark');
+			setIcon('icon-light-theme');
 		}
-		//setIcon(obj.disabled ? 'icon-light' : 'icon-dark');
+
+		if (obj.disabled) {
+			chrome.browserAction.setBadgeText({text: 'off'});
+			chrome.browserAction.setBadgeBackgroundColor({color: 'red'});
+			if (chrome.browserAction.setBadgeTextColor) { //Not supported in Chrome
+				chrome.browserAction.setBadgeTextColor({color: '#fafafa'});
+			}
+		} else {
+			chrome.browserAction.setBadgeText({text: ''});
+		}
 	});	
 }
 
@@ -409,5 +419,11 @@ function handleStartup(){
 	enableNotifications=false;
 	chrome.storage.local.set({
 		enableNotifications: false
+	});
+
+	updateIcon(); //To set dark/light icon...
+	let mql = window.matchMedia('(prefers-color-scheme: dark)');
+	mql.addEventListener('change', function(e) {
+		console.log('IT CHANGED ' + e.matches);
 	});
 }

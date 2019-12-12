@@ -4,13 +4,13 @@
   "description": "Automatically redirect content based on user-defined rules.",
   "version": "3.5",
   "icons": {
-    "16": "images/icon-dark-16.png",
-    "19": "images/icon-dark-19.png",
-    "32": "images/icon-dark-32.png",
-    "38": "images/icon-dark-38.png",
-    "48": "images/icon-dark-48.png",
-    "64": "images/icon-dark-64.png",
-    "128": "images/icon-dark-128.png"
+    "16": "images/icon-light-theme-16.png",
+    "19": "images/icon-light-theme-19.png",
+    "32": "images/icon-light-theme-32.png",
+    "38": "images/icon-light-theme-38.png",
+    "48": "images/icon-light-theme-48.png",
+    "64": "images/icon-light-theme-64.png",
+    "128": "images/icon-light-theme-128.png"
   },
   "permissions": [
     "webRequest",
@@ -39,50 +39,50 @@
   },
   "browser_action": {
     "default_icon": {
-      "16": "images/icon-dark-16.png",
-      "19": "images/icon-dark-19.png",
-      "32": "images/icon-dark-32.png",
-      "38": "images/icon-dark-38.png",
-      "48": "images/icon-dark-48.png",
-      "64": "images/icon-dark-64.png",
-      "128": "images/icon-dark-128.png"
+      "16": "images/icon-light-theme-16.png",
+      "19": "images/icon-light-theme-19.png",
+      "32": "images/icon-light-theme-32.png",
+      "38": "images/icon-light-theme-38.png",
+      "48": "images/icon-light-theme-48.png",
+      "64": "images/icon-light-theme-64.png",
+      "128": "images/icon-light-theme-128.png"
     },
     "default_title": "Redirector",
     "default_popup": "popup.html",
     "theme_icons": [
       {
-        "light": "images/icon-dark-16.png",
-        "dark": "images/icon-light-16.png",
+        "light": "images/icon-light-theme-16.png",
+        "dark": "images/icon-dark-theme-16.png",
         "size": 16
       },
       {
-        "light": "images/icon-dark-19.png",
-        "dark": "images/icon-light-19.png",
+        "light": "images/icon-light-theme-19.png",
+        "dark": "images/icon-dark-theme-19.png",
         "size": 19
       },
       {
-        "light": "images/icon-dark-32.png",
-        "dark": "images/icon-light-32.png",
+        "light": "images/icon-light-theme-32.png",
+        "dark": "images/icon-dark-theme-32.png",
         "size": 32
       },
       {
-        "light": "images/icon-dark-38.png",
-        "dark": "images/icon-light-38.png",
+        "light": "images/icon-light-theme-38.png",
+        "dark": "images/icon-dark-theme-38.png",
         "size": 38
       },
       {
-        "light": "images/icon-dark-48.png",
-        "dark": "images/icon-light-48.png",
+        "light": "images/icon-light-theme-48.png",
+        "dark": "images/icon-dark-theme-48.png",
         "size": 48
       },
       {
-        "light": "images/icon-dark-64.png",
-        "dark": "images/icon-light-64.png",
+        "light": "images/icon-light-theme-64.png",
+        "dark": "images/icon-dark-theme-64.png",
         "size": 64
       },
       {
-        "light": "images/icon-dark-128.png",
-        "dark": "images/icon-light-128.png",
+        "light": "images/icon-light-theme-128.png",
+        "dark": "images/icon-dark-theme-128.png",
         "size": 128
       }
     ]
