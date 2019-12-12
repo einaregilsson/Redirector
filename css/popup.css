@@ -71,6 +71,7 @@ label {
 	.disabled span {
 		color: rgb(252,87,84);
 	}
+
 	button {
 		background-color: rgb(32,33,36) !important;
 		border: solid 1px #777 !important;

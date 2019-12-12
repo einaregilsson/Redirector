@@ -561,7 +561,7 @@ footer small a:hover {
     color: rgb(138,179,241);
   }
 
-  [data-bind="description"] {
+  .redirect-row [data-bind="description"] {
     color: #eee;
   }
 
@@ -569,7 +569,7 @@ footer small a:hover {
     color:#555 !important;
   }
 
-  #edit-redirect-form {
+  #edit-redirect-form, #delete-redirect-form {
     background:rgb(41,42,45);
     border: solid 1px #888;
   }
@@ -582,7 +582,7 @@ footer small a:hover {
     color: #eee;
   }
 
-  #edit-redirect-form label {
+  #edit-redirect-form label, #delete-redirect-form label  {
     color: white;
     font-weight: normal;
   }
