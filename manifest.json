@@ -15,6 +15,7 @@
   "permissions": [
     "webRequest",
     "webRequestBlocking",
+    "webNavigation",
     "storage",
     "tabs",
     "http://*/*",
@@ -51,38 +52,38 @@
     "default_popup": "popup.html",
     "theme_icons": [
       {
-        "light": "images/icon-light-theme-16.png",
-        "dark": "images/icon-dark-theme-16.png",
+        "dark": "images/icon-light-theme-16.png",
+        "light": "images/icon-dark-theme-16.png",
         "size": 16
       },
       {
-        "light": "images/icon-light-theme-19.png",
-        "dark": "images/icon-dark-theme-19.png",
+        "dark": "images/icon-light-theme-19.png",
+        "light": "images/icon-dark-theme-19.png",
         "size": 19
       },
       {
-        "light": "images/icon-light-theme-32.png",
-        "dark": "images/icon-dark-theme-32.png",
+        "dark": "images/icon-light-theme-32.png",
+        "light": "images/icon-dark-theme-32.png",
         "size": 32
       },
       {
-        "light": "images/icon-light-theme-38.png",
-        "dark": "images/icon-dark-theme-38.png",
+        "dark": "images/icon-light-theme-38.png",
+        "light": "images/icon-dark-theme-38.png",
         "size": 38
       },
       {
-        "light": "images/icon-light-theme-48.png",
-        "dark": "images/icon-dark-theme-48.png",
+        "dark": "images/icon-light-theme-48.png",
+        "light": "images/icon-dark-theme-48.png",
         "size": 48
       },
       {
-        "light": "images/icon-light-theme-64.png",
-        "dark": "images/icon-dark-theme-64.png",
+        "dark": "images/icon-light-theme-64.png",
+        "light": "images/icon-dark-theme-64.png",
         "size": 64
       },
       {
-        "light": "images/icon-light-theme-128.png",
-        "dark": "images/icon-dark-theme-128.png",
+        "dark": "images/icon-light-theme-128.png",
+        "light": "images/icon-dark-theme-128.png",
         "size": 128
       }
     ]

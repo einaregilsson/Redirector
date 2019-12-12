@@ -48,6 +48,17 @@ label {
     }
 }
 
+button {
+	border: solid 1px #aaa !important;
+	color: #333;
+	height: 20px;
+	border-radius: 3px;
+}
+
+label span {
+	position: relative;
+	top: 1px;
+}
 
 @media (prefers-color-scheme: dark) {
 
@@ -75,6 +86,6 @@ label {
 	button {
 		background-color: rgb(32,33,36) !important;
 		border: solid 1px #777 !important;
-		color: #eee;
+		color: #ddd;
 	  }
   }

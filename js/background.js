@@ -9,6 +9,11 @@ function log(msg, force) {
 log.enabled = false;
 var enableNotifications=false;
 
+function isDarkMode() {
+	return window.matchMedia('(prefers-color-scheme: dark)').matches;
+}
+var isFirefox = !!navigator.userAgent.match(/Firefox/i);
+
 var storageArea = chrome.storage.local;
 //Redirects partitioned by request type, so we have to run through
 //the minimum number of redirects for each request.
@@ -116,6 +121,7 @@ function monitorChanges(changes, namespace) {
 		if (changes.disabled.newValue == true) {
 			log('Disabling Redirector, removing listener');
 			chrome.webRequest.onBeforeRequest.removeListener(checkRedirects);
+			chrome.webNavigation.onHistoryStateUpdated.removeListener(checkHistoryStateRedirects);
 		} else {
 			log('Enabling Redirector, setting up listener');
 			setUpRedirectListener();
@@ -184,6 +190,7 @@ function createPartitionedRedirects(redirects) {
 function setUpRedirectListener() {
 
 	chrome.webRequest.onBeforeRequest.removeListener(checkRedirects); //Unsubscribe first, in case there are changes...
+	chrome.webNavigation.onHistoryStateUpdated.removeListener(checkHistoryStateRedirects);
 
 	storageArea.get({redirects:[]}, function(obj) {
 		var redirects = obj.redirects;
@@ -197,15 +204,40 @@ function setUpRedirectListener() {
 
 		log('Setting filter for listener: ' + JSON.stringify(filter));
 		chrome.webRequest.onBeforeRequest.addListener(checkRedirects, filter, ["blocking"]);
+
+		if (partitionedRedirects.history) {
+			log('Adding HistoryState Listener');
+
+			let filter = { url : []};
+			for (let r of partitionedRedirects.history) {
+				filter.url.push({urlMatches: r._preparePattern(r.includePattern)});
+			}
+			chrome.webNavigation.onHistoryStateUpdated.addListener(checkHistoryStateRedirects, filter);
+		}
 	});
 }
 
+//Redirect urls on places like Facebook and Twitter who don't do real reloads, only do ajax updates and push a new url to the address bar...
+function checkHistoryStateRedirects(ev) {
+	ev.type = 'history';
+	ev.method = 'GET';
+	let result = checkRedirects(ev);
+	if (result.redirectUrl) {
+		chrome.tabs.update(ev.tabId, {url: result.redirectUrl});
+	}
+}
+
+//Sets on/off badge, and for Chrome updates dark/light mode icon
 function updateIcon() {
 	chrome.storage.local.get({disabled:false}, function(obj) {
-		if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-			setIcon('icon-dark-theme');
-		} else {
-			setIcon('icon-light-theme');
+
+		//Do this here so even in Chrome we get the icon not too long after an dark/light mode switch...
+		if (!isFirefox) {
+			if (isDarkMode()) {
+				setIcon('icon-dark-theme');
+			} else {
+				setIcon('icon-light-theme');
+			}
 		}
 
 		if (obj.disabled) {
@@ -215,7 +247,11 @@ function updateIcon() {
 				chrome.browserAction.setBadgeTextColor({color: '#fafafa'});
 			}
 		} else {
-			chrome.browserAction.setBadgeText({text: ''});
+			chrome.browserAction.setBadgeText({text: 'on'});
+			chrome.browserAction.setBadgeBackgroundColor({color: '#35b44a'});
+			if (chrome.browserAction.setBadgeTextColor) { //Not supported in Chrome
+				chrome.browserAction.setBadgeTextColor({color: '#fafafa'});
+			}
 		}
 	});	
 }
@@ -376,7 +412,8 @@ function setupInitial() {
 	});
 }
 log('Redirector starting up...');
-	
+
+
 // Below is a feature request by an user who wished to see visual indication for an Redirect rule being applied on URL 
 // https://github.com/einaregilsson/Redirector/issues/72
 // By default, we will have it as false. If user wishes to enable it from settings page, we can make it true until user disables it (or browser is restarted)
@@ -392,24 +429,28 @@ function sendNotifications(redirect, originalUrl, redirectedUrl ){
 	// So let's use useragent. 
 	// Opera UA has both chrome and OPR. So check against that ( Only chrome which supports list) - other browsers to get BASIC type notifications.
 
+	let icon = isDarkMode() ? "images/icon-dark-theme-48.png": "images/icon-light-theme-48.png";
+
 	if(navigator.userAgent.toLowerCase().indexOf("chrome") > -1 && navigator.userAgent.toLowerCase().indexOf("opr")<0){
-		var items = [{title:"Original page: ", message: originalUrl},{title:"Redirected to: ",message:redirectedUrl}];
+		
+		var items = [{title:"Original page: ", message: originalUrl},{title:"Redirected to: ",message: redirectedUrl}];
 		var head = "Redirector - Applied rule : " + redirect.description;
 		chrome.notifications.create({
-			"type": "list",
-			"items": items,
-			"title": head,
-			"message": head,
-			"iconUrl": "images/icon-dark-38.png"
-		  });	}
+			type : "list",
+			items : items,
+			title : head,
+			message : head,
+			iconUrl : icon
+		  });	
+		}
 	else{
 		var message = "Applied rule : " + redirect.description + " and redirected original page " + originalUrl + " to " + redirectedUrl;
 
 		chrome.notifications.create({
-        	"type": "basic",
-        	"title": "Redirector",
-			"message": message,
-			"iconUrl": "images/icon-dark-38.png"
+        	type : "basic",
+        	title : "Redirector",
+			message : message,
+			iconUrl : icon
 		});
 	}
 }
@@ -422,8 +463,4 @@ function handleStartup(){
 	});
 
 	updateIcon(); //To set dark/light icon...
-	let mql = window.matchMedia('(prefers-color-scheme: dark)');
-	mql.addEventListener('change', function(e) {
-		console.log('IT CHANGED ' + e.matches);
-	});
 }
