@@ -9,8 +9,7 @@ function createNewRedirect() {
 	el('#btn-save-redirect').setAttribute('disabled', 'disabled');
 }
 
-function editRedirect(ev) {
-	let index = indexFromClickEvent(ev);
+function editRedirect(index) {
 	el('#edit-redirect-form h3').innerHTML = 'Edit Redirect';
 	activeRedirect = new Redirect(REDIRECTS[index]); //Make a new one, which we can dump a bunch of stuff on...
 	activeRedirect.existing = true;
@@ -41,7 +40,8 @@ function saveRedirect() {
 	hideForm('#edit-redirect-form');
 }
 
-function toggleAdvancedOptions() {
+function toggleAdvancedOptions(ev) {
+	ev.preventDefault();
 	let advancedOptions = el('.advanced');
 	if (advancedOptions.classList.contains('hidden')) {
 		advancedOptions.classList.remove('hidden');
@@ -52,9 +52,8 @@ function toggleAdvancedOptions() {
 	}
 }
 
-//Listen to any change from the edit form...
-el('#edit-redirect-form').addEventListener('input', function(ev) {
 
+function editFormChange() {
 	//Now read values back from the form...
 	for (let input of el('#edit-redirect-form').querySelectorAll('input[type="text"][data-bind]')) {
 		let prop = input.getAttribute('data-bind');
@@ -72,12 +71,13 @@ el('#edit-redirect-form').addEventListener('input', function(ev) {
 	activeRedirect.updateExampleResult();
 
 	dataBind('#edit-redirect-form', activeRedirect);
-});
+}
+
 
 
 var deleteIndex;
-function confirmDeleteRedirect(ev) {
-	deleteIndex = indexFromClickEvent(ev);
+function confirmDeleteRedirect(index) {
+	deleteIndex = index;
 	let redirect = REDIRECTS[deleteIndex];
 	showForm('#delete-redirect-form', redirect);
 }
@@ -94,3 +94,22 @@ function deleteRedirect() {
 function cancelDelete() {
 	hideForm('#delete-redirect-form');
 }
+
+
+function setupEditAndDeleteEventListeners() {
+
+	el('#btn-save-redirect').addEventListener('click', saveRedirect);
+	el('#btn-cancel-edit').addEventListener('click', cancelEdit);
+
+	el('#confirm-delete').addEventListener('click', deleteRedirect);
+	el('#cancel-delete').addEventListener('click', cancelDelete);
+
+	el('#advanced-toggle a').addEventListener('click', toggleAdvancedOptions);	
+
+	el('#create-new-redirect').addEventListener('click', createNewRedirect);
+	//Listen to any change from the edit form...
+	el('#edit-redirect-form').addEventListener('input', editFormChange);
+}
+
+
+setupEditAndDeleteEventListeners();

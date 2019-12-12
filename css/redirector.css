@@ -218,8 +218,8 @@ input[type="radio"] {
   color:#bbb !important;
 }
 
-button[disabled]:hover {
-
+button span {
+  pointer-events:none;
 }
 
 /* Edit, Delete, Disable buttons */

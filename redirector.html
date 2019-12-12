@@ -35,8 +35,8 @@
 				<span data-bind="patternTypeText"></span>
 			</div>
 			<div class="button-container">
-				<button id="confirm-delete" class="btn red large" onclick="deleteRedirect(event)">Yes, delete it</button>
-				<button id="cancel-delete" class="btn grey large" onclick="cancelDelete(event)">No, don't delete it</button>
+				<button id="confirm-delete" class="btn red large">Yes, delete it</button>
+				<button id="cancel-delete" class="btn grey large">No, don't delete it</button>
 			</div>
 		</div>
 		
@@ -80,7 +80,7 @@
 				</div>
 			</div>
 			<div id="advanced-toggle">
-				<a onclick="toggleAdvancedOptions()">Show advanced options...</a>
+				<a href="#show-advanced">Show advanced options...</a>
 			</div>
 			<div class="form-grid advanced hidden">
 				<div>
@@ -116,8 +116,8 @@
 				</div>
 			</div>
 			<div class="button-container">
-				<button id="btn-save-redirect" data-disabled="error" data-class="disabled:error" class="btn green large" onclick="saveRedirect()">Save</button>
-				<button class="btn red large" onclick="cancelEdit()">Cancel</button>
+				<button id="btn-save-redirect" data-disabled="error" data-class="disabled:error" class="btn green large">Save</button>
+				<button id="btn-cancel-edit" class="btn red large">Cancel</button>
 			</div>
 		</div>
 
@@ -128,13 +128,13 @@
 			<h5>Go where <em>YOU</em> want!</h5>
 
 			<div id="menu">
-				<a class="btn blue large" onclick="createNewRedirect()">Create new redirect</a>
+				<a id="create-new-redirect" class="btn blue large">Create new redirect</a>
 				
 				<!-- Importing/Exporting of redirects -->
 				<span>
-					<input type="file" id="import-file" onchange="importRedirects(event)" accept=".rjson,.json,.txt"  />
+					<input type="file" id="import-file" accept=".rjson,.json,.txt"  />
 					<label for="import-file" class="btn blue large">Import</label>
-					<a class="btn blue large" id="export-link" onmousedown="updateExportLink()" download="Redirector.json">Export</a>
+					<a class="btn blue large" id="export-link" download="Redirector.json">Export</a>
 				</span>
 	
 				<a class="btn blue large" href="help.html" target="_blank">Help</a>
@@ -143,7 +143,7 @@
 
 			<div id="message-box">
 				<span data-bind="message" id="message"></span>
-				<a id="hide-message" onclick="hideMessage()">&#x2716;</a>
+				<a id="hide-message">&#x2716;</a>
 			</div>
 
 			<!-- List of existing redirects -->
@@ -173,16 +173,16 @@
 								</div>
 							</div>
 							<div>
-								<button class="btn medium blue" onclick="toggleDisabled(event)"><span data-show="disabled">Enable</span><span data-show="!disabled">Disable</span></button>
-								<button class="btn medium green" onclick="editRedirect(event)">Edit</button>
-								<button class="btn medium red" onclick="confirmDeleteRedirect(event)">Delete</button>
-								<button class="btn medium grey move-up-btn" onclick="moveUp(event)" data-disabled="$first">▲</button>
-								<button class="btn medium grey move-down-btn" onclick="moveDown(event)" data-disabled="$last">▼</button>
-								<button class="btn medium grey" onclick="duplicateRedirect(event)">Duplicate</button>
+								<button class="btn medium blue" data-action="toggleDisabled"><span data-show="disabled">Enable</span><span data-show="!disabled">Disable</span></button>
+								<button class="btn medium green" data-action="editRedirect">Edit</button>
+								<button class="btn medium red" data-action="confirmDeleteRedirect">Delete</button>
+								<button class="btn medium grey move-up-btn" data-action="moveUp" data-disabled="$first">▲</button>
+								<button class="btn medium grey move-down-btn" data-action="moveDown" data-disabled="$last">▼</button>
+								<button class="btn medium grey" data-action="duplicateRedirect">Duplicate</button>
 							</div>
 						</div>
 					</div>
-				<label id="storage-sync-option"><input type="checkbox" onclick="toggleSyncSetting()" /> Enable Storage Sync</label>
+				<label id="storage-sync-option"><input type="checkbox" /> Enable Storage Sync</label>
 			</div>
 
 			<footer>

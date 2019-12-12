@@ -87,3 +87,10 @@ function updateExportLink() {
 }
 
 updateExportLink();
+
+function setupImportExportEventListeners() {
+	el("#import-file").addEventListener('change', importRedirects);
+	el("#export-link").addEventListener('mousedown', updateExportLink);
+}
+
+setupImportExportEventListeners();

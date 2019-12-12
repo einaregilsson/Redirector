@@ -99,12 +99,7 @@ function updateBindings() {
 	}
 }
 
-function indexFromClickEvent(ev) {
-	return parseInt(ev.target.getAttribute('data-index') || ev.target.parentNode.getAttribute('data-index'));
-}
-
-function duplicateRedirect(ev) {
-	let index = indexFromClickEvent(ev);
+function duplicateRedirect(index) {
 	let redirect = new Redirect(REDIRECTS[index]);
 	REDIRECTS.splice(index, 0, redirect);
 
@@ -115,8 +110,7 @@ function duplicateRedirect(ev) {
 	saveChanges();
 }
 
-function toggleDisabled(ev) {
-	let index = indexFromClickEvent(ev);
+function toggleDisabled(index) {
 	let redirect = REDIRECTS[index];
 	redirect.disabled = !redirect.disabled
 	updateBindings();
@@ -124,11 +118,7 @@ function toggleDisabled(ev) {
 }
 
 
-function moveUp(ev) {
-	if (ev.target.classList.contains('disabled')) {
-		return;
-	}
-	let index = indexFromClickEvent(ev);
+function moveUp(index) {
 	let prev = REDIRECTS[index-1];
 	REDIRECTS[index-1] = REDIRECTS[index];
 	REDIRECTS[index] = prev;
@@ -136,11 +126,7 @@ function moveUp(ev) {
 	saveChanges();
 }
 
-function moveDown(ev) {
-	if (ev.target.classList.contains('disabled')) {
-		return;
-	}
-	let index = indexFromClickEvent(ev);
+function moveDown(index) {
 	let next = REDIRECTS[index+1];
 	REDIRECTS[index+1] = REDIRECTS[index];
 	REDIRECTS[index] = next;
@@ -171,6 +157,27 @@ function pageLoad() {
 	if(navigator.userAgent.toLowerCase().indexOf("chrome") > -1){
 		show('#storage-sync-option');
 	}
+
+
+	//Setup event listeners
+	el('#hide-message').addEventListener('click', hideMessage);
+	el('#storage-sync-option input').addEventListener('click', toggleSyncSetting);
+
+	el('.redirect-rows').addEventListener('click', function(ev) {
+		let action = ev.target.getAttribute('data-action');
+
+		//We clone and re-use nodes all the time, so instead of attaching and removing event handlers endlessly we just put
+		//a data-action attribute on them with the name of the function that should be called...
+		if (!action) {
+			return;
+		}
+
+		let handler = window[action];
+
+		let index = parseInt(ev.target.getAttribute('data-index'));
+
+		handler(index);
+	});
 }
 
 pageLoad();
