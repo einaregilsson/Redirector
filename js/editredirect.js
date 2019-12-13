@@ -4,13 +4,13 @@ var activeRedirect = null;
 
 function createNewRedirect() {
 	activeRedirect = new Redirect();
-	el('#edit-redirect-form h3').innerHTML = 'Create Redirect';
+	el('#edit-redirect-form h3').textContent = 'Create Redirect';
 	showForm('#edit-redirect-form', activeRedirect);
 	el('#btn-save-redirect').setAttribute('disabled', 'disabled');
 }
 
 function editRedirect(index) {
-	el('#edit-redirect-form h3').innerHTML = 'Edit Redirect';
+	el('#edit-redirect-form h3').textContent = 'Edit Redirect';
 	activeRedirect = new Redirect(REDIRECTS[index]); //Make a new one, which we can dump a bunch of stuff on...
 	activeRedirect.existing = true;
 	activeRedirect.index = index;
@@ -45,10 +45,10 @@ function toggleAdvancedOptions(ev) {
 	let advancedOptions = el('.advanced');
 	if (advancedOptions.classList.contains('hidden')) {
 		advancedOptions.classList.remove('hidden');
-		el('#advanced-toggle a').innerHTML = 'Hide advanced options...';
+		el('#advanced-toggle a').textContent = 'Hide advanced options...';
 	} else {
 		advancedOptions.classList.add('hidden');
-		el('#advanced-toggle a').innerHTML = 'Show advanced options...';
+		el('#advanced-toggle a').textContent = 'Show advanced options...';
 	}
 }
 

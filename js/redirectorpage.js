@@ -48,7 +48,7 @@ function toggleSyncSetting() {
 }
 
 function renderRedirects() {
-	el('.redirect-rows').innerHTML = '';
+	el('.redirect-rows').textContent = '';
 	for (let i=0; i < REDIRECTS.length; i++) {
 		let r = REDIRECTS[i];
 		let node = template.cloneNode(true);

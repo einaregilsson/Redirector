@@ -32,7 +32,7 @@ function dataBind(el, dataObject) {
 			}
 
 		} else {
-			tag.innerHTML = dataObject[prop];
+			tag.textContent = dataObject[prop];
 		}
 	}
 	for (let tag of el.querySelectorAll('[data-show]')) {
@@ -102,7 +102,7 @@ function showMessage(message, success) {
 
 	//Remove the message in 20 seconds if it hasn't been changed...
 	setTimeout(function() {
-		if (el('#message').innerHTML === message) {
+		if (el('#message').textContent === message) {
 			messageBox.className = ''; //Removing .visible removes the box...
 		}
 	}, timer * 1000);
