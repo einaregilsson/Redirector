@@ -290,6 +290,8 @@ chrome.runtime.onMessage.addListener(
 				});
 			}
 			});
+		} else if (request.type == 'update-icon') {
+			updateIcon();
 		} else if (request.type == 'toggle-sync') {
 			// Notes on Toggle Sync feature here https://github.com/einaregilsson/Redirector/issues/86#issuecomment-389943854
 			// This provides for feature request - issue 86
@@ -463,4 +465,8 @@ function handleStartup(){
 	});
 
 	updateIcon(); //To set dark/light icon...
+
+	//This doesn't work yet in Chrome, but we'll put it here anyway, in case it starts working...
+	let darkModeMql = window.matchMedia('(prefers-color-scheme: dark)');
+	darkModeMql.onchange = updateIcon;
 }

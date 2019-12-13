@@ -202,4 +202,16 @@ function pageLoad() {
 	});
 }
 
+
+function updateFavicon(e) {
+	let type = e.matches ? 'dark' : 'light'
+	el('link[rel="shortcut icon"]').href = `images/icon-${type}-theme-32.png`;
+	chrome.runtime.sendMessage({type: "update-icon"}); //Only works if this page is open, but still, better than nothing...
+}
+
+let mql = window.matchMedia('(prefers-color-scheme:dark)');
+
+mql.onchange = updateFavicon;
+updateFavicon(mql);
+
 pageLoad();

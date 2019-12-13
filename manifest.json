@@ -12,6 +12,7 @@
     "64": "images/icon-light-theme-64.png",
     "128": "images/icon-light-theme-128.png"
   },
+
   "permissions": [
     "webRequest",
     "webRequestBlocking",
