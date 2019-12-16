@@ -316,6 +316,10 @@ a.disabled:hover, button[disabled]:hover {
   filter:blur(3px); 
 }
 
+.url {
+	font-family: monospace;
+}
+
 #edit-redirect-form {
   position: fixed;
   display:table;
@@ -328,7 +332,9 @@ a.disabled:hover, button[disabled]:hover {
   left:50%;
   margin-left:-350px;
   top:50%;
-  margin-top:-258px;
+  transform: translateY(-50%);
+  max-height: 96vh;
+  overflow: auto;
 }
 
 .form-grid {
