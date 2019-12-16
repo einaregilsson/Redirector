@@ -316,10 +316,6 @@ a.disabled:hover, button[disabled]:hover {
   filter:blur(3px); 
 }
 
-.url {
-	font-family: monospace;
-}
-
 #edit-redirect-form {
   position: fixed;
   display:table;
