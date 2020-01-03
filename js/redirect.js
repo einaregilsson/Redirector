@@ -157,7 +157,7 @@ Redirect.prototype = {
 		}
 
 		if (match.isMatch && !match.redirectTo.match(/^https?\:\/\//)) {
-			this.error = 'The redirect result must start with http:// or https://, current result is: "' + match.redirectTo + ".";
+			this.error = 'The redirect result must start with http:// or https://, current result is: ' + match.redirectTo;
 			return;
 		}
 		if (!match.isMatch) {
