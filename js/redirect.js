@@ -19,7 +19,7 @@ Redirect.requestTypes = {
 	script : "Scripts",
 	image : "Images",
 	imageset: "Responsive Images in Firefox",
-	object : "Objects (e.g. Flash videos, Java applets)",
+	object : "Objects (e.g. Flash content, Java applets)",
 	xmlhttprequest : "XMLHttpRequests (Ajax)",
 	history : "HistoryState",
 	other : "Other"
@@ -161,8 +161,8 @@ Redirect.prototype = {
 		//	this.error = 'The redirect result must start with http:// or https://, current result is: "' + match.redirectTo;
 		//	return;
 		//}
-		
-		if (!match.isMatch) {
+
+    if (!match.isMatch) {
 			this.error = 'The include pattern does not match the example url.';
 			return;
 		}
