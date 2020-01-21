@@ -10,7 +10,7 @@
 	<body>
 		<div id="cover">
 		</div>
-		
+
 		<!-- Confirmation form for deleting redirects -->
 		<div id="delete-redirect-form">
 			<h3>Are you sure you want to delete this redirect?</h3>
@@ -39,7 +39,7 @@
 				<button id="cancel-delete" class="btn grey large">No, don't delete it</button>
 			</div>
 		</div>
-		
+
 
 		<!-- Form for creating and editing redirects -->
 		<div id="edit-redirect-form">
@@ -124,20 +124,20 @@
 
 
 		<div id="blur-wrapper">
-			
+
 			<h1>REDIRECTOR</h1>
 			<h5>Go where <em>YOU</em> want!</h5>
 
 			<div id="menu">
 				<a id="create-new-redirect" class="btn blue large">Create new redirect</a>
-				
+
 				<!-- Importing/Exporting of redirects -->
 				<span>
 					<input type="file" id="import-file" accept=".rjson,.json,.txt"  />
 					<label for="import-file" class="btn blue large">Import</label>
 					<a class="btn blue large" id="export-link" download="Redirector.json">Export</a>
 				</span>
-	
+
 				<a class="btn blue large" href="help.html" target="_blank">Help</a>
 			</div>
 
@@ -177,8 +177,10 @@
 								<button class="btn medium blue" data-action="toggleDisabled"><span data-show="disabled">Enable</span><span data-show="!disabled">Disable</span></button>
 								<button class="btn medium green" data-action="editRedirect">Edit</button>
 								<button class="btn medium red" data-action="confirmDeleteRedirect">Delete</button>
+								<button class="btn medium grey move-uptop-btn" data-action="moveUpTop" data-disabled="$first">⟰</button>
 								<button class="btn medium grey move-up-btn" data-action="moveUp" data-disabled="$first">▲</button>
 								<button class="btn medium grey move-down-btn" data-action="moveDown" data-disabled="$last">▼</button>
+								<button class="btn medium grey move-downbottom-btn" data-action="moveDownBottom" data-disabled="$last">⟱</button>
 								<button class="btn medium grey" data-action="duplicateRedirect">Duplicate</button>
 							</div>
 						</div>
@@ -189,7 +191,7 @@
 			<footer>
 				<small>Redirector is created by <a target="_blank" href="http://einaregilsson.com">Einar Egilsson</a></small>
 			</footer>
-		
+
 		</div>
 
 		<script src="js/stub.js"></script>

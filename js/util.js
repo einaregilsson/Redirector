@@ -36,12 +36,12 @@ function dataBind(el, dataObject) {
 		}
 	}
 	for (let tag of el.querySelectorAll('[data-show]')) {
-		let shouldShow = boolValue(tag.getAttribute('data-show'));	
+		let shouldShow = boolValue(tag.getAttribute('data-show'));
 		tag.style.display = shouldShow ? '' : 'none';
 	}
 	for (let tag of el.querySelectorAll('[data-disabled]')) {
 		let isDisabled = boolValue(tag.getAttribute('data-disabled'));
-		
+
 		if (isDisabled) {
 			tag.classList.add('disabled');
 			tag.setAttribute('disabled', 'disabled');
@@ -80,6 +80,10 @@ function showForm(selector, dataObject) {
 	el('#blur-wrapper').classList.add('blur');
 	show('#cover');
 	show(selector);
+}
+
+function move(arr, from, to) {
+    arr.splice(to, 0, arr.splice(from, 1)[0]);
 }
 
 function hideForm(selector) {

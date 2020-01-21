@@ -235,10 +235,13 @@ button span {
   color:red !important;
 }
 
-.move-up-btn, .move-down-btn {
+.move-up-btn, .move-down-btn, .move-downbottom-btn, .move-uptop-btn {
   width:45px !important;
 }
 
+.move-downbottom-btn, .move-uptop-btn {
+  height:25px !important;
+}
 
 .redirect-row label {
   display:inline-block;
@@ -312,8 +315,8 @@ a.disabled:hover, button[disabled]:hover {
 }
 
 .blur {
-  -webkit-filter:blur(3px); 
-  filter:blur(3px); 
+  -webkit-filter:blur(3px);
+  filter:blur(3px);
 }
 
 #edit-redirect-form {
@@ -353,7 +356,7 @@ a.disabled:hover, button[disabled]:hover {
 
 .input-cell {
   padding-top:1px;
-} 
+}
 
 .form-grid div input[type='text'] {
   width:510px;
@@ -404,7 +407,7 @@ a.disabled:hover, button[disabled]:hover {
 }
 
 ::-moz-placeholder {  /* Firefox 19+ */
-   color: #c0c0c0;  
+   color: #c0c0c0;
 }
 
 .advanced {
@@ -509,10 +512,10 @@ footer small a:hover {
 
   .redirect-row:nth-child(odd) {
     background: rgb(31,32,35);
-  } 
+  }
   .redirect-row:nth-child(even) {
     background: rgb(41,42,45);
-  } 
+  }
 
   .btn {
     background-color: rgb(32,33,36);
@@ -590,7 +593,7 @@ footer small a:hover {
   }
 
   .example-result-error {
-    color:rgb(252,87,84) !important; 
+    color:rgb(252,87,84) !important;
   }
 
   #edit-redirect-form input {

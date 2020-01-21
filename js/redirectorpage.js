@@ -23,7 +23,7 @@ function saveChanges() {
 		}
 	});
 }
-		
+
 function toggleSyncSetting() {
 	chrome.runtime.sendMessage({type:"toggle-sync", isSyncEnabled: !options.isSyncEnabled}, function(response) {
 		if(response.message === "sync-enabled"){
@@ -60,16 +60,16 @@ function renderRedirects() {
 }
 
 function renderSingleRedirect(node, redirect, index) {
-	
+
 	//Add extra props to help with rendering...
 	if (index === 0) {
 		redirect.$first = true;
 	}
 	if (index === REDIRECTS.length - 1) {
 		redirect.$last = true;
-	} 
+	}
 	redirect.$index = index;
-	
+
 	dataBind(node, redirect);
 
 	node.setAttribute('data-index', index);
@@ -134,11 +134,25 @@ function moveDown(index) {
 	saveChanges();
 }
 
+function moveUpTop(index) {
+	let top = REDIRECTS[0];
+	move(REDIRECTS, index, top);
+	updateBindings();
+	saveChanges();
+}
+
+function moveDownBottom(index) {
+	let bottom = REDIRECTS.length - 1;
+	move(REDIRECTS, index, bottom);
+	updateBindings();
+	saveChanges();
+}
+
 //All the setup stuff for the page
 function pageLoad() {
 	template = el('#redirect-row-template');
 	template.parentNode.removeChild(template);
-	
+
 	//Need to proxy this through the background page, because Firefox gives us dead objects
 	//nonsense when accessing chrome.storage directly.
 	chrome.runtime.sendMessage({type: "get-redirects"}, function(response) {
@@ -169,7 +183,7 @@ function pageLoad() {
 			));
 		}
 		renderRedirects();
-	}); 
+	});
 
 	chrome.storage.local.get({isSyncEnabled:false}, function(obj){
 		options.isSyncEnabled = obj.isSyncEnabled;
