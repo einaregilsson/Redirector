@@ -151,13 +151,6 @@
 			<div class="redirect-table">
 				<div class="redirect-rows">
 					<div class="redirect-row" id="redirect-row-template" >
-							<!-- <div class="toggle-container"> -->
-								<!-- <input class="checkmark small gray" type="checkbox" data-action="toggleGroup"> -->
-							<!-- </div> -->
-							<label class="toggle-container">
-								<input type="checkbox" checked="checked">
-								<span class="checkmark"></span>
-							</label>
 							<h4><span class="disabled-marker" data-show="disabled">[Disabled] </span><span data-bind="description" data-class="disabled:disabled"></span></h4>
 							<div class="redirect-info" data-class="disabled:disabled">
 								<div>
@@ -188,6 +181,10 @@
 								<button class="btn medium grey move-down-btn" data-action="moveDown" data-disabled="$last">▼</button>
 								<button class="btn medium grey" data-action="duplicateRedirect">Duplicate</button>
 							</div>
+							<label class="toggle-container">
+								<input type="checkbox">
+								<span class="checkmark" data-action="toggleGrouping"></span>
+							</label>
 						</div>
 					</div>
 				<label id="storage-sync-option"><input type="checkbox" /> Enable Storage Sync</label>

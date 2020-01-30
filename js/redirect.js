@@ -27,7 +27,7 @@ Redirect.requestTypes = {
 
 
 Redirect.prototype = {
-	
+
 	//attributes
 	description : '',
 	exampleUrl : '',
@@ -40,7 +40,8 @@ Redirect.prototype = {
 	patternType : '',
 	processMatches : 'noProcessing',
 	disabled : false,
-	
+	grouped: false,
+
 	compile : function() {
 
 		var incPattern = this._preparePattern(this.includePattern);
@@ -65,7 +66,7 @@ Redirect.prototype = {
 			&& this.processMatches == redirect.processMatches
 			&& this.appliesTo.toString() == redirect.appliesTo.toString();
 	},
-	
+
 	toObject : function() {
 		return {
 			description : this.description,
@@ -79,6 +80,7 @@ Redirect.prototype = {
 			patternType : this.patternType,
 			processMatches : this.processMatches,
 			disabled : this.disabled,
+			grouped: this.grouped,
 			appliesTo : this.appliesTo.slice(0)
 		};
 	},
@@ -87,10 +89,10 @@ Redirect.prototype = {
 		if (!this._rxInclude) {
 			this.compile();
 		}
-		var result = { 
-			isMatch : false, 
-			isExcludeMatch : false, 
-			isDisabledMatch : false, 
+		var result = {
+			isMatch : false,
+			isExcludeMatch : false,
+			isDisabledMatch : false,
 			redirectTo : '',
 			toString : function() { return JSON.stringify(this); }
 		};
@@ -106,11 +108,11 @@ Redirect.prototype = {
 				result.redirectTo = redirectTo;
 			}
 		}
-		return result;	 
+		return result;
 	},
-	
+
 	//Updates the .exampleResult field or the .error
-	//field depending on if the example url and patterns match 
+	//field depending on if the example url and patterns match
 	//and make a good redirect
 	updateExampleResult : function() {
 
@@ -171,25 +173,25 @@ Redirect.prototype = {
 	isRegex: function() {
 		return this.patternType == Redirect.REGEX;
 	},
-	
+
 	isWildcard : function() {
-		return this.patternType == Redirect.WILDCARD;	
+		return this.patternType == Redirect.WILDCARD;
 	},
 
 	test : function() {
-		return this.getMatch(this.exampleUrl);	
+		return this.getMatch(this.exampleUrl);
 	},
 
-	//Private functions below	
+	//Private functions below
 	_rxInclude : null,
 	_rxExclude : null,
-	
+
 	_preparePattern : function(pattern) {
 		if (!pattern) {
 			return null;
 		}
 		if (this.patternType == Redirect.REGEX) {
-			return pattern; 
+			return pattern;
 		} else { //Convert wildcard to regex pattern
 			var converted = '^';
 			for (var i = 0; i < pattern.length; i++) {
@@ -206,7 +208,7 @@ Redirect.prototype = {
 			return converted;
 		}
 	},
-	
+
 	_init : function(o) {
 		o = o || {};
 		this.description = o.description || '';
@@ -240,7 +242,7 @@ Redirect.prototype = {
 	get appliesToText() {
 		return this.appliesTo.map(type => Redirect.requestTypes[type]).join(', ');
 	},
-	
+
 	get processMatchesExampleText() {
 		let examples = {
 			noProcessing : 'Use matches as they are',
@@ -256,11 +258,11 @@ Redirect.prototype = {
 	toString : function() {
 		return JSON.stringify(this.toObject(), null, 2);
 	},
-	
+
 	_includeMatch : function(url) {
 		if (!this._rxInclude) {
 			return null;
-		}	
+		}
 		var matches = this._rxInclude.exec(url);
 		if (!matches) {
 			return null;
@@ -285,12 +287,12 @@ Redirect.prototype = {
 		this._rxInclude.lastIndex = 0;
 		return resultUrl;
 	},
-	
+
 	_excludeMatch : function(url) {
 		if (!this._rxExclude) {
-			return false;	
+			return false;
 		}
-		var shouldExclude = this._rxExclude.test(url);	
+		var shouldExclude = this._rxExclude.test(url);
 		this._rxExclude.lastIndex = 0;
 		return shouldExclude;
 	}

@@ -291,7 +291,7 @@ a.disabled:hover, button[disabled]:hover {
   background-color: #ccc;
 }
 
-.toggle-container input:checked ~ .checkmark {
+.toggle-container input:checked ~ .checkMarked {
   background-color: #2196F3;
 }
 
@@ -301,11 +301,11 @@ a.disabled:hover, button[disabled]:hover {
   display: none;
 }
 
-.toggle-container input:checked ~ .checkmark:after {
+.toggle-container input:checked ~ .checkMarked:after {
   display: block;
 }
 
-.toggle-container .checkmark:after {
+.toggle-container .checkMarked:after {
   left: 4px;
   top: -1px;
   width: 4px;

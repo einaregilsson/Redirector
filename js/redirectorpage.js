@@ -23,7 +23,7 @@ function saveChanges() {
 		}
 	});
 }
-		
+
 function toggleSyncSetting() {
 	chrome.runtime.sendMessage({type:"toggle-sync", isSyncEnabled: !options.isSyncEnabled}, function(response) {
 		if(response.message === "sync-enabled"){
@@ -60,21 +60,27 @@ function renderRedirects() {
 }
 
 function renderSingleRedirect(node, redirect, index) {
-	
+
 	//Add extra props to help with rendering...
 	if (index === 0) {
 		redirect.$first = true;
 	}
 	if (index === REDIRECTS.length - 1) {
 		redirect.$last = true;
-	} 
+	}
 	redirect.$index = index;
-	
+
 	dataBind(node, redirect);
 
 	node.setAttribute('data-index', index);
 	for (let btn of node.querySelectorAll('.btn')) {
 		btn.setAttribute('data-index', index);
+	}
+
+	let checkmark = node.querySelectorAll('.checkmark');
+
+	if(checkmark.length == 1) {
+		checkmark[0].setAttribute('data-index', index);
 	}
 
 	//Remove extra props...
@@ -117,19 +123,156 @@ function toggleDisabled(index) {
 	saveChanges();
 }
 
+// function handleGroupedMove(index) {
+//     console.log(`NSC`, arguments);
+// 	let grouping = REDIRECTS.filter(row => row.grouped);
+// 	let size = grouping.length;
+// 	console.log(grouping)
+// }
 
+// function wrap(node, elm) {
+// 	node.parentNode.insertBefore(elm, node);
+// 	// node.previousElementSibling.appendChild(node);
+// }
+
+function swap(node1, node2) {
+    const afterNode2 = node2.nextElementSibling;
+    const parent = node2.parentNode;
+    node1.replaceWith(node2);
+    parent.insertBefore(node1, afterNode2);
+}
+
+function groupedMoveDown(group) {
+	// let grouping = REDIRECTS.map((row, i) => { return { row, index: i}})
+	// 								.filter(result => result.row.grouped)
+	// 								.sort((a, b) => b.index - a.index);
+		for(let rule of group) {
+			// swap positions in dom
+			let elm = document.querySelector("[data-index='" + (rule.index).toString() + "']");
+			let prev = document.querySelector("[data-index='" + (rule.index + group.length).toString() + "']");
+			swap(elm,prev);
+		}
+
+		for(let rule of group) {
+			// swap positions in array
+			rule.row.grouping = false;
+			let prevRedir = REDIRECTS[rule.index + group.length];
+			REDIRECTS[rule.index + group.length] = REDIRECTS[rule.index];
+			REDIRECTS[rule.index] = prevRedir;
+			// REDIRECTS[rule.index].grouped = false;
+		}
+}
+
+function isGroupAdjacent(grouping) {
+	let distances = [];
+	for(let i = grouping.length - 1; i >= 0; i--) {
+
+		if(i != 0) {
+			distances.push(grouping[i].index - grouping[i - 1].index);
+
+		}
+
+	}
+	return distances.every(distance => distance === 1);
+}
+
+function groupedMoveUp(group) {
+
+
+	console.log(group);
+
+	// working config - sort of
+	// for(let rule of group) {
+	// 	// swap positions in dom
+	// 	let elm = document.querySelector("[data-index='" + (rule.index).toString() + "']");
+	// 	let prev = document.querySelector("[data-index='" + (rule.index - group.length).toString() + "']");
+	// 	elm.childNodes[7].childNodes[3].classList.remove("checkMarked");
+    //     console.log(`NSC: groupedMoveUp -> elm`, elm);
+	// 	prev.childNodes[7].childNodes[3].classList.remove("checkMarked");
+    //     console.log(`NSC: groupedMoveUp -> prev`, prev);
+	// 	swap(elm,prev);
+	// }
+
+	// for(let rule of group) {
+	// 	// swap positions in array
+	// 	rule.row.grouping = false;
+	// 	let prevRedir = REDIRECTS[rule.index - group.length];
+	// 	REDIRECTS[rule.index - group.length] = REDIRECTS[rule.index];
+	// 	REDIRECTS[rule.index] = prevRedir;
+	// 	// REDIRECTS[rule.index].grouped = false;
+	// }
+
+	// only set the below to 1 if groupings are not next to each other.
+	var jumpLength = 1;
+
+	if(isGroupAdjacent(group)) {
+		console.log('adjacent')
+		jumpLength = group.length;
+	}
+
+
+
+
+	for(let rule of group) {
+        console.log(`NSC: groupedMoveUp -> rule`, rule);
+		// swap positions in dom
+		let elm = document.querySelector("[data-index='" + (rule.index).toString() + "']");
+        console.log(`NSC: groupedMoveUp -> elm`, elm);
+		let prev = document.querySelector("[data-index='" + (rule.index - jumpLength).toString() + "']");
+        console.log(`NSC: groupedMoveUp -> prev`, prev);
+		elm.childNodes[7].childNodes[3].classList.remove("checkMarked");
+		prev.childNodes[7].childNodes[3].classList.remove("checkMarked");
+		if(jumpLength > 1) {
+			swap(elm,prev);
+		}
+
+	}
+
+	for(let rule of group) {
+		// swap positions in array
+		rule.row.grouping = false;
+		let prevRedir = REDIRECTS[rule.index - jumpLength];
+		REDIRECTS[rule.index - jumpLength] = REDIRECTS[rule.index];
+		REDIRECTS[rule.index] = prevRedir;
+	}
+}
 function moveUp(index) {
-	let prev = REDIRECTS[index-1];
-	REDIRECTS[index-1] = REDIRECTS[index];
-	REDIRECTS[index] = prev;
+	let grouping = REDIRECTS.map((row, i) => { return { row, index: i}})
+									.filter(result => result.row.grouped)
+									.sort((a, b) => a.index - b.index);
+
+	if(grouping.length > 1) {
+		// many
+		console.log('many')
+
+		groupedMoveUp(grouping);
+
+	} else {
+		// one
+		let prev = REDIRECTS[index-1];
+		REDIRECTS[index-1] = REDIRECTS[index];
+		REDIRECTS[index] = prev;
+	}
+
 	updateBindings();
 	saveChanges();
 }
 
 function moveDown(index) {
-	let next = REDIRECTS[index+1];
-	REDIRECTS[index+1] = REDIRECTS[index];
-	REDIRECTS[index] = next;
+	let grouping = REDIRECTS.map((row, i) => { return { row, index: i}})
+									.filter(result => result.row.grouped)
+									.sort((a, b) => a.index - b.index);
+
+	if(grouping.length > 1) {
+		// many
+		groupedMoveDown(grouping);
+	} else {
+		// one
+		let next = REDIRECTS[index+1];
+		REDIRECTS[index+1] = REDIRECTS[index];
+		REDIRECTS[index] = next;
+	}
+
 	updateBindings();
 	saveChanges();
 }
@@ -138,7 +281,7 @@ function moveDown(index) {
 function pageLoad() {
 	template = el('#redirect-row-template');
 	template.parentNode.removeChild(template);
-	
+
 	//Need to proxy this through the background page, because Firefox gives us dead objects
 	//nonsense when accessing chrome.storage directly.
 	chrome.runtime.sendMessage({type: "get-redirects"}, function(response) {
@@ -169,7 +312,7 @@ function pageLoad() {
 			));
 		}
 		renderRedirects();
-	}); 
+	});
 
 	chrome.storage.local.get({isSyncEnabled:false}, function(obj){
 		options.isSyncEnabled = obj.isSyncEnabled;
@@ -186,6 +329,11 @@ function pageLoad() {
 	el('#storage-sync-option input').addEventListener('click', toggleSyncSetting);
 
 	el('.redirect-rows').addEventListener('click', function(ev) {
+		// apply checkMarked class for Grouping
+		if(ev.target.type == 'checkbox') {
+			ev.target.nextElementSibling.classList.add("checkMarked");
+		}
+
 		let action = ev.target.getAttribute('data-action');
 
 		//We clone and re-use nodes all the time, so instead of attaching and removing event handlers endlessly we just put
@@ -213,5 +361,9 @@ let mql = window.matchMedia('(prefers-color-scheme:dark)');
 
 mql.onchange = updateFavicon;
 updateFavicon(mql);
+
+function toggleGrouping(index) {
+	REDIRECTS[index].grouped = !REDIRECTS[index].grouped;
+}
 
 pageLoad();
