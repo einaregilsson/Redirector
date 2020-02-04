@@ -114,6 +114,10 @@ input[type="radio"] {
   border:solid 1px green;
 }
 
+.btn.blue.active {
+  color: white;
+  background:rgb(21,90,233);
+}
 
 #redirect-row-template {
   display: none;
@@ -235,10 +239,14 @@ button span {
   color:red !important;
 }
 
-.move-up-btn, .move-down-btn {
+/* nav btns */
+.move-up-btn, .move-down-btn, .move-downbottom-btn, .move-uptop-btn {
   width:45px !important;
 }
 
+.move-downbottom-btn, .move-uptop-btn {
+  height:25px !important;
+}
 
 .redirect-row label {
   display:inline-block;
@@ -256,6 +264,65 @@ a.disabled:hover, button[disabled]:hover {
   color:#bbb !important;
   border:solid 1px #bbb !important;
   background:white !important;
+}
+
+/* Toggle Grouping Checkbox */
+.toggle-container {
+  display: block;
+  position: absolute;
+  top: 8%;
+  right: 5%;
+  cursor: pointer;
+  font-size: 22px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.toggle-container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.checkmark {
+  position: absolute;
+  height: 15px;
+  width: 15px;
+  background-color: #eee;
+}
+
+.toggle-container:hover input ~ .checkmark {
+  background-color: #ccc;
+}
+
+.toggle-container input:checked ~ .checkMarked {
+  background-color: #2196F3;
+}
+
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+.toggle-container input:checked ~ .checkMarked:after {
+  display: block;
+}
+
+.toggle-container .checkMarked:after {
+  left: 4px;
+  top: -1px;
+  width: 4px;
+  height: 9px;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
 }
 
 /* Popup form for deleting redirects */
@@ -312,8 +379,8 @@ a.disabled:hover, button[disabled]:hover {
 }
 
 .blur {
-  -webkit-filter:blur(3px); 
-  filter:blur(3px); 
+  -webkit-filter:blur(3px);
+  filter:blur(3px);
 }
 
 #edit-redirect-form {
@@ -353,7 +420,7 @@ a.disabled:hover, button[disabled]:hover {
 
 .input-cell {
   padding-top:1px;
-} 
+}
 
 .form-grid div input[type='text'] {
   width:510px;
@@ -404,7 +471,7 @@ a.disabled:hover, button[disabled]:hover {
 }
 
 ::-moz-placeholder {  /* Firefox 19+ */
-   color: #c0c0c0;  
+   color: #c0c0c0;
 }
 
 .advanced {
@@ -509,10 +576,10 @@ footer small a:hover {
 
   .redirect-row:nth-child(odd) {
     background: rgb(31,32,35);
-  } 
+  }
   .redirect-row:nth-child(even) {
     background: rgb(41,42,45);
-  } 
+  }
 
   .btn {
     background-color: rgb(32,33,36);
@@ -525,6 +592,10 @@ footer small a:hover {
 
   .btn.green {
     color: rgb(53,180,75);
+  }
+
+  .toggle {
+    background-color: #ccc;
   }
 
   #message-box.success {
@@ -590,7 +661,7 @@ footer small a:hover {
   }
 
   .example-result-error {
-    color:rgb(252,87,84) !important; 
+    color:rgb(252,87,84) !important;
   }
 
   #edit-redirect-form input {
