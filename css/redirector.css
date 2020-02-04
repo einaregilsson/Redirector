@@ -235,10 +235,13 @@ button span {
   color:red !important;
 }
 
-.move-up-btn, .move-down-btn {
+.move-up-btn, .move-down-btn, .move-downbottom-btn, .move-uptop-btn {
   width:45px !important;
 }
 
+.move-downbottom-btn, .move-uptop-btn {
+  height:25px !important;
+}
 
 .redirect-row label {
   display:inline-block;

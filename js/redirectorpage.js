@@ -277,6 +277,20 @@ function moveDown(index) {
 	saveChanges();
 }
 
+function moveUpTop(index) {
+	let top = REDIRECTS[0];
+	move(REDIRECTS, index, top);
+	updateBindings();
+	saveChanges();
+}
+
+function moveDownBottom(index) {
+	let bottom = REDIRECTS.length - 1;
+	move(REDIRECTS, index, bottom);
+	updateBindings();
+	saveChanges();
+}
+
 //All the setup stuff for the page
 function pageLoad() {
 	template = el('#redirect-row-template');
