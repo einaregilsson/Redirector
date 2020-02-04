@@ -28,10 +28,10 @@ function toggleSyncSetting() {
 	chrome.runtime.sendMessage({type:"toggle-sync", isSyncEnabled: !options.isSyncEnabled}, function(response) {
 		if(response.message === "sync-enabled"){
 			options.isSyncEnabled = true;
-			showMessage('Sync is enabled!',true);
+			showMessage('Sync is enabled!', true);
 		} else if(response.message === "sync-disabled"){
 			options.isSyncEnabled = false;
-			showMessage('Sync is disabled - local storage will be used!',true);
+			showMessage('Sync is disabled - local storage will be used!', true);
 		} else if(response.message.indexOf("Sync Not Possible")>-1){
 			options.isSyncEnabled = false;
 			chrome.storage.local.set({isSyncEnabled: $s.isSyncEnabled}, function(){

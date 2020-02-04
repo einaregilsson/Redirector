@@ -114,6 +114,10 @@ input[type="radio"] {
   border:solid 1px green;
 }
 
+.btn.blue.active {
+  color: white;
+  background:rgb(21,90,233);
+}
 
 #redirect-row-template {
   display: none;
@@ -235,6 +239,7 @@ button span {
   color:red !important;
 }
 
+/* nav btns */
 .move-up-btn, .move-down-btn, .move-downbottom-btn, .move-uptop-btn {
   width:45px !important;
 }
