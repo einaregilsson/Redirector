@@ -116,24 +116,41 @@ function duplicateRedirect(index) {
 	saveChanges();
 }
 
+function checkIfGroupingExists() {
+	let grouping = REDIRECTS.map((row, i) => { return { row, index: i}})
+									.filter(result => result.row.grouped)
+									.sort((a, b) => a.index - b.index);
+	return grouping;
+}
+
 function toggleDisabled(index) {
-	let redirect = REDIRECTS[index];
-	redirect.disabled = !redirect.disabled
+	let grouping = checkIfGroupingExists();
+
+	if(grouping && grouping.length > 1) {
+		for (let redirect of grouping) {
+			let redirectDom = REDIRECTS[redirect.index];
+			redirectDom.disabled = !redirectDom.disabled
+			redirectDom.grouped = !redirectDom.grouped
+
+			let elm = document.querySelector("[data-index='" + (redirect.index).toString() + "']");
+			elm.classList.remove('grouped')
+			elm.childNodes[7].childNodes[3].classList.remove("checkMarked");
+			elm.childNodes[7].childNodes[1].removeAttribute("checked");
+		}
+	} else {
+		let redirect = REDIRECTS[index];
+		redirect.disabled = !redirect.disabled
+	}
+
 	updateBindings();
 	saveChanges();
 }
 
-// function handleGroupedMove(index) {
-//     console.log(`NSC`, arguments);
-// 	let grouping = REDIRECTS.filter(row => row.grouped);
-// 	let size = grouping.length;
-// 	console.log(grouping)
-// }
-
-// function wrap(node, elm) {
-// 	node.parentNode.insertBefore(elm, node);
-// 	// node.previousElementSibling.appendChild(node);
-// }
+function clearGrouping(element) {
+	element.childNodes[7].childNodes[3].classList.remove("checkMarked");
+	element.childNodes[7].childNodes[1].removeAttribute("checked");
+	element.classList.remove('grouped');
+}
 
 function swap(node1, node2) {
     const afterNode2 = node2.nextElementSibling;
@@ -143,24 +160,41 @@ function swap(node1, node2) {
 }
 
 function groupedMoveDown(group) {
-	// let grouping = REDIRECTS.map((row, i) => { return { row, index: i}})
-	// 								.filter(result => result.row.grouped)
-	// 								.sort((a, b) => b.index - a.index);
+		var jumpLength = 1;
+
+		if(isGroupAdjacent(group)) {
+			console.log('adjacent')
+			jumpLength = group.length;
+		}
+
 		for(let rule of group) {
 			// swap positions in dom
 			let elm = document.querySelector("[data-index='" + (rule.index).toString() + "']");
-			let prev = document.querySelector("[data-index='" + (rule.index + group.length).toString() + "']");
+			// elm.childNodes[7].childNodes[3].classList.remove("checkMarked");
+			// elm.childNodes[7].childNodes[1].removeAttribute("checked");
+			// elm.classList.remove('grouped');
+			clearGrouping(elm);
+
+			let prev = document.querySelector("[data-index='" + (rule.index + jumpLength).toString() + "']");
+			// prev.childNodes[7].childNodes[3].classList.remove("checkMarked");
+			// prev.childNodes[7].childNodes[1].removeAttribute("checked");
+			// prev.classList.remove('grouped');
+			clearGrouping(prev);
+
 			swap(elm,prev);
 		}
 
 		for(let rule of group) {
+            console.log('NSC: groupedMoveDown -> rule', rule);
 			// swap positions in array
-			rule.row.grouping = false;
-			let prevRedir = REDIRECTS[rule.index + group.length];
-			REDIRECTS[rule.index + group.length] = REDIRECTS[rule.index];
+			rule.row.grouped = false;
+			let prevRedir = REDIRECTS[rule.index + jumpLength];
+			REDIRECTS[rule.index + jumpLength] = REDIRECTS[rule.index];
 			REDIRECTS[rule.index] = prevRedir;
-			// REDIRECTS[rule.index].grouped = false;
 		}
+
+	updateBindings();
+	saveChanges();
 }
 
 function isGroupAdjacent(grouping) {
@@ -177,31 +211,6 @@ function isGroupAdjacent(grouping) {
 }
 
 function groupedMoveUp(group) {
-
-
-	console.log(group);
-
-	// working config - sort of
-	// for(let rule of group) {
-	// 	// swap positions in dom
-	// 	let elm = document.querySelector("[data-index='" + (rule.index).toString() + "']");
-	// 	let prev = document.querySelector("[data-index='" + (rule.index - group.length).toString() + "']");
-	// 	elm.childNodes[7].childNodes[3].classList.remove("checkMarked");
-    //     console.log(`NSC: groupedMoveUp -> elm`, elm);
-	// 	prev.childNodes[7].childNodes[3].classList.remove("checkMarked");
-    //     console.log(`NSC: groupedMoveUp -> prev`, prev);
-	// 	swap(elm,prev);
-	// }
-
-	// for(let rule of group) {
-	// 	// swap positions in array
-	// 	rule.row.grouping = false;
-	// 	let prevRedir = REDIRECTS[rule.index - group.length];
-	// 	REDIRECTS[rule.index - group.length] = REDIRECTS[rule.index];
-	// 	REDIRECTS[rule.index] = prevRedir;
-	// 	// REDIRECTS[rule.index].grouped = false;
-	// }
-
 	// only set the below to 1 if groupings are not next to each other.
 	var jumpLength = 1;
 
@@ -210,43 +219,42 @@ function groupedMoveUp(group) {
 		jumpLength = group.length;
 	}
 
-
-
-
 	for(let rule of group) {
-        console.log(`NSC: groupedMoveUp -> rule`, rule);
 		// swap positions in dom
 		let elm = document.querySelector("[data-index='" + (rule.index).toString() + "']");
-        console.log(`NSC: groupedMoveUp -> elm`, elm);
+		// elm.classList.remove('grouped')
+		// elm.childNodes[7].childNodes[3].classList.remove("checkMarked");
+		// elm.childNodes[7].childNodes[1].removeAttribute("checked");
+		clearGrouping(elm);
+
 		let prev = document.querySelector("[data-index='" + (rule.index - jumpLength).toString() + "']");
-        console.log(`NSC: groupedMoveUp -> prev`, prev);
-		elm.childNodes[7].childNodes[3].classList.remove("checkMarked");
-		prev.childNodes[7].childNodes[3].classList.remove("checkMarked");
+		// prev.classList.remove('grouped')
+		// prev.childNodes[7].childNodes[3].classList.remove("checkMarked");
+		// prev.childNodes[7].childNodes[1].removeAttribute("checked");
+		clearGrouping(prev);
+
 		if(jumpLength > 1) {
 			swap(elm,prev);
 		}
-
 	}
 
 	for(let rule of group) {
 		// swap positions in array
-		rule.row.grouping = false;
+		rule.row.grouped = false;
 		let prevRedir = REDIRECTS[rule.index - jumpLength];
 		REDIRECTS[rule.index - jumpLength] = REDIRECTS[rule.index];
 		REDIRECTS[rule.index] = prevRedir;
 	}
+
+	updateBindings();
+	saveChanges();
 }
 function moveUp(index) {
-	let grouping = REDIRECTS.map((row, i) => { return { row, index: i}})
-									.filter(result => result.row.grouped)
-									.sort((a, b) => a.index - b.index);
+	let grouping = checkIfGroupingExists();
 
 	if(grouping.length > 1) {
 		// many
-		console.log('many')
-
 		groupedMoveUp(grouping);
-
 	} else {
 		// one
 		let prev = REDIRECTS[index-1];
@@ -259,9 +267,7 @@ function moveUp(index) {
 }
 
 function moveDown(index) {
-	let grouping = REDIRECTS.map((row, i) => { return { row, index: i}})
-									.filter(result => result.row.grouped)
-									.sort((a, b) => a.index - b.index);
+	let grouping = checkIfGroupingExists();
 
 	if(grouping.length > 1) {
 		// many
@@ -272,7 +278,6 @@ function moveDown(index) {
 		REDIRECTS[index+1] = REDIRECTS[index];
 		REDIRECTS[index] = next;
 	}
-
 	updateBindings();
 	saveChanges();
 }
@@ -346,6 +351,8 @@ function pageLoad() {
 		// apply checkMarked class for Grouping
 		if(ev.target.type == 'checkbox') {
 			ev.target.nextElementSibling.classList.add("checkMarked");
+            ev.target.parentElement.parentElement.classList.add('grouped');
+			toggleGrouping(ev.target.index);
 		}
 
 		let action = ev.target.getAttribute('data-action');
@@ -377,7 +384,9 @@ mql.onchange = updateFavicon;
 updateFavicon(mql);
 
 function toggleGrouping(index) {
-	REDIRECTS[index].grouped = !REDIRECTS[index].grouped;
+	if(REDIRECTS[index]) {
+		REDIRECTS[index].grouped = !REDIRECTS[index].grouped;
+	}
 }
 
 pageLoad();

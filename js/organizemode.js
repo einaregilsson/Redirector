@@ -3,7 +3,7 @@ function displayOrganizeModeMessage() {
     if(el('#message-box').classList.contains('visible')) {
         hideMessage();
     } else {
-        showMessage("Use ⟱ to move a redirect to the bottom, ⟰ to move to the top, and use the checkboxes to select multiple redirects and move them together.", true)
+        showMessage("Use ⟱ to move a redirect to the bottom, ⟰ to move to the top, and use the checkboxes to select multiple redirects.", true)
     }
 }
 
@@ -24,11 +24,7 @@ function organizeModeToggle(ev) {
         }
     }
 
-    // let buttonText = el('#organize-mode').textContent;
-    // buttonText.includes('Show') ? el('#organize-mode').textContent = 'Hide Organize' : el('#organize-mode').textContent = 'Show Organize';
-
     let buttonClasses = el('#organize-mode').classList;
-    console.log('NSC: organizeModeToggle -> buttonClasses', buttonClasses);
     !buttonClasses.contains('active') ? el('#organize-mode').classList.add('active') : el('#organize-mode').classList.remove('active');
 
     displayOrganizeModeMessage();
