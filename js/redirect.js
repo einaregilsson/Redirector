@@ -158,11 +158,13 @@ Redirect.prototype = {
 			return;
 		}
 
-		if (match.isMatch && !match.redirectTo.match(/^https?\:\/\//)) {
-			this.error = 'The redirect result must start with http:// or https://, current result is: ' + match.redirectTo;
-			return;
-		}
-		if (!match.isMatch) {
+		//Commented out because this code prevents saving many types of valid redirects.
+		//if (match.isMatch && !match.redirectTo.match(/^https?\:\/\//)) {
+		//	this.error = 'The redirect result must start with http:// or https://, current result is: "' + match.redirectTo;
+		//	return;
+		//}
+
+    if (!match.isMatch) {
 			this.error = 'The include pattern does not match the example url.';
 			return;
 		}
