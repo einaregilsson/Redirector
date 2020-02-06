@@ -29,7 +29,6 @@ function saveRedirect() {
 		REDIRECTS[activeRedirect.index] = savedRedirect; //To strip out any extra crap we've added
 	} else {
 		REDIRECTS.push(savedRedirect);
-	
 		let newNode = template.cloneNode(true);
 		newNode.removeAttribute('id');
 		el('.redirect-rows').appendChild(newNode);
@@ -59,11 +58,10 @@ function editFormChange() {
 		let prop = input.getAttribute('data-bind');
 		activeRedirect[prop] = input.value;
 	}
-	
 	activeRedirect.appliesTo = [];
 	for (let input of el('#apply-to').querySelectorAll('input:checked')) {
 		activeRedirect.appliesTo.push(input.value);
-	}	
+	}
 
 	activeRedirect.processMatches = el('#process-matches option:checked').value;
 	activeRedirect.patternType = el('[name="patterntype"]:checked').value;
@@ -78,8 +76,8 @@ function editFormChange() {
 var deleteIndex;
 function confirmDeleteRedirect(index) {
 	deleteIndex = index;
-	let redirect = REDIRECTS[deleteIndex];
-	showForm('#delete-redirect-form', redirect);
+		let redirect = REDIRECTS[deleteIndex];
+		showForm('#delete-redirect-form', redirect);
 }
 
 function deleteRedirect() {
@@ -104,7 +102,7 @@ function setupEditAndDeleteEventListeners() {
 	el('#confirm-delete').addEventListener('click', deleteRedirect);
 	el('#cancel-delete').addEventListener('click', cancelDelete);
 
-	el('#advanced-toggle a').addEventListener('click', toggleAdvancedOptions);	
+	el('#advanced-toggle a').addEventListener('click', toggleAdvancedOptions);
 
 	el('#create-new-redirect').addEventListener('click', createNewRedirect);
 	//Listen to any change from the edit form...
