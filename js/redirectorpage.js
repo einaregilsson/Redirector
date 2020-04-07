@@ -43,7 +43,7 @@ function toggleSyncSetting() {
 			alert(response.message)
 			showMessage('Error occured when trying to change Sync settings. Look at the logs and raise an issue',false);
 		}
-		el('#storage-sync-option').checked = options.isSyncEnabled;
+		el('#storage-sync-option input').checked = options.isSyncEnabled;
 	});
 }
 
