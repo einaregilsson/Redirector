@@ -270,7 +270,7 @@ Redirect.prototype = {
 			return null;
 		}
 		var resultUrl = this.redirectUrl;
-		for (var i = 1; i < matches.length; i++) {
+		for (var i = matches.length - 1; i > 0; i--) {
 			var repl = matches[i] || '';
 			if (this.processMatches == 'urlDecode') {
 				repl = unescape(repl);
