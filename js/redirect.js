@@ -20,6 +20,7 @@ Redirect.requestTypes = {
 	image : "Images",
 	imageset: "Responsive Images in Firefox",
 	object : "Objects (e.g. Flash content, Java applets)",
+	object_subrequest : "Object subrequests",
 	xmlhttprequest : "XMLHttpRequests (Ajax)",
 	history : "HistoryState",
 	other : "Other"
