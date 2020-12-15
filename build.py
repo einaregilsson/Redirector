@@ -80,6 +80,7 @@ if __name__ == '__main__':
 	print ''
 
 	create_addon(files, 'chrome')
+	create_addon(files, 'edge')
 	create_addon(files, 'opera')
 	create_addon(files, 'firefox')
 
