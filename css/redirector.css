@@ -206,7 +206,7 @@ input[type="radio"] {
 
 .redirect-info div p {
   display:table-cell;
-  word-wrap:break-word;
+  word-wrap:anywhere;
   max-width:700px;
 }
 
