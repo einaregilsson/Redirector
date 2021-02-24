@@ -6,7 +6,7 @@
 ## Examples
 ### De-mobilizer
 - Example URL: `https://en.m.wikipedia.org/`
-- Include pattern: `^(https?://)(.*\.)m(?:obile)?\.(.*)`
+- Include pattern: `^(https?://)([a-z0-9-]*\.)m(?:obile)?\.(.*)`
 - Redirect to: `$1$2$3`
 - Pattern type: Regular Expression
 - Description: always show the desktop site of a webpage
