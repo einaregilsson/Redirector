@@ -18,12 +18,6 @@
 - Pattern type: Regular Expression
 - Description: AMP is bad: <https://80x24.net/post/the-problem-with-amp/>
 
-### old reddit
-- Example URL: `https://www.reddit.com/u/test`
-- Include pattern: `^(?:https?://)(?:www.)reddit.com(.*)`
-- Redirect to: `https://old.reddit.com$1`
-- Pattern type: Regular Expression
-
 ### doubleclick escaper
 - Example URL: `https://ad.doubleclick.net/ddm/trackclk/N135005.2681608PRIVATENETWORK/B20244?https://www.example.com`
 - Include pattern: `^(?:https?://)ad.doubleclick.net/.*\?(http?s://.*)`
