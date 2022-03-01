@@ -62,8 +62,7 @@ Redirect.prototype = {
 			this._rxExclude = new RegExp(excPattern, 'gi');
 		}
 		if (replPattern) {
-			const falgs = this.replaceAll ? 'gi' : 'i';
-			this._rxReplace = new RegExp(replPattern, falgs);
+			this._rxReplace = new RegExp(replPattern, this.replaceAll ? 'gi' : 'i');
 		}
 	},
 
