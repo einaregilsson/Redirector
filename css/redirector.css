@@ -479,7 +479,7 @@ a.disabled:hover, button[disabled]:hover {
 }
 
 .hidden {
-  display:none;
+  display:none !important;
 }
 
 #advanced-toggle {
@@ -519,6 +519,10 @@ a[ng-click] {
   margin-top:20px;
   text-align: center;
   padding-bottom:10px;
+}
+
+.replace-process-input input[type='checkbox'] {
+  margin-top: 6px;
 }
 
 /* Footer with link */

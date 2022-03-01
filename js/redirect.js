@@ -37,6 +37,11 @@ Redirect.prototype = {
 	error : null,
 	includePattern : '',
 	excludePattern : '',
+	replacePattern : '',
+	replaceFrom : '',
+	replacement : '',
+	replaceAll : false,
+	usePatternForReplace : false,
 	patternDesc:'',
 	redirectUrl : '',
 	patternType : '',
@@ -48,12 +53,17 @@ Redirect.prototype = {
 
 		var incPattern = this._preparePattern(this.includePattern);
 		var excPattern = this._preparePattern(this.excludePattern);
+		var replPattern = this._preparePattern(this.replacePattern);
 
 		if (incPattern) {
 			this._rxInclude = new RegExp(incPattern, 'gi');
 		}
 		if (excPattern) {
 			this._rxExclude = new RegExp(excPattern, 'gi');
+		}
+		if (replPattern) {
+			const falgs = this.replaceAll ? 'gi' : 'i';
+			this._rxReplace = new RegExp(replPattern, falgs);
 		}
 	},
 
@@ -62,6 +72,11 @@ Redirect.prototype = {
 			&& this.exampleUrl == redirect.exampleUrl
 			&& this.includePattern == redirect.includePattern
 			&& this.excludePattern == redirect.excludePattern
+			&& this.replacePattern == redirect.replacePattern
+			&& this.replaceFrom == redirect.replaceFrom
+			&& this.replacement == redirect.replacement
+			&& this.replaceAll == redirect.replaceAll
+			&& this.usePatternForReplace == redirect.usePatternForReplace
 			&& this.patternDesc == redirect.patternDesc
 			&& this.redirectUrl == redirect.redirectUrl
 			&& this.patternType == redirect.patternType
@@ -77,6 +92,11 @@ Redirect.prototype = {
 			error : this.error,
 			includePattern : this.includePattern,
 			excludePattern : this.excludePattern,
+			replacePattern : this.replacePattern,
+			replaceFrom : this.replaceFrom,
+			replacement : this.replacement,
+			replaceAll : this.replaceAll,
+			usePatternForReplace : this.usePatternForReplace,
 			patternDesc : this.patternDesc,
 			redirectUrl : this.redirectUrl,
 			patternType : this.patternType,
@@ -189,6 +209,7 @@ Redirect.prototype = {
 	//Private functions below
 	_rxInclude : null,
 	_rxExclude : null,
+	_rxReplace : null,
 
 	_preparePattern : function(pattern) {
 		if (!pattern) {
@@ -221,6 +242,11 @@ Redirect.prototype = {
 		this.error = o.error || null;
 		this.includePattern = o.includePattern || '';
 		this.excludePattern = o.excludePattern || '';
+		this.replacePattern = o.replacePattern || '';
+		this.replaceFrom = o.replaceFrom || '';
+		this.replacement = o.replacement || '';
+		this.replaceAll = o.replaceAll || false;
+		this.usePatternForReplace = o.usePatternForReplace || false;
 		this.redirectUrl = o.redirectUrl || '';
 		this.patternType = o.patternType || Redirect.WILDCARD;
 
@@ -274,7 +300,15 @@ Redirect.prototype = {
 		var resultUrl = this.redirectUrl;
 		for (var i = matches.length - 1; i > 0; i--) {
 			var repl = matches[i] || '';
-			if (this.processMatches == 'urlDecode') {
+			if (this.processMatches == 'replace') {
+				const pattern = this.usePatternForReplace ? this._rxReplace ?? '' : this.replaceFrom;
+
+				if (this.replaceAll) {
+					repl = repl.replaceAll(pattern, this.replacement);
+				} else {
+					repl = repl.replace(pattern, this.replacement);
+				}
+			} else if (this.processMatches == 'urlDecode') {
 				repl = unescape(repl);
 			} else if (this.processMatches == 'doubleUrlDecode') {
 				repl = unescape(unescape(repl));
