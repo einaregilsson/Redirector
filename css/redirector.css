@@ -478,8 +478,8 @@ a.disabled:hover, button[disabled]:hover {
   margin-top:8px;
 }
 
-.hidden {
-  display:none !important;
+.hidden, .replace-process-input.hidden {
+  display:none;
 }
 
 #advanced-toggle {

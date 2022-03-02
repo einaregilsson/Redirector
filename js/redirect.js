@@ -61,7 +61,7 @@ Redirect.prototype = {
 		if (excPattern) {
 			this._rxExclude = new RegExp(excPattern, 'gi');
 		}
-		if (replPattern) {
+		if (this.usePatternForReplace && replPattern) {
 			this._rxReplace = new RegExp(replPattern, this.replaceAll ? 'gi' : 'i');
 		}
 	},
@@ -161,6 +161,15 @@ Redirect.prototype = {
 				new RegExp(this.excludePattern, 'gi');
 			} catch(e) {
 				this.error = 'Invalid regular expression in Exclude pattern.';
+				return;
+			}
+		}
+
+		if (this.patternType == Redirect.REGEX && this.usePatternForReplace && this.replacePattern) {
+			try {
+				new RegExp(this.replacePattern, this.replaceAll ? 'gi' : 'i');
+			} catch(e) {
+				this.error = 'Invalid regular expression in Replace pattern.';
 				return;
 			}
 		}
