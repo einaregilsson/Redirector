@@ -25,6 +25,13 @@
 - Pattern type: Regular Expression
 - Description: remove doubleclick link tracking / fix problems with doubleclick host based blocking
 
+### YouTube Shorts to YouTube
+- Example URL: `https://www.youtube.com/shorts/video-id`
+- Include pattern: `^(?:https?://)(?:www.)?youtube.com/shorts/([a-zA-Z0-9_-]+)(.*)`
+- Redirect to: `https://www.youtube.com/watch?v=$1$2`
+- Pattern type: Regular Expression
+- Description: Redirect YouTube Shorts to YouTube
+
 ### Fun with !bangs
 What are bangs?: <https://duckduckgo.com/bang>
 
