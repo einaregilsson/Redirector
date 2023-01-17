@@ -1,10 +1,10 @@
 ## Download links
 * [Firefox](https://addons.mozilla.org/firefox/addon/redirector/)
 * [Google Chrome and Vivaldi](https://chrome.google.com/webstore/detail/redirector/ocgpenflpmgnfapjedencafcfakcekcd)
-```
+<!--
 Opera extension is no longer present (as of 2023/01/16)
 * [Opera](https://addons.opera.com/extensions/details/redirector-2/)
-```
+-->
 
 ## Examples
 ### De-mobilizer
