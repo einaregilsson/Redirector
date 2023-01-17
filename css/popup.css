@@ -66,21 +66,18 @@ label span {
 		color: #ddd;
 	}
 
-	h1 {
-		color: white;
-	}
-
+	h1,
 	label {
 		color: #eee;
 	}
 
 	th {
-		color: white;
+		color: #eee;
 		font-weight: normal;
 	}
 
 	.disabled span {
-		color: rgb(252,87,84);
+		color: rgb(240,85,82);
 	}
 
 	button {
