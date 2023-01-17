@@ -26,7 +26,7 @@
 - Description: remove doubleclick link tracking / fix problems with doubleclick host based blocking
 
 ### Fun with !bangs
-What are bangs?: <https://duckduckgo.com/bang>
+What are bangs?: <https://duckduckgo.com/bangs>
 
 #### use DuckDuckGo.com !bangs on Google
 - Example URL: `https://www.google.com/search?&ei=-FvkXcOVMo6RRwW5p5DgBg&q=asdfasdf%21+sadfas&oq=%21asdfasdf+sadfas&gs_l=asdfsadfafsgaf`
