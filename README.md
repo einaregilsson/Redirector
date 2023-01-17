@@ -22,7 +22,7 @@ Opera extension is no longer present (as of 2023/01/16)
 
 ### AMP redirect
 - Example URL: `https://www.google.com/amp/www.example.com/amp/document`
-- Include pattern: `^(?:https?://)www.(?:google|bing).com/amp/(.*)`
+- Include pattern: `^(?:https?://)www.(?:google|bing).com/amp/(?:s/)?(.*)`
 - Redirect to: `https://$1`
 - Pattern type: Regular Expression
 - Description: AMP is bad: <https://80x24.net/post/the-problem-with-amp/>
