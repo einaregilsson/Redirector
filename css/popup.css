@@ -1,58 +1,57 @@
 
 body {
-	width:180px;
+	width: 180px;
 	text-align: center;
 	font-family: Arial, sans-serif;
 }
 
 h1 {
-	margin-top:4px;
-	font-size:22px;
+	margin-top: 4px;
+	font-size: 22px;
 	font-weight: bold;
 	letter-spacing: 1.5px;
 }
 
 h1 span {
 	position: relative;
-	top:1px;
-	font-size:38px;
+	top: 1px;
+	font-size: 38px;
 }
 
 button {
-
-	display:block;
-	width:90%;
-	margin:5px auto !important;
+	margin: 5px auto !important;
+	display: block;
+	width: 90%;
 }
 
 .disabled {
-	margin-top:-16px;
-	color:red;
-	height:13px;
-	font-size:12px;
+	margin-top: -16px;
+	height: 13px;
+	color: red;
+	font-size: 12px;
 }
 
 label {
-    display:block;
-    width:85%;
-    text-align:left;
-    margin:6px auto;
-    font-size:12px !important;
+	margin: 6px auto;
+	display: block;
+	width: 85%;
+	text-align: left;
+	font-size: 12px !important;
 }
 
 /* Firefox only */
 @supports (-moz-appearance:none) {
-    label input {
-        position: relative;
-        top:1px;
-    }
+    	label input {
+        	position: relative;
+        	top: 1px;
+    	}
 }
 
 button {
-	border: solid 1px #aaa !important;
-	color: #333;
 	height: 20px;
+	border: solid 1px #aaa !important;
 	border-radius: 3px;
+	color: #333;
 }
 
 label span {
@@ -84,8 +83,8 @@ label span {
 	}
 
 	button {
-		background-color: rgb(32,33,36) !important;
 		border: solid 1px #777 !important;
+		background-color: rgb(32,33,36) !important;
 		color: #ddd;
 	  }
-  }
+}
