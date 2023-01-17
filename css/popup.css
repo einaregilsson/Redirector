@@ -73,6 +73,7 @@ label span {
 	label {
 		color: #eee;
 	}
+
 	th {
 		color: white;
 		font-weight: normal;
@@ -86,5 +87,5 @@ label span {
 		border: solid 1px #777 !important;
 		background-color: rgb(32,33,36) !important;
 		color: #ddd;
-	  }
+	}
 }
