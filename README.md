@@ -64,12 +64,12 @@ What are bangs?: <https://duckduckgo.com/bangs>
     - Process matches: URL decode
 
 ## Dark theme
-If you are a Firefox user and use a dark theme, you can edit your userChrome.css file and add these lines to it for the extension button to more visible:
+If you are a Firefox user and use a dark theme, you can add these lines to your `userChrome.css` file to make Redirector's extension button more visible:
 
 ```css
 /* Redirector button for dark Firefox themes */
-toolbarbutton#toggle-button--redirectoreinaregilssoncom-redirector[image*="active"]{filter:invert(100%) brightness(600%);}
-toolbarbutton#toggle-button--redirectoreinaregilssoncom-redirector[image*="disabled"]{filter:invert(100%) brightness(250%);}
+toolbarbutton#toggle-button--redirectoreinaregilssoncom-redirector[image*="active"] { filter: invert(1) brightness(6); }
+toolbarbutton#toggle-button--redirectoreinaregilssoncom-redirector[image*="disabled"] { filter: invert(1) brightness(2.5); }
 ```
 
-If you don't know what the userChrome.css file is or how to edit it, please look it up on Firefox forums instead of asking about it on this repository.
+If you don't know what the `userChrome.css` file is, or how to edit it, please look it up on a Firefox forum instead of asking about it in this repository. Thanks!
