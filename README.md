@@ -1,4 +1,10 @@
-## Download links
+## Description
+Web browser extension (Firefox, Vivaldi, Chrome, Opera, Edge) to redirect URLs based on regex or wildcard patterns.
+
+## Tribute
+In loving memory of Einar Egilsson, who gave us Redirector and selflessly nurtured it for many years.  We miss you Einar, and will always remember your kindness and generosity.
+
+## Download Links
 * [Firefox](https://addons.mozilla.org/firefox/addon/redirector/)
 * [Google Chrome and Vivaldi](https://chrome.google.com/webstore/detail/redirector/ocgpenflpmgnfapjedencafcfakcekcd)
 <!--
