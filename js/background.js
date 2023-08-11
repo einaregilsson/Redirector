@@ -32,6 +32,9 @@ var justRedirected = {
 };
 var redirectThreshold = 3;
 
+//Whether or not to skip redirection for the next request on a specific URL.
+var skipRedirect = [];
+
 function setIcon(image) {
 	var data = { 
 		path: {}
@@ -50,9 +53,53 @@ function setIcon(image) {
 	});		
 }
 
+//Create the context menu options for opening a link without redirecting.
+chrome.contextMenus.create(
+	{
+		id: "open-without-redirect",
+		title: "Open without redirecting",
+		contexts: ["link"],
+	},
+);
+  
+chrome.contextMenus.create(
+	{
+		id: "open-without-redirect-new-tab",
+		title: "Open in a new tab without redirecting",
+		contexts: ["link"],
+	},
+);
+
+//Listen for clicks on the context menu options.
+chrome.contextMenus.onClicked.addListener((info, tab) => {
+	switch (info.menuItemId) {
+		case "open-without-redirect":
+			skipRedirect[info.linkUrl] = true;
+			chrome.tabs.update({
+				url: info.linkUrl,
+			});
+			break;
+		case "open-without-redirect-new-tab":
+			skipRedirect[info.linkUrl] = true;
+			chrome.tabs.create({
+				url: info.linkUrl,
+			});
+			break;
+	}
+});
+
 //This is the actual function that gets called for each request and must
 //decide whether or not we want to redirect.
 function checkRedirects(details) {
+
+	//Skip redirection and return the original URL if the user chose to open the link
+	//without redirecting.
+	if (skipRedirect[details.url]) {
+		console.log("Skipping redirect!");
+		console.log(`(${details.url})`);
+		skipRedirect[details.url] = false;
+		return {};
+	}
 
 	//We only allow GET request to be redirected, don't want to accidentally redirect
 	//sensitive POST parameters
