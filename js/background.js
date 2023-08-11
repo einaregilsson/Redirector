@@ -57,7 +57,7 @@ function setIcon(image) {
 chrome.contextMenus.create(
 	{
 		id: "open-without-redirect",
-		title: "Open without redirecting",
+		title: chrome.i18n.getMessage("contextMenuItemNoRedirect"),
 		contexts: ["link"],
 	},
 );
@@ -65,7 +65,7 @@ chrome.contextMenus.create(
 chrome.contextMenus.create(
 	{
 		id: "open-without-redirect-new-tab",
-		title: "Open in a new tab without redirecting",
+		title: chrome.i18n.getMessage("contextMenuItemNoRedirectNewTab"),
 		contexts: ["link"],
 	},
 );
