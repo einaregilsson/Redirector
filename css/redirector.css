@@ -383,21 +383,85 @@ a.disabled:hover, button[disabled]:hover {
   filter:blur(3px);
 }
 
-#edit-redirect-form {
-  position: fixed;
-  display:table;
-  display:none;
-  width:700px;
-  background:white;
-  border:solid 1px #bbb;
-  border-radius:3px;
-  z-index: 6000;
-  left:50%;
-  margin-left:-350px;
-  top:50%;
-  transform: translateY(-50%);
-  max-height: 96vh;
-  overflow: auto;
+@media (min-width: 700px) {
+  #edit-redirect-form {
+    position: fixed;
+    display:table;
+    display:none;
+    width:700px;
+    background:white;
+    border:solid 1px #bbb;
+    border-radius:3px;
+    z-index: 6000;
+    left:50%;
+    margin-left:-350px;
+    top:50%;
+    transform: translateY(-50%);
+    max-height: 96vh;
+    overflow: auto;
+  }
+
+  .form-grid div input[type='text'] {
+    width:510px;
+    font-size:14px;
+  }
+
+  .example-result {
+    width:500px;
+    display:inline-block;
+    word-wrap:break-word;
+    margin-top:5px;
+  }
+
+  .form-grid > div > label {
+    display:table-cell;
+    font-weight:bold;
+    text-align: right;
+    padding:6px;
+    white-space: nowrap;
+    width:140px;
+    vertical-align:top;
+  }
+}
+
+@media (max-width: 699px) {
+  #edit-redirect-form {
+    position: fixed;
+    display:table;
+    display:none;
+    background:white;
+    border:solid 1px #bbb;
+    border-radius:3px;
+    z-index: 6000;
+    left:2%;
+    top:2%;
+    right:2%;
+    bottom:2%;
+    margin:auto;
+    max-height: 96vh;
+    overflow: auto;
+  }
+
+  .form-grid div input[type='text'] {
+    width: 100%;
+    font-size: 14px;
+    box-sizing: border-box;
+  }
+
+  .example-result {
+    display:inline-block;
+    word-wrap:break-word;
+    margin-top:5px;
+  }
+
+  .form-grid > div > label {
+    display:table-cell;
+    font-weight:bold;
+    text-align: right;
+    padding:6px;
+    white-space: break-spaces;
+    vertical-align:top;
+  }
 }
 
 .form-grid {
@@ -408,30 +472,8 @@ a.disabled:hover, button[disabled]:hover {
   display:table-row;
 }
 
-.form-grid > div > label {
-  display:table-cell;
-  font-weight:bold;
-  text-align: right;
-  padding:6px;
-  white-space: nowrap;
-  width:140px;
-  vertical-align:top;
-}
-
 .input-cell {
   padding-top:1px;
-}
-
-.form-grid div input[type='text'] {
-  width:510px;
-  font-size:14px;
-}
-
-.example-result {
-  width:500px;
-  display:inline-block;
-  word-wrap:break-word;
-  margin-top:5px;
 }
 
 .example-result-error {
