@@ -14,11 +14,13 @@ function editRedirect(index) {
 	activeRedirect = new Redirect(REDIRECTS[index]); //Make a new one, which we can dump a bunch of stuff on...
 	activeRedirect.existing = true;
 	activeRedirect.index = index;
+	toggleReplaceProcessForm(activeRedirect.processMatches);
 	showForm('#edit-redirect-form', activeRedirect);
 	setTimeout(() => el('input[data-bind="description"]').focus(), 200); //Why not working...?
 }
 
 function cancelEdit() {
+	toggleReplaceProcessForm(activeRedirect.processMatches, true);
 	activeRedirect = null;
 	hideForm('#edit-redirect-form');
 }
@@ -51,12 +53,23 @@ function toggleAdvancedOptions(ev) {
 	}
 }
 
+function toggleReplaceProcessForm(currentProcess, force) {
+	 force = force ?? currentProcess !== 'replace';
+
+	for (const input of document.querySelectorAll('.replace-process-input')) {
+		input.classList.toggle('hidden', force);
+	}
+}
 
 function editFormChange() {
 	//Now read values back from the form...
 	for (let input of el('#edit-redirect-form').querySelectorAll('input[type="text"][data-bind]')) {
 		let prop = input.getAttribute('data-bind');
 		activeRedirect[prop] = input.value;
+
+		if (prop === 'replaceFrom') {
+			activeRedirect.replacePattern = input.value;
+		}
 	}
 	activeRedirect.appliesTo = [];
 	for (let input of el('#apply-to').querySelectorAll('input:checked')) {
@@ -65,6 +78,10 @@ function editFormChange() {
 
 	activeRedirect.processMatches = el('#process-matches option:checked').value;
 	activeRedirect.patternType = el('[name="patterntype"]:checked').value;
+	activeRedirect.usePatternForReplace = el('#use-pattern').checked;
+	activeRedirect.replaceAll = el('#replace-all').checked;
+
+	toggleReplaceProcessForm(activeRedirect.processMatches);
 
 	activeRedirect.updateExampleResult();
 
@@ -92,7 +109,6 @@ function deleteRedirect() {
 function cancelDelete() {
 	hideForm('#delete-redirect-form');
 }
-
 
 function setupEditAndDeleteEventListeners() {
 
