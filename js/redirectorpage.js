@@ -304,7 +304,7 @@ function pageLoad() {
 
 	chrome.storage.local.get({isSyncEnabled:false}, function(obj){
 		options.isSyncEnabled = obj.isSyncEnabled;
-		el('#storage-sync-option').checked = options.isSyncEnabled;
+		el('#storage-sync-option input').checked = options.isSyncEnabled;
 	});
 
 	if(navigator.userAgent.toLowerCase().indexOf("chrome") > -1){
