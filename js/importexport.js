@@ -49,7 +49,7 @@ function importRedirects(ev) {
 			if (REDIRECTS.some(function(i) { return new Redirect(i).equals(r);})) {
 				existing++;
 			} else {
-				REDIRECTS.push(r.toObject());
+				REDIRECTS.push(r);
 				imported++;
 			}
 		}
