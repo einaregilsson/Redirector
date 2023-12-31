@@ -282,11 +282,11 @@ function pageLoad() {
 			//Add example redirect for first time users...
 			REDIRECTS.push(new Redirect(
 				{
-					"description": "Example redirect, try going to http://example.com/anywordhere",
-					"exampleUrl": "http://example.com/some-word-that-matches-wildcard",
+					"description": "Example redirect, try going to https://example.com/anywordhere",
+					"exampleUrl": "https://example.com/some-word-that-matches-wildcard",
 					"exampleResult": "https://google.com/search?q=some-word-that-matches-wildcard",
 					"error": null,
-					"includePattern": "http://example.com/*",
+					"includePattern": "https://example.com/*",
 					"excludePattern": "",
 					"patternDesc": "Any word after example.com leads to google search for that word.",
 					"redirectUrl": "https://google.com/search?q=$1",

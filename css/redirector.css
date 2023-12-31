@@ -2,14 +2,14 @@
 /* Basic element styles */
 
 body {
-  font-family: Arial, sans-serif;
+  font-family:Arial, sans-serif;
   font-size:14px;
   background:white;
   color:rgb(43, 38, 38);
 }
 
 h1, h2, h3, h5, h6 {
-  text-align: center;
+  text-align:center;
 }
 
 h1 {
@@ -17,7 +17,7 @@ h1 {
   margin-bottom:0px;
   cursor:default;
   padding:0px;
-  letter-spacing: 2.1px;
+  letter-spacing:2.1px;
 }
 
 h3 {
@@ -26,7 +26,7 @@ h3 {
 }
 
 h4 {
-  text-align: left;
+  text-align:left;
   font-size:14px;
   padding:0px;
   margin:4px;
@@ -54,11 +54,11 @@ input[type="radio"] {
   background:white;
   border:solid 1px #bbb;
   border-radius:3px;
-  cursor: pointer;
-  font-weight: bold;
+  cursor:pointer;
+  font-weight:bold;
   display:inline-block;
-  text-align: center;
-  text-decoration: none;
+  text-align:center;
+  text-decoration:none;
 }
 
 .btn.large {
@@ -74,7 +74,7 @@ input[type="radio"] {
 
 .btn:hover {
   color:white !important;
-  text-decoration: none;
+  text-decoration:none;
 }
 
 
@@ -115,20 +115,20 @@ input[type="radio"] {
 }
 
 .btn.blue.active {
-  color: white;
+  color:white;
   background:rgb(21,90,233);
 }
 
 #redirect-row-template {
-  display: none;
+  display:none;
 }
 
 /* Main menu with buttons */
 
 #menu {
-  margin: 30px auto 8px auto;
+  margin:30px auto 8px auto;
   max-width:90%;
-  text-align: center;
+  text-align:center;
 }
 
 #import-file {
@@ -140,34 +140,34 @@ input[type="radio"] {
   margin:10px auto;
   width:90%;
   color:white;
-  max-width: 800px;
+  max-width:800px;
   border-radius:3px;
   height:0px;
-  line-height: 30px;
+  line-height:30px;
   font-size:16px;
   text-align:center;
   overflow:hidden;
-  transition: height 0.2s ease-out;
-  position: relative;
+  transition:height 0.2s ease-out;
+  position:relative;
 }
 
 #message-box.visible {
   height:30px;
-  transition: height 0.2s ease-out;
+  transition:height 0.2s ease-out;
 }
 
 #message-box.success {
-  background-color: green;
+  background-color:green;
 }
 
 #message-box.error {
-  background-color: rgb(208,52,37);;
+  background-color:rgb(208,52,37);;
 }
 
 #message-box a {
   color:white;
   font-size:20px;
-  position: absolute;
+  position:absolute;
   right:6px;
   top:0px;
   cursor:pointer;
@@ -183,7 +183,7 @@ input[type="radio"] {
 }
 
 .redirect-row {
-  position: relative;
+  position:relative;
   font-size:14px;
   padding:8px;
   line-height:18px;
@@ -201,7 +201,7 @@ input[type="radio"] {
 .redirect-info div label {
   display:table-cell;
   padding:3px 5px;
-  white-space: nowrap;
+  white-space:nowrap;
 }
 
 .redirect-info div p {
@@ -211,7 +211,7 @@ input[type="radio"] {
 }
 
 .redirect-row:last-child {
-  border-bottom: none !important;
+  border-bottom:none !important;
 }
 
 .redirect-row:nth-child(odd) {
@@ -232,7 +232,7 @@ button span {
   margin-top:5px;
   padding:2px;
   width:80px;
-  display: inline-block;
+  display:inline-block;
 }
 
 .redirect-row h4 span.disabled-marker {
@@ -252,7 +252,7 @@ button span {
   display:inline-block;
   width:80px;
   font-weight:bold;
-  text-align: right;
+  text-align:right;
 }
 
 .arrow {
@@ -268,79 +268,78 @@ a.disabled:hover, button[disabled]:hover {
 
 /* Toggle Grouping Checkbox */
 .toggle-container {
-  display: block;
-  position: absolute;
-  top: 8%;
-  right: 5%;
-  cursor: pointer;
-  font-size: 22px;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
+  display:block;
+  position:absolute;
+  top:8%;
+  right:5%;
+  cursor:pointer;
+  font-size:22px;
+  -webkit-user-select:none;
+  -moz-user-select:none;
+  -ms-user-select:none;
+  user-select:none;
 }
 
 .toggle-container input {
-  position: absolute;
-  opacity: 0;
-  cursor: pointer;
-  height: 0;
-  width: 0;
+  position:absolute;
+  opacity:0;
+  cursor:pointer;
+  height:0;
+  width:0;
 }
 
 .checkmark {
-  position: absolute;
-  height: 15px;
-  width: 15px;
-  background-color: #eee;
+  position:absolute;
+  height:15px;
+  width:15px;
+  background-color:#eee;
 }
 
 .toggle-container:hover input ~ .checkmark {
-  background-color: #ccc;
+  background-color:#ccc;
 }
 
 .toggle-container input:checked ~ .checkMarked {
-  background-color: #2196F3;
+  background-color:#2196F3;
 }
 
 .checkmark:after {
-  content: "";
-  position: absolute;
-  display: none;
+  content:"";
+  position:absolute;
+  display:none;
 }
 
 .toggle-container input:checked ~ .checkMarked:after {
-  display: block;
+  display:block;
 }
 
 .toggle-container .checkMarked:after {
-  left: 4px;
-  top: -1px;
-  width: 4px;
-  height: 9px;
-  border: solid white;
-  border-width: 0 3px 3px 0;
-  -webkit-transform: rotate(45deg);
-  -ms-transform: rotate(45deg);
-  transform: rotate(45deg);
+  left:4px;
+  top:-1px;
+  width:4px;
+  height:9px;
+  border:solid white;
+  border-width:0 3px 3px 0;
+  -webkit-transform:rotate(45deg);
+  -ms-transform:rotate(45deg);
+  transform:rotate(45deg);
 }
 
 /* Popup form for deleting redirects */
 
 #delete-redirect-form {
-  position: fixed;
+  position:fixed;
   padding:10px;
-  width:500px;
+  width:45%;
+  max-height:45%;
   background:white;
   border:solid 1px #bbb;
   border-radius:3px;
-  z-index: 6000;
-  left:50%;
-  margin-left:-260px;
-  top:50%;
-  margin-top:-220px;
-  height:255px;
+  z-index:6000;
   display:none;
+  left:50%;
+  top:50%;
+  transform:translate(-50%, -50%);
 }
 
 #delete-redirect-form div{
@@ -348,34 +347,43 @@ a.disabled:hover, button[disabled]:hover {
 }
 
 #delete-redirect-form div label:first-child {
-  width:130px;
   font-weight:bold;
-  text-align: right;
+  text-align:right;
   display:inline-block;
-  vertical-align: top;
+  vertical-align:top;
 }
 
 #delete-redirect-form div span {
   display:inline-block;
-  width: 330px;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-  vertical-align: top;
+  white-space:nowrap;
+  vertical-align:top;
+}
+
+@media only screen and (max-width:767px) {
+
+#delete-redirect-form {
+  width:90%;
+  max-height:90%;
+  }
+  
+  #delete-redirect-form div span {
+  display:block;
+  white-space:pre-wrap;
+  }
 }
 
 /* Edit form */
 
 #cover {
-  position: fixed;
+  position:fixed;
   top:0px;
   bottom:0px;
   left:0px;
   right:0px;
-  z-index: 5000;
-  background: #333;
-  opacity: 0.5;
-  display: none;
+  z-index:5000;
+  background:#333;
+  opacity:0.5;
+  display:none;
 }
 
 .blur {
@@ -384,20 +392,26 @@ a.disabled:hover, button[disabled]:hover {
 }
 
 #edit-redirect-form {
-  position: fixed;
-  display:table;
-  display:none;
-  width:700px;
+  position:fixed;
+  padding:10px;
+  width:wrap;
+  max-height:wrap;
   background:white;
   border:solid 1px #bbb;
   border-radius:3px;
-  z-index: 6000;
+  z-index:6000;
+  display:none;
   left:50%;
-  margin-left:-350px;
   top:50%;
-  transform: translateY(-50%);
-  max-height: 96vh;
-  overflow: auto;
+  transform:translate(-50%, -50%);
+  overflow:auto;
+}
+
+@media only screen and (max-width:767px) {
+#edit-redirect-form {
+  width:90%;
+  max-height:90%;
+  }
 }
 
 .form-grid {
@@ -411,9 +425,9 @@ a.disabled:hover, button[disabled]:hover {
 .form-grid > div > label {
   display:table-cell;
   font-weight:bold;
-  text-align: right;
+  text-align:right;
   padding:6px;
-  white-space: nowrap;
+  white-space:nowrap;
   width:140px;
   vertical-align:top;
 }
@@ -453,7 +467,7 @@ a.disabled:hover, button[disabled]:hover {
 }
 
 #apply-to label span {
-  position: relative;
+  position:relative;
   top:1px;
 }
 
@@ -471,7 +485,7 @@ a.disabled:hover, button[disabled]:hover {
 }
 
 ::-moz-placeholder {  /* Firefox 19+ */
-   color: #c0c0c0;
+   color:#c0c0c0;
 }
 
 .advanced {
@@ -484,16 +498,16 @@ a.disabled:hover, button[disabled]:hover {
 
 #advanced-toggle {
   padding-top:3px;
-  text-align: center;
+  text-align:center;
 }
 
 #advanced-toggle a {
   color:rgb(21,90,233);
-  cursor: pointer;
+  cursor:pointer;
 }
 
 #advanced-toggle a:hover {
-  text-decoration: underline;
+  text-decoration:underline;
 }
 
 .advanced div .input-cell label:first-child {
@@ -517,14 +531,14 @@ a[ng-click] {
 
 .button-container {
   margin-top:20px;
-  text-align: center;
+  text-align:center;
   padding-bottom:10px;
 }
 
 /* Footer with link */
 footer {
   margin-top:30px;
-  text-align: center;
+  text-align:center;
 }
 
 footer small {
@@ -533,17 +547,17 @@ footer small {
 }
 
 footer small a, footer small a:visited {
-  text-decoration: none;
+  text-decoration:none;
   color:rgb(21,90,233);
 }
 
 footer small a:hover {
-  text-decoration: underline;
+  text-decoration:underline;
 }
 
 #storage-sync-option {
-  border-top: solid 1px #bbb;
-  display: none;
+  border-top:solid 1px #bbb;
+  display:none;
 }
 
 #storage-sync-option input {
@@ -552,62 +566,62 @@ footer small a:hover {
 
 /* Dark mode support */
 
-@media (prefers-color-scheme: dark) {
+@media (prefers-color-scheme:dark) {
 
   body {
-    background: rgb(32,33,36);
-    color: #bbb;
+    background:rgb(32,33,36);
+    color:#bbb;
   }
 
   h1 {
-    color: #eee;
+    color:#eee;
   }
   h5, footer small {
-    color: #aaa;
+    color:#aaa;
   }
 
   .redirect-row label {
-    color: white;
+    color:white;
   }
 
   footer small a, footer small a:visited {
-    color: rgb(138,179,241);
+    color:rgb(138,179,241);
   }
 
   .redirect-row:nth-child(odd) {
-    background: rgb(31,32,35);
+    background:rgb(31,32,35);
   }
   .redirect-row:nth-child(even) {
-    background: rgb(41,42,45);
+    background:rgb(41,42,45);
   }
 
   .btn {
-    background-color: rgb(32,33,36);
-    border: solid 1px #777;
+    background-color:rgb(32,33,36);
+    border:solid 1px #777;
   }
 
   .btn.grey {
-    color: #ccc;
+    color:#ccc;
   }
 
   .btn.green {
-    color: rgb(53,180,75);
+    color:rgb(53,180,75);
   }
 
   .toggle {
-    background-color: #ccc;
+    background-color:#ccc;
   }
 
   #message-box.success {
-    background-color: rgb(53,203,75);;
+    background-color:rgb(53,203,75);;
   }
 
   #message-box.error {
-    background-color: rgb(252,87,84);
+    background-color:rgb(252,87,84);
   }
 
   .redirect-table, .redirect-row {
-    border-color: #555 !important;
+    border-color:#555 !important;
   }
 
   .redirect-row h4 span.disabled-marker {
@@ -615,27 +629,27 @@ footer small a:hover {
   }
 
   .btn.red {
-    color: rgb(252,87,84);
+    color:rgb(252,87,84);
   }
 
   .btn.grey[disabled]:hover {
-    border: solid 1px #777 !important;
-    background: rgb(32,33,36) !important;
+    border:solid 1px #777 !important;
+    background:rgb(32,33,36) !important;
     color:#555 !important;;
   }
 
   .btn.grey:hover {
-    border: solid 1px white;
-    background: black;
-    color: white !important;
+    border:solid 1px white;
+    background:black;
+    color:white !important;
   }
 
   .btn.blue {
-    color: rgb(138,179,241);
+    color:rgb(138,179,241);
   }
 
   .redirect-row [data-bind="description"] {
-    color: #eee;
+    color:#eee;
   }
 
   .redirect-info.disabled label, .redirect-info.disabled span, span.disabled, .redirect-info.disabled p, a.disabled, button[disabled] {
@@ -644,20 +658,20 @@ footer small a:hover {
 
   #edit-redirect-form, #delete-redirect-form {
     background:rgb(41,42,45);
-    border: solid 1px #888;
+    border:solid 1px #888;
   }
 
   #advanced-toggle a, #advanced-toggle a:visited {
-    color: rgb(138,179,241);
+    color:rgb(138,179,241);
   }
 
   h3 {
-    color: #eee;
+    color:#eee;
   }
 
   #edit-redirect-form label, #delete-redirect-form label  {
-    color: white;
-    font-weight: normal;
+    color:white;
+    font-weight:normal;
   }
 
   .example-result-error {
@@ -665,9 +679,9 @@ footer small a:hover {
   }
 
   #edit-redirect-form input {
-    background: rgb(68,68,68);
-    color: #ddd;
-    border-color: rgb(68,68,68) !important ;
-    border-radius: 2px;
+    background:rgb(68,68,68);
+    color:#ddd;
+    border-color:rgb(68,68,68) !important ;
+    border-radius:2px;
   }
 }
