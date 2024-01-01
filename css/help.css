@@ -1,6 +1,6 @@
 body {
   font-family: Arial, sans-serif;
-  font-size: 1rem
+  font-size: 1rem;
   line-height: 20px;
   width: auto;
   border: solid 1px #bbb;
@@ -28,15 +28,16 @@ h1 {
   font-size: 3rem;
   line-height: 3rem;
   margin-bottom: 80px;
+  letter-spacing: 2.1px;
 }
 
 h3{
-  font-size: 20px
+  font-size: 1.7rem;
   line-height: 3rem;
 }
 
 h4 {
-  font-size: 24px;
+  font-size: 1.5rem;
   margin-bottom: 0px;
   padding-bottom: 0px;
 }

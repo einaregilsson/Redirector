@@ -16,7 +16,7 @@ h6 {
 }
 
 h1 {
-  font-size: 55px;
+  font-size: 3rem;
   margin-bottom: 0px;
   cursor: default;
   padding: 0px;
@@ -24,19 +24,19 @@ h1 {
 }
 
 h3 {
-  font-size: 18px;
+  font-size: 1.7rem;
   padding: 0px;
 }
 
 h4 {
   text-align: left;
-  font-size: 14px;
+  font-size: 1.5rem;
   padding: 0px;
   margin: 4px;
 }
 
 h5 {
-  font-size: 20px;
+  font-size: 1.35rem;
   margin: -6px 0 0 0;
   color: #5e6163;
 }
