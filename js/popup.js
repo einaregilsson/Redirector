@@ -1,5 +1,3 @@
-
-
 var storage = chrome.storage.local;
 var viewModel = {}; //Just an object for the databinding
 
@@ -8,8 +6,12 @@ function applyBinding() {
 }
 
 function toggle(prop) {
-	storage.get({[prop]: false}, function(obj) {
-		storage.set({[prop] : !obj[prop]});
+	storage.get({
+		[prop]: false
+	}, function(obj) {
+		storage.set({
+			[prop]: !obj[prop]
+		});
 		viewModel[prop] = !obj[prop];
 		applyBinding();
 	});
@@ -18,26 +20,37 @@ function toggle(prop) {
 
 
 function openRedirectorSettings() {
-    var url = chrome.extension.getURL('redirector.html');
+	var url = chrome.extension.getURL('redirector.html');
 
-    chrome.tabs.query({currentWindow: true}, function(tabs) {
-        for (var i = 0; i < tabs.length; i++) {
-            if (tabs[i].url == url) {
-                chrome.tabs.update(tabs[i].id, {active: true}, function() {
-                    close();
-                });
-                return;
-            }
-        }
+	chrome.tabs.query({
+		currentWindow: true
+	}, function(tabs) {
+		for (var i = 0; i < tabs.length; i++) {
+			if (tabs[i].url == url) {
+				chrome.tabs.update(tabs[i].id, {
+					active: true
+				}, function() {
+					close();
+				});
+				return;
+			}
+		}
 
-        chrome.tabs.create({url: url, active: true}, function() {
-            close();
-        });
-    });
+		chrome.tabs.create({
+			url: url,
+			active: true
+		}, function() {
+			close();
+		});
+	});
 }
 
 function pageLoad() {
-	storage.get({logging:false, enableNotifications:false, disabled: false}, function(obj) {
+	storage.get({
+		logging: false,
+		enableNotifications: false,
+		disabled: false
+	}, function(obj) {
 		viewModel = obj;
 		applyBinding();
 	})

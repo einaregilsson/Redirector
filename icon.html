@@ -1,59 +1,54 @@
 <!DOCTYPE html>
 <html>
-<head>
-	<meta charset="UTF-8">
-	<style>
-		a {
-			display:block;
-			margin:10px auto;
-			padding:0px;
-		}
+  <head>
+    <meta charset="UTF-8">
+    <style>
+      a {
+        display: block;
+        margin: 10px auto;
+        padding: 0px;
+      }
 
-		img {
-			margin:0;
-			padding:0;
-			border:solid 1px green;
-		}
-
-		
-	</style>
-</head>
-<body>
-
-	<script>
-		
-		function createImageLink(size, logoFontSize, logoX, logoY) {
-			var colors = {'#333' : 'active', '#bbb' : 'disabled'};
-			for (var color in colors) {
-				var canvas = document.createElement('canvas');
-				canvas.width = canvas.height = size;
-				ctx = canvas.getContext('2d');
-				ctx.fillStyle = color;
-				ctx.font = 'Bold ' + logoFontSize + 'px Arial';
-				ctx.fillText('☈', logoX, logoY);
-				
-				
-				var a = document.createElement('a');
-				var img = document.createElement('img');
-				img.src = canvas.toDataURL();
-				a.href = canvas.toDataURL();
-				a.download = 'icon-' + colors[color] + '-' + size + '.png';
-				a.appendChild(img);
-				a.style.width = size + 'px'
-				document.body.appendChild(a);
-			}
-		}
-
-		document.addEventListener('DOMContentLoaded', function() {
-			createImageLink(16, 32, 0, 16);
-			createImageLink(19, 35, 1,  18);
-			createImageLink(32, 64, 1,  32);
-			createImageLink(38, 75, 2,  38);
-			createImageLink(48, 95, 1,  48);
-			createImageLink(64, 125, 3,  63);
-			createImageLink(128, 215, 12, 116);
-		});
-		
-	</script>
-</body>
+      img {
+        margin: 0;
+        padding: 0;
+        border: solid 1px green;
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+      function createImageLink(size, logoFontSize, logoX, logoY) {
+        var colors = {
+          '#333': 'active',
+          '#bbb': 'disabled'
+        };
+        for (var color in colors) {
+          var canvas = document.createElement('canvas');
+          canvas.width = canvas.height = size;
+          ctx = canvas.getContext('2d');
+          ctx.fillStyle = color;
+          ctx.font = 'Bold ' + logoFontSize + 'px Arial';
+          ctx.fillText('☈', logoX, logoY);
+          var a = document.createElement('a');
+          var img = document.createElement('img');
+          img.src = canvas.toDataURL();
+          a.href = canvas.toDataURL();
+          a.download = 'icon-' + colors[color] + '-' + size + '.png';
+          a.appendChild(img);
+          a.style.width = size + 'px'
+          document.body.appendChild(a);
+        }
+      }
+      document.addEventListener('DOMContentLoaded', function() {
+        createImageLink(16, 32, 0, 16);
+        createImageLink(19, 35, 1, 18);
+        createImageLink(32, 64, 1, 32);
+        createImageLink(38, 75, 2, 38);
+        createImageLink(48, 95, 1, 48);
+        createImageLink(64, 125, 3, 63);
+        createImageLink(128, 215, 12, 116);
+      });
+    </script>
+  </body>
 </html>

@@ -74,10 +74,11 @@ function editFormChange() {
 
 
 var deleteIndex;
+
 function confirmDeleteRedirect(index) {
 	deleteIndex = index;
-		let redirect = REDIRECTS[deleteIndex];
-		showForm('#delete-redirect-form', redirect);
+	let redirect = REDIRECTS[deleteIndex];
+	showForm('#delete-redirect-form', redirect);
 }
 
 function deleteRedirect() {

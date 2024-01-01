@@ -1,687 +1,711 @@
-
 /* Basic element styles */
 
 body {
-  font-family:Arial, sans-serif;
-  font-size:14px;
-  background:white;
-  color:rgb(43, 38, 38);
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  background: white;
+  color: rgb(43, 38, 38);
 }
 
-h1, h2, h3, h5, h6 {
-  text-align:center;
+h1,
+h2,
+h3,
+h5,
+h6 {
+  text-align: center;
 }
 
 h1 {
-  font-size:55px;
-  margin-bottom:0px;
-  cursor:default;
-  padding:0px;
-  letter-spacing:2.1px;
+  font-size: 55px;
+  margin-bottom: 0px;
+  cursor: default;
+  padding: 0px;
+  letter-spacing: 2.1px;
 }
 
 h3 {
-  font-size:18px;
-  padding:0px;
+  font-size: 18px;
+  padding: 0px;
 }
 
 h4 {
-  text-align:left;
-  font-size:14px;
-  padding:0px;
-  margin:4px;
+  text-align: left;
+  font-size: 14px;
+  padding: 0px;
+  margin: 4px;
 }
 
 h5 {
-  font-size:20px;
-  margin:-6px 0 0 0;
-  color:#5e6163;
+  font-size: 20px;
+  margin: -6px 0 0 0;
+  color: #5e6163;
 }
 
-input[type='text'] {
-  border-radius:2px;
-  padding:3px;
-  border:solid 1px #bbb;
+input[type="text"] {
+  border-radius: 2px;
+  padding: 3px;
+  border: solid 1px #bbb;
 }
 
 input[type="radio"] {
-  margin-right:5px;
+  margin-right: 5px;
 }
 
 /* Classes for buttons and other stuff */
 
 .btn {
-  background:white;
-  border:solid 1px #bbb;
-  border-radius:3px;
-  cursor:pointer;
-  font-weight:bold;
-  display:inline-block;
-  text-align:center;
-  text-decoration:none;
+  background: white;
+  border: solid 1px #bbb;
+  border-radius: 3px;
+  cursor: pointer;
+  font-weight: bold;
+  display: inline-block;
+  text-align: center;
+  text-decoration: none;
 }
 
 .btn.large {
-  font-size:18px;
-  padding:4px 8px;
-
+  font-size: 18px;
+  padding: 4px 8px;
 }
 
 .btn.medium {
-  font-size:14px;
-  padding:2px 6px;
+  font-size: 14px;
+  padding: 2px 6px;
 }
 
 .btn:hover {
-  color:white !important;
-  text-decoration:none;
+  color: white !important;
+  text-decoration: none;
 }
 
-
 .btn.grey {
-  color:#333;
+  color: #333;
 }
 
 .btn.grey:hover {
-  background:#333;
-  border:solid 1px #333;
+  background: #333;
+  border: solid 1px #333;
 }
 
 .btn.red {
-  color:rgb(208,52,37);
+  color: rgb(208, 52, 37);
 }
 
 .btn.red:hover {
-  background:rgb(208,52,37);
-  border:solid 1px rgb(208,52,37);
+  background: rgb(208, 52, 37);
+  border: solid 1px rgb(208, 52, 37);
 }
 
 .btn.blue {
-  color:rgb(21,90,233);
+  color: rgb(21, 90, 233);
 }
 
 .btn.blue:hover {
-  background:rgb(21,90,233);
-  border:solid 1px rgb(21,90,233);
+  background: rgb(21, 90, 233);
+  border: solid 1px rgb(21, 90, 233);
 }
 
 .btn.green {
-  color:green;
+  color: green;
 }
 
 .btn.green:hover {
-  background:green;
-  border:solid 1px green;
+  background: green;
+  border: solid 1px green;
 }
 
 .btn.blue.active {
-  color:white;
-  background:rgb(21,90,233);
+  color: white;
+  background: rgb(21, 90, 233);
 }
 
 #redirect-row-template {
-  display:none;
+  display: none;
 }
 
 /* Main menu with buttons */
 
 #menu {
-  margin:30px auto 8px auto;
-  max-width:90%;
-  text-align:center;
+  margin: 30px auto 8px auto;
+  max-width: 90%;
+  text-align: center;
 }
 
 #import-file {
-  display:none;
+  display: none;
 }
 
 /* Message box for success/failure messages */
 #message-box {
-  margin:10px auto;
-  width:90%;
-  color:white;
-  max-width:800px;
-  border-radius:3px;
-  height:0px;
-  line-height:30px;
-  font-size:16px;
-  text-align:center;
-  overflow:hidden;
-  transition:height 0.2s ease-out;
-  position:relative;
+  margin: 10px auto;
+  width: 90%;
+  color: white;
+  max-width: 800px;
+  border-radius: 3px;
+  height: 0px;
+  line-height: 30px;
+  font-size: 16px;
+  text-align: center;
+  overflow: hidden;
+  transition: height 0.2s ease-out;
+  position: relative;
 }
 
 #message-box.visible {
-  height:30px;
-  transition:height 0.2s ease-out;
+  height: 30px;
+  transition: height 0.2s ease-out;
 }
 
 #message-box.success {
-  background-color:green;
+  background-color: green;
 }
 
 #message-box.error {
-  background-color:rgb(208,52,37);;
+  background-color: rgb(208, 52, 37);
 }
 
 #message-box a {
-  color:white;
-  font-size:20px;
-  position:absolute;
-  right:6px;
-  top:0px;
-  cursor:pointer;
+  color: white;
+  font-size: 20px;
+  position: absolute;
+  right: 6px;
+  top: 0px;
+  cursor: pointer;
 }
 
 /* Table of redirects */
 
 .redirect-table {
-  max-width:800px;
-  border:solid 1px #bbb;
-  margin:0px auto;
-  border-radius:3px;
+  max-width: 800px;
+  border: solid 1px #bbb;
+  margin: 0px auto;
+  border-radius: 3px;
 }
 
 .redirect-row {
-  position:relative;
-  font-size:14px;
-  padding:8px;
-  line-height:18px;
-  border-bottom:solid 1px #bbb;
+  position: relative;
+  font-size: 14px;
+  padding: 8px;
+  line-height: 18px;
+  border-bottom: solid 1px #bbb;
 }
 
 .redirect-info {
-  display:table;
+  display: table;
 }
 
 .redirect-info div {
-  display:table-row;
+  display: table-row;
 }
 
 .redirect-info div label {
-  display:table-cell;
-  padding:3px 5px;
-  white-space:nowrap;
+  display: table-cell;
+  padding: 3px 5px;
+  white-space: nowrap;
 }
 
 .redirect-info div p {
-  display:table-cell;
-  word-wrap:anywhere;
-  max-width:700px;
+  display: table-cell;
+  word-wrap: anywhere;
+  max-width: 700px;
 }
 
 .redirect-row:last-child {
-  border-bottom:none !important;
+  border-bottom: none !important;
 }
 
 .redirect-row:nth-child(odd) {
-  background:#f8f8f8;
+  background: #f8f8f8;
 }
 
-.redirect-info.disabled label, .redirect-info.disabled span, span.disabled, .redirect-info.disabled p, a.disabled, button[disabled] {
-  color:#bbb !important;
+.redirect-info.disabled label,
+.redirect-info.disabled span,
+span.disabled,
+.redirect-info.disabled p,
+a.disabled,
+button[disabled] {
+  color: #bbb !important;
 }
 
 button span {
-  pointer-events:none;
+  pointer-events: none;
 }
 
 /* Edit, Delete, Disable buttons */
 .redirect-row button {
-  font-size:13px;
-  margin-top:5px;
-  padding:2px;
-  width:80px;
-  display:inline-block;
+  font-size: 13px;
+  margin-top: 5px;
+  padding: 2px;
+  width: 80px;
+  display: inline-block;
 }
 
 .redirect-row h4 span.disabled-marker {
-  color:red !important;
+  color: red !important;
 }
 
 /* nav btns */
-.move-up-btn, .move-down-btn, .move-downbottom-btn, .move-uptop-btn {
-  width:45px !important;
+.move-up-btn,
+.move-down-btn,
+.move-downbottom-btn,
+.move-uptop-btn {
+  width: 45px !important;
 }
 
-.move-downbottom-btn, .move-uptop-btn {
-  height:25px !important;
+.move-downbottom-btn,
+.move-uptop-btn {
+  height: 25px !important;
 }
 
 .redirect-row label {
-  display:inline-block;
-  width:80px;
-  font-weight:bold;
-  text-align:right;
+  display: inline-block;
+  width: 80px;
+  font-weight: bold;
+  text-align: right;
 }
 
 .arrow {
-  font-size:18px;
+  font-size: 18px;
 }
 
-a.disabled:hover, button[disabled]:hover {
-  cursor:default;
-  color:#bbb !important;
-  border:solid 1px #bbb !important;
-  background:white !important;
+a.disabled:hover,
+button[disabled]:hover {
+  cursor: default;
+  color: #bbb !important;
+  border: solid 1px #bbb !important;
+  background: white !important;
 }
 
 /* Toggle Grouping Checkbox */
 .toggle-container {
-  display:block;
-  position:absolute;
-  top:8%;
-  right:5%;
-  cursor:pointer;
-  font-size:22px;
-  -webkit-user-select:none;
-  -moz-user-select:none;
-  -ms-user-select:none;
-  user-select:none;
+  display: block;
+  position: absolute;
+  top: 8%;
+  right: 5%;
+  cursor: pointer;
+  font-size: 22px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .toggle-container input {
-  position:absolute;
-  opacity:0;
-  cursor:pointer;
-  height:0;
-  width:0;
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
 }
 
 .checkmark {
-  position:absolute;
-  height:15px;
-  width:15px;
-  background-color:#eee;
+  position: absolute;
+  height: 15px;
+  width: 15px;
+  background-color: #eee;
 }
 
 .toggle-container:hover input ~ .checkmark {
-  background-color:#ccc;
+  background-color: #ccc;
 }
 
 .toggle-container input:checked ~ .checkMarked {
-  background-color:#2196F3;
+  background-color: #2196f3;
 }
 
 .checkmark:after {
-  content:"";
-  position:absolute;
-  display:none;
+  content: "";
+  position: absolute;
+  display: none;
 }
 
 .toggle-container input:checked ~ .checkMarked:after {
-  display:block;
+  display: block;
 }
 
 .toggle-container .checkMarked:after {
-  left:4px;
-  top:-1px;
-  width:4px;
-  height:9px;
-  border:solid white;
-  border-width:0 3px 3px 0;
-  -webkit-transform:rotate(45deg);
-  -ms-transform:rotate(45deg);
-  transform:rotate(45deg);
+  left: 4px;
+  top: -1px;
+  width: 4px;
+  height: 9px;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
 }
 
 /* Popup form for deleting redirects */
 
 #delete-redirect-form {
-  position:fixed;
-  padding:10px;
-  width:45%;
-  max-height:45%;
-  background:white;
-  border:solid 1px #bbb;
-  border-radius:3px;
-  z-index:6000;
-  display:none;
-  left:50%;
-  top:50%;
-  transform:translate(-50%, -50%);
+  position: fixed;
+  padding: 10px;
+  width: 45%;
+  max-height: 45%;
+  background: white;
+  border: solid 1px #bbb;
+  border-radius: 3px;
+  z-index: 6000;
+  display: none;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 
-#delete-redirect-form div{
-  margin-bottom:7px;
+#delete-redirect-form div {
+  margin-bottom: 7px;
 }
 
 #delete-redirect-form div label:first-child {
-  font-weight:bold;
-  text-align:right;
-  display:inline-block;
-  vertical-align:top;
+  font-weight: bold;
+  text-align: right;
+  display: inline-block;
+  vertical-align: top;
 }
 
 #delete-redirect-form div span {
-  display:inline-block;
-  white-space:nowrap;
-  vertical-align:top;
+  display: inline-block;
+  white-space: nowrap;
+  vertical-align: top;
 }
 
-@media only screen and (max-width:767px) {
-
-#delete-redirect-form {
-  width:90%;
-  max-height:90%;
+@media only screen and (max-width: 767px) {
+  #delete-redirect-form {
+    width: 90%;
+    max-height: 90%;
   }
-  
+
   #delete-redirect-form div span {
-  display:block;
-  white-space:pre-wrap;
+    display: block;
+    white-space: pre-wrap;
   }
 }
 
 /* Edit form */
 
 #cover {
-  position:fixed;
-  top:0px;
-  bottom:0px;
-  left:0px;
-  right:0px;
-  z-index:5000;
-  background:#333;
-  opacity:0.5;
-  display:none;
+  position: fixed;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  z-index: 5000;
+  background: #333;
+  opacity: 0.5;
+  display: none;
 }
 
 .blur {
-  -webkit-filter:blur(3px);
-  filter:blur(3px);
+  -webkit-filter: blur(3px);
+  filter: blur(3px);
 }
 
 #edit-redirect-form {
-  position:fixed;
-  padding:10px;
-  width:wrap;
-  max-height:wrap;
-  background:white;
-  border:solid 1px #bbb;
-  border-radius:3px;
-  z-index:6000;
-  display:none;
-  left:50%;
-  top:50%;
-  transform:translate(-50%, -50%);
-  overflow:auto;
+  position: fixed;
+  padding: 10px;
+  width: wrap;
+  max-height: wrap;
+  background: white;
+  border: solid 1px #bbb;
+  border-radius: 3px;
+  z-index: 6000;
+  display: none;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  overflow: auto;
 }
 
-@media only screen and (max-width:767px) {
-#edit-redirect-form {
-  width:90%;
-  max-height:90%;
+@media only screen and (max-width: 767px) {
+  #edit-redirect-form {
+    width: 90%;
+    max-height: 90%;
   }
 }
 
 .form-grid {
-  display:table;
+  display: table;
 }
 
-.form-grid > div{
-  display:table-row;
+.form-grid > div {
+  display: table-row;
 }
 
 .form-grid > div > label {
-  display:table-cell;
-  font-weight:bold;
-  text-align:right;
-  padding:6px;
-  white-space:nowrap;
-  width:140px;
-  vertical-align:top;
+  display: table-cell;
+  font-weight: bold;
+  text-align: right;
+  padding: 6px;
+  white-space: nowrap;
+  width: 140px;
+  vertical-align: top;
 }
 
 .input-cell {
-  padding-top:1px;
+  padding-top: 1px;
 }
 
-.form-grid div input[type='text'] {
-  width:510px;
-  font-size:14px;
+.form-grid div input[type="text"] {
+  width: 510px;
+  font-size: 14px;
 }
 
 .example-result {
-  width:500px;
-  display:inline-block;
-  word-wrap:break-word;
-  margin-top:5px;
+  width: 500px;
+  display: inline-block;
+  word-wrap: break-word;
+  margin-top: 5px;
 }
 
 .example-result-error {
-  margin-top:5px;
-  display:inline-block;
+  margin-top: 5px;
+  display: inline-block;
 }
 
-#unescape-matches, #escape-matches {
-  margin-top:7px;
-  margin-left:0px;
+#unescape-matches,
+#escape-matches {
+  margin-top: 7px;
+  margin-left: 0px;
 }
 
 .input-cell label {
-  display:block;
+  display: block;
 }
 
 #apply-to {
-  padding-top:3px;
+  padding-top: 3px;
 }
 
 #apply-to label span {
-  position:relative;
-  top:1px;
+  position: relative;
+  top: 1px;
 }
 
 .input-cell label input {
-  margin-left:0px;
+  margin-left: 0px;
 }
 
 .error {
-  color:red;
+  color: red;
 }
 
-.placeholder  {
-  color:#c0c0c0;
-  font-size:11px;
+.placeholder {
+  color: #c0c0c0;
+  font-size: 11px;
 }
 
-::-moz-placeholder {  /* Firefox 19+ */
-   color:#c0c0c0;
+::-moz-placeholder {
+  /* Firefox 19+ */
+  color: #c0c0c0;
 }
 
 .advanced {
-  margin-top:8px;
+  margin-top: 8px;
 }
 
 .hidden {
-  display:none;
+  display: none;
 }
 
 #advanced-toggle {
-  padding-top:3px;
-  text-align:center;
+  padding-top: 3px;
+  text-align: center;
 }
 
 #advanced-toggle a {
-  color:rgb(21,90,233);
-  cursor:pointer;
+  color: rgb(21, 90, 233);
+  cursor: pointer;
 }
 
 #advanced-toggle a:hover {
-  text-decoration:underline;
+  text-decoration: underline;
 }
 
 .advanced div .input-cell label:first-child {
-  margin-top:2px;
+  margin-top: 2px;
 }
 
 .advanced div .input-cell select {
-  margin-top:4px;
-  width:160px;
+  margin-top: 4px;
+  width: 160px;
 }
 
 a[ng-click] {
-  cursor:pointer;
+  cursor: pointer;
 }
 
-#wildcardtype, #regextype {
-  margin-right:10px;
-  display:inline-block;
-  margin-top:4px;
+#wildcardtype,
+#regextype {
+  margin-right: 10px;
+  display: inline-block;
+  margin-top: 4px;
 }
 
 .button-container {
-  margin-top:20px;
-  text-align:center;
-  padding-bottom:10px;
+  margin-top: 20px;
+  text-align: center;
+  padding-bottom: 10px;
 }
 
 /* Footer with link */
 footer {
-  margin-top:30px;
-  text-align:center;
+  margin-top: 30px;
+  text-align: center;
 }
 
 footer small {
-  font-size:10px;
-  color:#555;
+  font-size: 10px;
+  color: #555;
 }
 
-footer small a, footer small a:visited {
-  text-decoration:none;
-  color:rgb(21,90,233);
+footer small a,
+footer small a:visited {
+  text-decoration: none;
+  color: rgb(21, 90, 233);
 }
 
 footer small a:hover {
-  text-decoration:underline;
+  text-decoration: underline;
 }
 
 #storage-sync-option {
-  border-top:solid 1px #bbb;
-  display:none;
+  border-top: solid 1px #bbb;
+  display: none;
 }
 
 #storage-sync-option input {
-  margin:10px;
+  margin: 10px;
 }
 
 /* Dark mode support */
 
-@media (prefers-color-scheme:dark) {
-
+@media (prefers-color-scheme: dark) {
   body {
-    background:rgb(32,33,36);
-    color:#bbb;
+    background: rgb(32, 33, 36);
+    color: #bbb;
   }
 
   h1 {
-    color:#eee;
+    color: #eee;
   }
-  h5, footer small {
-    color:#aaa;
+  h5,
+  footer small {
+    color: #aaa;
   }
 
   .redirect-row label {
-    color:white;
+    color: white;
   }
 
-  footer small a, footer small a:visited {
-    color:rgb(138,179,241);
+  footer small a,
+  footer small a:visited {
+    color: rgb(138, 179, 241);
   }
 
   .redirect-row:nth-child(odd) {
-    background:rgb(31,32,35);
+    background: rgb(31, 32, 35);
   }
   .redirect-row:nth-child(even) {
-    background:rgb(41,42,45);
+    background: rgb(41, 42, 45);
   }
 
   .btn {
-    background-color:rgb(32,33,36);
-    border:solid 1px #777;
+    background-color: rgb(32, 33, 36);
+    border: solid 1px #777;
   }
 
   .btn.grey {
-    color:#ccc;
+    color: #ccc;
   }
 
   .btn.green {
-    color:rgb(53,180,75);
+    color: rgb(53, 180, 75);
   }
 
   .toggle {
-    background-color:#ccc;
+    background-color: #ccc;
   }
 
   #message-box.success {
-    background-color:rgb(53,203,75);;
+    background-color: rgb(53, 203, 75);
   }
 
   #message-box.error {
-    background-color:rgb(252,87,84);
+    background-color: rgb(252, 87, 84);
   }
 
-  .redirect-table, .redirect-row {
-    border-color:#555 !important;
+  .redirect-table,
+  .redirect-row {
+    border-color: #555 !important;
   }
 
   .redirect-row h4 span.disabled-marker {
-    color:rgb(252,87,84) !important;
+    color: rgb(252, 87, 84) !important;
   }
 
   .btn.red {
-    color:rgb(252,87,84);
+    color: rgb(252, 87, 84);
   }
 
   .btn.grey[disabled]:hover {
-    border:solid 1px #777 !important;
-    background:rgb(32,33,36) !important;
-    color:#555 !important;;
+    border: solid 1px #777 !important;
+    background: rgb(32, 33, 36) !important;
+    color: #555 !important;
   }
 
   .btn.grey:hover {
-    border:solid 1px white;
-    background:black;
-    color:white !important;
+    border: solid 1px white;
+    background: black;
+    color: white !important;
   }
 
   .btn.blue {
-    color:rgb(138,179,241);
+    color: rgb(138, 179, 241);
   }
 
   .redirect-row [data-bind="description"] {
-    color:#eee;
+    color: #eee;
   }
 
-  .redirect-info.disabled label, .redirect-info.disabled span, span.disabled, .redirect-info.disabled p, a.disabled, button[disabled] {
-    color:#555 !important;
+  .redirect-info.disabled label,
+  .redirect-info.disabled span,
+  span.disabled,
+  .redirect-info.disabled p,
+  a.disabled,
+  button[disabled] {
+    color: #555 !important;
   }
 
-  #edit-redirect-form, #delete-redirect-form {
-    background:rgb(41,42,45);
-    border:solid 1px #888;
+  #edit-redirect-form,
+  #delete-redirect-form {
+    background: rgb(41, 42, 45);
+    border: solid 1px #888;
   }
 
-  #advanced-toggle a, #advanced-toggle a:visited {
-    color:rgb(138,179,241);
+  #advanced-toggle a,
+  #advanced-toggle a:visited {
+    color: rgb(138, 179, 241);
   }
 
   h3 {
-    color:#eee;
+    color: #eee;
   }
 
-  #edit-redirect-form label, #delete-redirect-form label  {
-    color:white;
-    font-weight:normal;
+  #edit-redirect-form label,
+  #delete-redirect-form label {
+    color: white;
+    font-weight: normal;
   }
 
   .example-result-error {
-    color:rgb(252,87,84) !important;
+    color: rgb(252, 87, 84) !important;
   }
 
   #edit-redirect-form input {
-    background:rgb(68,68,68);
-    color:#ddd;
-    border-color:rgb(68,68,68) !important ;
-    border-radius:2px;
+    background: rgb(68, 68, 68);
+    color: #ddd;
+    border-color: rgb(68, 68, 68) !important ;
+    border-radius: 2px;
   }
 }
