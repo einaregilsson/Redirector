@@ -341,31 +341,31 @@ button[disabled]:hover {
 
 #delete-redirect-form {
   position: fixed;
-  padding:10px;
-  width:45%;
-  background:white;
-  border:solid 1px #bbb;
-  border-radius:3px;
+  padding: 10px;
+  width: 45%;
+  background: white;
+  border: solid 1px #bbb;
+  border-radius: 3px;
   z-index: 6000;
-  left:50%;
-  top:50%;
-  display:none;
+  left: 50%;
+  top: 50%;
+  display: none;
   transform: translate(-50%, -50%);
 }
 
 #delete-redirect-form div{
-  margin-bottom:7px;
+  margin-bottom: 7px;
 }
 
 #delete-redirect-form div label:first-child {
-  font-weight:bold;
+  font-weight: bold;
   text-align: right;
-  display:inline-block;
+  display: inline-block;
   vertical-align: top;
 }
 
 #delete-redirect-form div span {
-  display:inline-block;
+  display: inline-block;
   width: 70%;
   text-overflow: ellipsis;
   overflow: hidden;

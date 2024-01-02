@@ -290,7 +290,7 @@ function pageLoad() {
 		console.log(`Received redirects message, count=${response.redirects.length}`);
 		for (var i = 0; i < response.redirects.length; i++) {
 			REDIRECTS.push(new Redirect(response.redirects[i]));
-		}
+		}	
 
 		if (response.redirects.length === 0) {
 			//Add example redirect for first time users...
@@ -312,6 +312,7 @@ function pageLoad() {
 			}));
 		}
 		renderRedirects();
+		saveChanges();
 	});
 
 	chrome.storage.local.get({
