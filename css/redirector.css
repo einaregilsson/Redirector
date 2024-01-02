@@ -62,6 +62,7 @@ input[type="radio"] {
   display: inline-block;
   text-align: center;
   text-decoration: none;
+  text-shadow: none;
 }
 
 .btn.large {
@@ -340,45 +341,40 @@ button[disabled]:hover {
 
 #delete-redirect-form {
   position: fixed;
-  padding: 10px;
-  width: 45%;
-  max-height: 45%;
-  background: white;
-  border: solid 1px #bbb;
-  border-radius: 3px;
+  padding:10px;
+  width:45%;
+  background:white;
+  border:solid 1px #bbb;
+  border-radius:3px;
   z-index: 6000;
-  display: none;
-  left: 50%;
-  top: 50%;
+  left:50%;
+  top:50%;
+  display:none;
   transform: translate(-50%, -50%);
 }
 
-#delete-redirect-form div {
-  margin-bottom: 7px;
+#delete-redirect-form div{
+  margin-bottom:7px;
 }
 
 #delete-redirect-form div label:first-child {
-  font-weight: bold;
+  font-weight:bold;
   text-align: right;
-  display: inline-block;
+  display:inline-block;
   vertical-align: top;
 }
 
 #delete-redirect-form div span {
-  display: inline-block;
+  display:inline-block;
+  width: 70%;
+  text-overflow: ellipsis;
+  overflow: hidden;
   white-space: nowrap;
-  vertical-align: top;
 }
 
 @media only screen and (max-width: 767px) {
   #delete-redirect-form {
-    width: 90%;
-    max-height: 90%;
-  }
-
-  #delete-redirect-form div span {
-    display: block;
-    white-space: pre-wrap;
+    width: 95vw;
   }
 }
 

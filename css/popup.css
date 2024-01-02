@@ -19,6 +19,7 @@ h1 span {
 
 button {
   margin: 5px auto !important;
+  font-size: 1.4rem;
   display: block;
   width: 90%;
   min-height: 32px;
@@ -26,10 +27,10 @@ button {
 }
 
 .disabled {
-  margin-top: -16px;
-  height: 13px;
+  margin-top: -1.5rem;
   color: red;
-  font-size: 12px;
+  font-size: 2.5rem;
+  letter-spacing: 2.1px;
 }
 
 label {
