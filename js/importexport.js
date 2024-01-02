@@ -21,53 +21,53 @@ function showImportedMessage(imported, existing) {
 }
 
 function importRedirects(ev) {
+    let file = ev.target.files[0];
+    if (!file) {
+        return;
+    }
 
-	let file = ev.target.files[0];
-	if (!file) {
-		return;
-	}
-	var reader = new FileReader();
+    var reader = new FileReader();
 
-	reader.onload = function(e) {
-		var data;
-		try {
-			data = JSON.parse(reader.result);
-		} catch (e) {
-			showMessage('Failed to parse JSON data, invalid JSON: ' + (e.message || '').substr(0, 100));
-			return;
-		}
+    reader.onload = function (e) {
+        var data;
+        try {
+            data = JSON.parse(reader.result);
+        } catch (e) {
+            showMessage('Failed to parse JSON data, invalid JSON: ' + (e.message || '').substr(0, 100));
+            return;
+        }
 
-		if (!data.redirects) {
-			showMessage('Invalid JSON, missing "redirects" property');
-			return;
-		}
+        if (!data.redirects) {
+            showMessage('Invalid JSON, missing "redirects" property');
+            return;
+        }
 
-		var imported = 0,
-			existing = 0;
-		for (var i = 0; i < data.redirects.length; i++) {
-			var r = new Redirect(data.redirects[i]);
-			r.updateExampleResult();
-			if (REDIRECTS.some(function(i) {
-					return new Redirect(i).equals(r);
-				})) {
-				existing++;
-			} else {
-				REDIRECTS.push(r.toObject());
-				imported++;
-			}
-		}
+        var imported = 0,
+            existing = 0;
 
-		showImportedMessage(imported, existing);
+        data.redirects.forEach(redirectData => {
+            const r = new Redirect(redirectData);
+            r.updateExampleResult();
 
-		saveChanges();
-		renderRedirects();
-	};
+            if (REDIRECTS.some(existingRedirect => new Redirect(existingRedirect).equals(r))) {
+                existing++;
+            } else {
+                REDIRECTS.push(r.toObject());
+                imported++;
+            }
+        });
 
-	try {
-		reader.readAsText(file, 'utf-8');
-	} catch (e) {
-		showMessage('Failed to read import file');
-	}
+        showImportedMessage(imported, existing);
+
+        saveChanges();
+        renderRedirects();
+    };
+
+    try {
+        reader.readAsText(file, 'utf-8');
+    } catch (e) {
+        showMessage('Failed to read import file');
+    }
 }
 
 function updateExportLink() {

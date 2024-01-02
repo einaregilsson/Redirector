@@ -24,19 +24,19 @@ h1 {
 }
 
 h3 {
-  font-size: 1.7rem;
+  font-size: 1.5rem;
   padding: 0px;
 }
 
 h4 {
   text-align: left;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   padding: 0px;
   margin: 4px;
 }
 
 h5 {
-  font-size: 1.35rem;
+  font-size: 1.1rem;
   margin: -6px 0 0 0;
   color: #5e6163;
 }
@@ -127,7 +127,7 @@ input[type="radio"] {
 /* Main menu with buttons */
 
 #menu {
-  margin: 30px auto 8px auto;
+  margin: 30px auto;
   max-width: 90%;
   text-align: center;
 }

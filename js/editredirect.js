@@ -51,7 +51,6 @@ function toggleAdvancedOptions(ev) {
 	}
 }
 
-
 function editFormChange() {
 	//Now read values back from the form...
 	for (let input of el('#edit-redirect-form').querySelectorAll('input[type="text"][data-bind]')) {
@@ -70,8 +69,6 @@ function editFormChange() {
 
 	dataBind('#edit-redirect-form', activeRedirect);
 }
-
-
 
 var deleteIndex;
 
@@ -94,7 +91,6 @@ function cancelDelete() {
 	hideForm('#delete-redirect-form');
 }
 
-
 function setupEditAndDeleteEventListeners() {
 
 	el('#btn-save-redirect').addEventListener('click', saveRedirect);
@@ -109,6 +105,5 @@ function setupEditAndDeleteEventListeners() {
 	//Listen to any change from the edit form...
 	el('#edit-redirect-form').addEventListener('input', editFormChange);
 }
-
 
 setupEditAndDeleteEventListeners();

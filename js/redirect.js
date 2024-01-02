@@ -26,7 +26,6 @@ Redirect.requestTypes = {
 	other: "Other"
 };
 
-
 Redirect.prototype = {
 
 	//attributes

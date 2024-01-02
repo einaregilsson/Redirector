@@ -2,7 +2,7 @@
 //as well as monitoring changes in the redirects and the disabled status and reacting to them.
 function log(msg, force) {
 	if (log.enabled || force) {
-		console.log('REDIRECTOR: ' + msg);
+		console.log(`REDIRECTOR: ${msg}`);
 	}
 }
 log.enabled = false;
@@ -21,14 +21,10 @@ var partitionedRedirects = {};
 //Cache of urls that have just been redirected to. They will not be redirected again, to
 //stop recursive redirects, and endless redirect chains.
 //Key is url, value is timestamp of redirect.
-var ignoreNextRequest = {
-
-};
+var ignoreNextRequest = {};
 
 //url => { timestamp:ms, count:1...n};
-var justRedirected = {
-
-};
+var justRedirected = {};
 var redirectThreshold = 3;
 
 function setIcon(image) {
@@ -44,7 +40,7 @@ function setIcon(image) {
 		var err = chrome.runtime.lastError;
 		if (err) {
 			//If not checked we will get unchecked errors in the background page console...
-			log('Error in SetIcon: ' + err.message);
+			log(`Error in SetIcon: ${err.message}`);
 		}
 	});
 }
@@ -58,60 +54,58 @@ function checkRedirects(details) {
 	if (details.method != 'GET') {
 		return {};
 	}
-	log('Checking: ' + details.type + ': ' + details.url);
+	log(`Checking: ${details.type}: ${details.url}`);
 
 	var list = partitionedRedirects[details.type];
 	if (!list) {
-		log('No list for type: ' + details.type);
+		log(`No list for type: ${details.type}`);
 		return {};
 	}
 
 	var timestamp = ignoreNextRequest[details.url];
 	if (timestamp) {
-		log('Ignoring ' + details.url + ', was just redirected ' + (new Date().getTime() - timestamp) + 'ms ago');
+		log(`Ignoring ${details.url}, was just redirected ${(new Date().getTime() - timestamp)}ms ago`);
 		delete ignoreNextRequest[details.url];
 		return {};
 	}
 
-
-	for (var i = 0; i < list.length; i++) {
-		var r = list[i];
-		var result = r.getMatch(details.url);
-
+	for (const rule of list) {
+		const result = rule.getMatch(details.url);
+	
 		if (result.isMatch) {
-
-			//Check if we're stuck in a loop where we keep redirecting this, in that
-			//case ignore!
-			var data = justRedirected[details.url];
-
-			var threshold = 3000;
-			if (!data || ((new Date().getTime() - data.timestamp) > threshold)) { //Obsolete after 3 seconds
+			// Check if we're stuck in a loop where we keep redirecting this, in that case ignore!
+			const data = justRedirected[details.url];
+			const threshold = 3000;
+	
+			if (!data || (new Date().getTime() - data.timestamp > threshold)) {
 				justRedirected[details.url] = {
 					timestamp: new Date().getTime(),
-					count: 1
+					count: 1,
 				};
 			} else {
 				data.count++;
 				justRedirected[details.url] = data;
+				
 				if (data.count >= redirectThreshold) {
-					log('Ignoring ' + details.url + ' because we have redirected it ' + data.count + ' times in the last ' + threshold + 'ms');
+					log(`Ignoring ${details.url} because we have redirected it ${data.count} times in the last ${threshold}ms`);
 					return {};
 				}
 			}
-
-
-			log('Redirecting ' + details.url + ' ===> ' + result.redirectTo + ', type: ' + details.type + ', pattern: ' + r.includePattern + ' which is in Rule : ' + r.description);
+	
+			log(`Redirecting ${details.url} ===> ${result.redirectTo}, type: ${details.type}, pattern: ${rule.includePattern} which is in Rule: ${rule.description}`);
+			
 			if (enableNotifications) {
-				sendNotifications(r, details.url, result.redirectTo);
+				sendNotifications(rule, details.url, result.redirectTo);
 			}
+			
 			ignoreNextRequest[result.redirectTo] = new Date().getTime();
-
+	
 			return {
-				redirectUrl: result.redirectTo
+				redirectUrl: result.redirectTo,
 			};
 		}
 	}
-
+	
 	return {};
 }
 
@@ -139,10 +133,10 @@ function monitorChanges(changes, namespace) {
 
 	if (changes.logging) {
 		log.enabled = changes.logging.newValue;
-		log('Logging settings have changed to ' + changes.logging.newValue, true); //Always want this to be logged...
+		log(`Logging settings have changed to ${changes.logging.newValue}`, true); //Always want this to be logged...
 	}
 	if (changes.enableNotifications) {
-		log('notifications setting changed to ' + changes.enableNotifications.newValue);
+		log(`notifications setting changed to ${changes.enableNotifications.newValue}`);
 		enableNotifications = changes.enableNotifications.newValue;
 	}
 }
@@ -208,7 +202,7 @@ function setUpRedirectListener() {
 		partitionedRedirects = createPartitionedRedirects(redirects);
 		var filter = createFilter(redirects);
 
-		log('Setting filter for listener: ' + JSON.stringify(filter));
+		log(`Setting filter for listener: ${JSON.stringify(filter)}`);
 		chrome.webRequest.onBeforeRequest.addListener(checkRedirects, filter, ["blocking"]);
 
 		if (partitionedRedirects.history) {
@@ -282,24 +276,23 @@ function updateIcon() {
 	});
 }
 
-
 //Firefox doesn't allow the "content script" which is actually privileged
 //to access the objects it gets from chrome.storage directly, so we
 //proxy it through here.
 chrome.runtime.onMessage.addListener(
 	function(request, sender, sendResponse) {
-		log('Received background message: ' + JSON.stringify(request));
+		log(`Received background message: ${JSON.stringify(request)}`);
 		if (request.type == 'get-redirects') {
 			log('Getting redirects from storage');
 			storageArea.get({
 				redirects: []
 			}, function(obj) {
-				log('Got redirects from storage: ' + JSON.stringify(obj));
+				log(`Got redirects from storage: ${JSON.stringify(obj)}`);
 				sendResponse(obj);
 				log('Sent redirects to content page');
 			});
 		} else if (request.type == 'save-redirects') {
-			console.log('Saving redirects, count=' + request.redirects.length);
+			console.log(`Saving redirects, count=${request.redirects.length}`);
 			delete request.type;
 			storageArea.set(request, function(a) {
 				if (chrome.runtime.lastError) {
@@ -322,7 +315,7 @@ chrome.runtime.onMessage.addListener(
 			// Notes on Toggle Sync feature here https://github.com/einaregilsson/Redirector/issues/86#issuecomment-389943854
 			// This provides for feature request - issue 86
 			delete request.type;
-			log('toggling sync to ' + request.isSyncEnabled);
+			log(`toggling sync to ${request.isSyncEnabled}`);
 			// Setting for Sync enabled or not, resides in Local.
 			chrome.storage.local.set({
 					isSyncEnabled: request.isSyncEnabled
@@ -330,12 +323,12 @@ chrome.runtime.onMessage.addListener(
 				function() {
 					if (request.isSyncEnabled) {
 						storageArea = chrome.storage.sync;
-						log('storageArea size for sync is 5 MB but one object (redirects) is allowed to hold only ' + storageArea.QUOTA_BYTES_PER_ITEM / 1000000 + ' MB, that is .. ' + storageArea.QUOTA_BYTES_PER_ITEM + " bytes");
+						log(`storageArea size for sync is 5 MB but one object (redirects) is allowed to hold only ${storageArea.QUOTA_BYTES_PER_ITEM / 1000000} MB, that is .. ${storageArea.QUOTA_BYTES_PER_ITEM} bytes`);
 						chrome.storage.local.getBytesInUse("redirects",
 							function(size) {
-								log("size of redirects is " + size + " bytes");
+								log(`size of redirects is ${size} bytes`);
 								if (size > storageArea.QUOTA_BYTES_PER_ITEM) {
-									log("size of redirects " + size + " is greater than allowed for Sync which is " + storageArea.QUOTA_BYTES_PER_ITEM);
+									log(`size of redirects ${size} is greater than allowed for Sync which is ${storageArea.QUOTA_BYTES_PER_ITEM}`);
 									// Setting storageArea back to Local.
 									storageArea = chrome.storage.local;
 									sendResponse({
@@ -368,7 +361,7 @@ chrome.runtime.onMessage.addListener(
 							});
 					} else {
 						storageArea = chrome.storage.local;
-						log('storageArea size for local is ' + storageArea.QUOTA_BYTES / 1000000 + ' MB, that is .. ' + storageArea.QUOTA_BYTES + " bytes");
+						log(`storageArea size for local is ${storageArea.QUOTA_BYTES / 1000000} MB, that is .. ${storageArea.QUOTA_BYTES} bytes`);
 						chrome.storage.sync.get({
 							redirects: []
 						}, function(obj) {
@@ -393,7 +386,7 @@ chrome.runtime.onMessage.addListener(
 				});
 
 		} else {
-			log('Unexpected message: ' + JSON.stringify(request));
+			log(`Unexpected message: ${JSON.stringify(request)}`);
 			return false;
 		}
 
@@ -401,7 +394,6 @@ chrome.runtime.onMessage.addListener(
 		//we're sending the response asynchronously.
 	}
 );
-
 
 //First time setup
 updateIcon();
@@ -444,7 +436,6 @@ function setupInitial() {
 	});
 }
 log('Redirector starting up...');
-
 
 // Below is a feature request by an user who wished to see visual indication for an Redirect rule being applied on URL 
 // https://github.com/einaregilsson/Redirector/issues/72

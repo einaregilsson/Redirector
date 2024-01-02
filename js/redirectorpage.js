@@ -22,7 +22,7 @@ function saveChanges() {
 		if (response.message.indexOf("Redirects failed to save") > -1) {
 			showMessage(response.message, false);
 		} else {
-			console.log('Saved ' + arr.length + ' redirects at ' + new Date() + '. Message from background page:' + response.message);
+			console.log(`Saved ${arr.length} redirects at ${new Date()}. Message from background page: ${response.message}`);
 		}
 	});
 }
@@ -95,7 +95,6 @@ function renderSingleRedirect(node, redirect, index) {
 	delete redirect.$last;
 	delete redirect.$index;
 }
-
 
 function updateBindings() {
 
@@ -288,7 +287,7 @@ function pageLoad() {
 	chrome.runtime.sendMessage({
 		type: "get-redirects"
 	}, function(response) {
-		console.log('Received redirects message, count=' + response.redirects.length);
+		console.log(`Received redirects message, count=${response.redirects.length}`);
 		for (var i = 0; i < response.redirects.length; i++) {
 			REDIRECTS.push(new Redirect(response.redirects[i]));
 		}

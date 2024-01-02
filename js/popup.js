@@ -17,8 +17,6 @@ function toggle(prop) {
 	});
 }
 
-
-
 function openRedirectorSettings() {
 	var url = chrome.extension.getURL('redirector.html');
 

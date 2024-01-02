@@ -60,7 +60,6 @@ if (!chrome || !chrome.storage || !chrome.storage.local) {
 
 	localStorage.redirector = JSON.stringify(testData);
 
-
 	//Make dummy for testing...
 	window.chrome = window.chrome || {};
 	chrome.storage = {
