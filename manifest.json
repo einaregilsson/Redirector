@@ -37,7 +37,7 @@
   },
   "options_ui": {
     "page": "redirector.html",
-    "chrome_style": true
+    "open_in_tab": true
   },
   "browser_action": {
     "default_icon": {
