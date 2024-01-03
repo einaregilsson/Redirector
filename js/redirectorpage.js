@@ -112,14 +112,40 @@ function updateBindings() {
 }
 
 function duplicateRedirect(index) {
-	let redirect = new Redirect(REDIRECTS[index]);
-	REDIRECTS.splice(index, 0, redirect);
+    let originalRedirect = new Redirect(REDIRECTS[index]);
 
-	let newNode = template.cloneNode(true);
-	newNode.removeAttribute('id');
-	el('.redirect-rows').appendChild(newNode);
-	updateBindings();
-	saveChanges();
+    // Create a new Redirect instance for the duplicate
+    let duplicatedRedirect = new Redirect({
+        ...originalRedirect, // Copy properties from the original redirect
+        description: incrementDescription(originalRedirect.description)
+    });
+
+    // Ensure the new description is unique across the entire list
+    while (descriptionExists(duplicatedRedirect.description)) {
+        duplicatedRedirect.description = incrementDescription(duplicatedRedirect.description);
+    }
+
+    REDIRECTS.splice(index + 1, 0, duplicatedRedirect);
+
+    let newNode = template.cloneNode(true);
+    newNode.removeAttribute('id');
+    el('.redirect-rows').appendChild(newNode);
+    updateBindings();
+    saveChanges();
+}
+
+function incrementDescription(description) {
+    // Check if the description contains a number at the end
+    let match = description.match(/(\d+)$/);
+    let count = match ? parseInt(match[1]) + 1 : 2;
+
+    // Increment number in the description
+    return description.replace(/(\d+)?$/, ' ' + count);
+}
+
+function descriptionExists(description) {
+    // Check if the given description already exists in the list
+    return REDIRECTS.some(redirect => redirect.description === description);
 }
 
 function checkIfGroupingExists() {
