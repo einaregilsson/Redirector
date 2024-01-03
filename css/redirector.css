@@ -140,21 +140,22 @@ input[type="radio"] {
 /* Message box for success/failure messages */
 #message-box {
   margin: 10px auto;
-  width: 90%;
+  width: 100%;
   color: white;
   max-width: 800px;
   border-radius: 3px;
   height: 0px;
-  line-height: 30px;
-  font-size: 16px;
+  line-height: 2rem;
+  font-size: 1rem;
   text-align: center;
   overflow: hidden;
+  white-space: normal;
   transition: height 0.2s ease-out;
   position: relative;
 }
 
 #message-box.visible {
-  height: 30px;
+  height: auto;
   transition: height 0.2s ease-out;
 }
 
@@ -168,10 +169,11 @@ input[type="radio"] {
 
 #message-box a {
   color: white;
-  font-size: 20px;
+  font-size: 1.5rem;
   position: absolute;
   right: 6px;
-  top: 0px;
+  top: 50%;
+  transform: translateY(-50%);
   cursor: pointer;
 }
 

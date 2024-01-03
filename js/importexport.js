@@ -117,9 +117,16 @@ function updateExportLink() {
 
 updateExportLink();
 
+// Need to remove EventListener to allow using the import button more than once without reloading the page
 function setupImportExportEventListeners() {
-    el("#import-file").addEventListener('change', importRedirects);
-    el("#export-link").addEventListener('mousedown', updateExportLink);
+    const importFileInput = el("#import-file");
+    const exportLink = el("#export-link");
+
+    importFileInput.removeEventListener('change', importRedirects);
+    importFileInput.addEventListener('change', importRedirects);
+
+    exportLink.removeEventListener('mousedown', updateExportLink);
+    exportLink.addEventListener('mousedown', updateExportLink);
 }
 
 setupImportExportEventListeners();
