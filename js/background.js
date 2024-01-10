@@ -292,7 +292,7 @@ chrome.runtime.onMessage.addListener(
 				log('Sent redirects to content page');
 			});
 		} else if (request.type == 'save-redirects') {
-			console.log(`Saving redirects, count=${request.redirects.length}`);
+			log(`Saving redirects, count=${request.redirects.length}`);
 			delete request.type;
 			storageArea.set(request, function(a) {
 				if (chrome.runtime.lastError) {
@@ -444,7 +444,7 @@ log('Redirector starting up...');
 // Upon browser startup, just set enableNotifications to false.
 // Listen to a message from Settings page to change this to true.
 function sendNotifications(redirect, originalUrl, redirectedUrl) {
-	//var message = "Applied rule : " + redirect.description + " and redirected original page " + originalUrl + " to " + redirectedUrl;
+	//var message = `Applied rule: ${redirect.description} and redirected original page ${originalUrl} to ${redirectedUrl}`;
 	log("Showing redirect success notification");
 	//Firefox and other browsers does not yet support "list" type notification like in Chrome.
 	// Console.log(JSON.stringify(chrome.notifications)); -- This will still show "list" as one option but it just won't work as it's not implemented by Firefox yet
@@ -463,7 +463,7 @@ function sendNotifications(redirect, originalUrl, redirectedUrl) {
 			title: "Redirected to: ",
 			message: redirectedUrl
 		}];
-		var head = "Redirector - Applied rule : " + redirect.description;
+		var head = `Redirector - Applied rule: ${redirect.description}`;
 		chrome.notifications.create({
 			type: "list",
 			items: items,
@@ -472,7 +472,7 @@ function sendNotifications(redirect, originalUrl, redirectedUrl) {
 			iconUrl: icon
 		});
 	} else {
-		var message = "Applied rule : " + redirect.description + " and redirected original page " + originalUrl + " to " + redirectedUrl;
+		var message = `Applied rule: ${redirect.description} and redirected original page ${originalUrl} to ${redirectedUrl}`;
 
 		chrome.notifications.create({
 			type: "basic",

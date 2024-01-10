@@ -5,7 +5,13 @@ var options = {
 var template;
 
 function normalize(r) {
-	return new Redirect(r).toObject(); //Cleans out any extra props, and adds default values for missing ones.
+    let normalizedRedirect = new Redirect(r).toObject();
+    // Check if the redirect already has an ID, assign a new one only if it doesn't
+    if (normalizedRedirect.id === undefined) {
+		normalizedRedirect.id = nanoid();
+		console.log("Assigned new ID:", normalizedRedirect.id);
+	}
+    return normalizedRedirect;
 }
 
 // Saves the entire list of redirects to storage.
@@ -18,7 +24,6 @@ function saveChanges() {
 		type: "save-redirects",
 		redirects: arr
 	}, function(response) {
-		console.log(response.message);
 		if (response.message.indexOf("Redirects failed to save") > -1) {
 			showMessage(response.message, false);
 		} else {
@@ -43,7 +48,7 @@ function toggleSyncSetting() {
 			chrome.storage.local.set({
 				isSyncEnabled: $s.isSyncEnabled
 			}, function() {
-				// console.log("set back to false");
+				//console.log("set back to false");
 			});
 			showMessage(response.message, false);
 		} else {
@@ -55,15 +60,18 @@ function toggleSyncSetting() {
 }
 
 function renderRedirects() {
-	el('.redirect-rows').textContent = '';
-	for (let i = 0; i < REDIRECTS.length; i++) {
-		let r = REDIRECTS[i];
-		let node = template.cloneNode(true);
-		node.removeAttribute('id');
+    el('.redirect-rows').textContent = '';
+    //console.log("Rendering redirects:", REDIRECTS.length); // Log the count
 
-		renderSingleRedirect(node, r, i);
-		el('.redirect-rows').appendChild(node);
-	}
+    for (let i = 0; i < REDIRECTS.length; i++) {
+        let r = REDIRECTS[i];
+        let node = template.cloneNode(true);
+        node.removeAttribute('id');
+
+        renderSingleRedirect(node, r, i);
+        el('.redirect-rows').appendChild(node);
+        //console.log("Rendered redirect:", r); // Log each rendered redirect
+    }
 }
 
 function renderSingleRedirect(node, redirect, index) {
@@ -313,18 +321,19 @@ function pageLoad() {
 	chrome.runtime.sendMessage({
 		type: "get-redirects"
 	}, function(response) {
-		console.log(`Received redirects message, count=${response.redirects.length}`);
+		//console.log(`Received redirects message, count=${response.redirects.length}`);
 		for (var i = 0; i < response.redirects.length; i++) {
 			REDIRECTS.push(new Redirect(response.redirects[i]));
 		}	
 
 		if (response.redirects.length === 0) {
-			//Add example redirect for first time users...
+			//console.log("First run, adding example rule")
 			REDIRECTS.push(new Redirect({
 				"description": "Example redirect, try going to https://example.com/anywordhere",
 				"exampleUrl": "https://example.com/some-word-that-matches-wildcard",
 				"exampleResult": "https://google.com/search?q=some-word-that-matches-wildcard",
 				"error": null,
+				"id": "NEixgGiEr3XHcj6_K_kKl",
 				"includePattern": "https://example.com/*",
 				"excludePattern": "",
 				"patternDesc": "Any word after example.com leads to google search for that word.",
@@ -339,6 +348,7 @@ function pageLoad() {
 		}
 		renderRedirects();
 		saveChanges();
+		updateExportLink();
 	});
 
 	chrome.storage.local.get({

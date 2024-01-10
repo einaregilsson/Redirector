@@ -374,12 +374,6 @@ button[disabled]:hover {
   white-space: nowrap;
 }
 
-@media only screen and (max-width: 767px) {
-  #delete-redirect-form {
-    width: 95vw;
-  }
-}
-
 /* Edit form */
 
 #cover {
@@ -402,8 +396,6 @@ button[disabled]:hover {
 #edit-redirect-form {
   position: fixed;
   padding: 10px;
-  width: wrap;
-  max-height: wrap;
   background: white;
   border: solid 1px #bbb;
   border-radius: 3px;
@@ -413,13 +405,6 @@ button[disabled]:hover {
   top: 50%;
   transform: translate(-50%, -50%);
   overflow: auto;
-}
-
-@media only screen and (max-width: 767px) {
-  #edit-redirect-form {
-    width: 90%;
-    max-height: 90%;
-  }
 }
 
 .form-grid {
@@ -446,7 +431,7 @@ button[disabled]:hover {
 
 .form-grid div input[type="text"] {
   width: 510px;
-  font-size: 14px;
+  font-size: 0.9rem;
 }
 
 .example-result {
@@ -576,12 +561,58 @@ footer small a:hover {
   margin: 10px;
 }
 
+/* Popup form for importing redirects */
+#import-popup {
+  position: fixed;
+  padding: 10px;
+  width: 45%;
+  background: white;
+  border: solid 1px #bbb;
+  border-radius: 3px;
+  z-index: 6000;
+  left: 50%;
+  top: 50%;
+  display: none;
+  transform: translate(-50%, -50%);
+}
+
+#import-popup input {
+  font-weight: bold;
+  text-align: center;
+  display: inline-block;
+  vertical-align: top;
+  margin-bottom: 0.5rem;
+}
+
+.popup-content {
+  text-align: center;
+  margin-bottom: 7px;
+}
+
+@media only screen and (max-width: 767px) {
+  #delete-redirect-form,
+  #edit-redirect-form,
+  #import-popup {
+    width: 85vw;
+  }
+}
+
 /* Dark mode support */
 
 @media (prefers-color-scheme: dark) {
   body {
     background: rgb(32, 33, 36);
     color: #bbb;
+  }
+
+  #import-popup {
+    background: rgb(41, 42, 45);
+    border: solid 1px #888;
+  }
+
+  #import-popup label {
+    color: white;
+    font-weight: normal;
   }
 
   h1 {

@@ -170,14 +170,29 @@
         <button id="btn-cancel-edit" class="btn red large">Cancel</button>
       </div>
     </div>
+    <!-- Import Popup -->
+    <div id="import-popup">
+      <div class="popup-content">
+        <h3>Would You Like To</h3>
+        <input type="file" id="import-file-popup" style="display: none;" accept=".rjson,.json,.txt" />
+        <button id="import-file-popup-cb" class="btn blue large">Import From File</button>
+        <h3>OR</h3>
+        <div class="input-cell">
+          <input type="url" id="import-url-popup" placeholder="Import From URL" autocomplete="off" />
+        </div>
+        <button id="import-url-button" class="btn blue large">Fetch and Import</button>
+        <div class="button-container">
+          <button id="cancel-import" class="btn grey large">Cancel</button>
+        </div>
+      </div>
+    </div>
     <div id="blur-wrapper">
       <h1>REDIRECTOR</h1>
       <h5>Go where <em>YOU</em> want! </h5>
       <div id="menu">
         <a id="create-new-redirect" class="btn blue large">Create new redirect</a>
-        <!-- Importing/Exporting of redirects -->
         <span>
-          <input type="file" id="import-file" accept=".rjson,.json,.txt" />
+          <!-- Importing/Exporting of redirects -->
           <label for="import-file" class="btn blue large">Import</label>
           <a class="btn blue large" id="export-link" download="Redirector.json">Export</a>
           <label class="btn blue large" id="organize-mode">Organize</label>

@@ -30,6 +30,7 @@ Redirect.prototype = {
 
 	//attributes
 	description: '',
+	id: '',
 	exampleUrl: '',
 	exampleResult: '',
 	error: null,
@@ -57,6 +58,7 @@ Redirect.prototype = {
 
 	equals: function(redirect) {
 		return this.description == redirect.description &&
+			this.id == redirect.id &&
 			this.exampleUrl == redirect.exampleUrl &&
 			this.includePattern == redirect.includePattern &&
 			this.excludePattern == redirect.excludePattern &&
@@ -70,6 +72,7 @@ Redirect.prototype = {
 	toObject: function() {
 		return {
 			description: this.description,
+			id: this.id,
 			exampleUrl: this.exampleUrl,
 			exampleResult: this.exampleResult,
 			error: this.error,
@@ -216,6 +219,7 @@ Redirect.prototype = {
 	_init: function(o) {
 		o = o || {};
 		this.description = o.description || '';
+		this.id = o.id || '';
 		this.exampleUrl = o.exampleUrl || '';
 		this.exampleResult = o.exampleResult || '';
 		this.error = o.error || null;
@@ -253,8 +257,8 @@ Redirect.prototype = {
 			urlEncode: 'E.g. turn /bar/foo?x=2 into %2Fbar%2Ffoo%3Fx%3D2',
 			urlDecode: 'E.g. turn %2Fbar%2Ffoo%3Fx%3D2 into /bar/foo?x=2',
 			doubleUrlDecode: 'E.g. turn %252Fbar%252Ffoo%253Fx%253D2 into /bar/foo?x=2',
-			base64Decode: 'E.g. turn aHR0cDovL2Nubi5jb20= into http://cnn.com'
-		};
+			base64Decode: 'E.g. turn aHR0cHM6Ly9nb29nbGUuY29tLw== into https://google.com/'
+		};		
 
 		return examples[this.processMatches];
 	},
@@ -275,22 +279,25 @@ Redirect.prototype = {
 		for (var i = matches.length - 1; i > 0; i--) {
 			var repl = matches[i] || '';
 			if (this.processMatches == 'urlDecode') {
-				repl = unescape(repl);
+				repl = decodeURIComponent(repl);
 			} else if (this.processMatches == 'doubleUrlDecode') {
-				repl = unescape(unescape(repl));
+				repl = decodeURIComponent(decodeURIComponent(repl));
 			} else if (this.processMatches == 'urlEncode') {
 				repl = encodeURIComponent(repl);
 			} else if (this.processMatches == 'base64decode') {
-				if (repl.indexOf('%') > -1) {
-					repl = unescape(repl);
+				if (/^[A-Za-z0-9+/]*={0,2}$/.test(repl)) { // Check if it's valid base64
+					repl = atob(repl);
+				} else {
+					// Handle invalid base64 encoding here
+					console.error('Invalid base64 encoding:', repl);
+					repl = ''; // You can set it to an empty string or handle the error as needed
 				}
-				repl = atob(repl);
 			}
 			resultUrl = resultUrl.replace(new RegExp('\\$' + i, 'gi'), repl);
 		}
 		this._rxInclude.lastIndex = 0;
 		return resultUrl;
-	},
+	},	
 
 	_excludeMatch: function(url) {
 		if (!this._rxExclude) {

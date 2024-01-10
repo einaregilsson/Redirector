@@ -36,6 +36,7 @@ function saveRedirect() {
 
 	updateBindings();
 	saveChanges();
+	updateExportLink();
 	hideForm('#edit-redirect-form');
 }
 
