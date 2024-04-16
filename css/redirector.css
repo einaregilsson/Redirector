@@ -565,7 +565,7 @@ footer small a:hover {
 #import-popup {
   position: fixed;
   padding: 10px;
-  width: 45%;
+  width: 35%;
   background: white;
   border: solid 1px #bbb;
   border-radius: 3px;
@@ -582,6 +582,7 @@ footer small a:hover {
   display: inline-block;
   vertical-align: top;
   margin-bottom: 0.5rem;
+  padding: 4px 8px;
 }
 
 .popup-content {

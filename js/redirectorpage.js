@@ -60,18 +60,14 @@ function toggleSyncSetting() {
 }
 
 function renderRedirects() {
-    el('.redirect-rows').textContent = '';
-    //console.log("Rendering redirects:", REDIRECTS.length); // Log the count
-
-    for (let i = 0; i < REDIRECTS.length; i++) {
-        let r = REDIRECTS[i];
+    const fragment = document.createDocumentFragment();
+    REDIRECTS.forEach((redirect, index) => {
         let node = template.cloneNode(true);
         node.removeAttribute('id');
-
-        renderSingleRedirect(node, r, i);
-        el('.redirect-rows').appendChild(node);
-        //console.log("Rendered redirect:", r); // Log each rendered redirect
-    }
+        renderSingleRedirect(node, redirect, index);
+        fragment.appendChild(node);
+    });
+    el('.redirect-rows').appendChild(fragment);
 }
 
 function renderSingleRedirect(node, redirect, index) {
