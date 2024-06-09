@@ -18,7 +18,7 @@ Opera extension is no longer present (as of 2023/01/16)
 - Include pattern: `^(https?://)([a-z0-9-]*\.)m(?:obile)?\.(.*)`
 - Redirect to: `$1$2$3`
 - Pattern type: Regular Expression
-- Description: Always show the desktop site of a webpage
+- Description: Always show the desktop version of websites
 
 ### AMP redirect
 - Example URL: `https://www.google.com/amp/www.example.com/amp/document`
@@ -32,7 +32,7 @@ Opera extension is no longer present (as of 2023/01/16)
 - Include pattern: `^(?:https?://)ad.doubleclick.net/.*\?(http?s://.*)`
 - Redirect to: `$1`
 - Pattern type: Regular Expression
-- Description: Remove doubleclick link tracking / fix problems with doubleclick host based blocking
+- Description: Remove doubleclick link tracking / fix problems with doubleclick host-based blocking
 
 ### YouTube Shorts to YouTube
 - Example URL: `https://www.youtube.com/shorts/video-id`
