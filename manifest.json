@@ -21,7 +21,8 @@
     "tabs",
     "http://*/*",
     "https://*/*",
-    "notifications"
+    "notifications",
+    "contextMenus"
   ],
   "applications": {
     "gecko": {
@@ -39,6 +40,7 @@
     "page": "popup.html",
     "chrome_style": true
   },
+  "default_locale": "en",
   "browser_action": {
     "default_icon": {
       "16": "images/icon-light-theme-16.png",

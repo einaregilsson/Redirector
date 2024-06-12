@@ -1,0 +1,16 @@
+{
+    "extentionName": {
+        "message": "Redirector",
+        "description": "Name of the extention."
+    },
+    
+    "contextMenuItemNoRedirect": {
+        "message": "Open without redirecting",
+        "description": "Context menu option to open a link without attempting to redirect."
+    },
+
+    "contextMenuItemNoRedirectNewTab": {
+        "message": "Open in a new tab without redirecting",
+        "description": "Context menu option to open a link in a new tab without attempting to redirect."
+    }
+}
