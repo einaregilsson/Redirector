@@ -1,106 +1,123 @@
 body {
-	font-family:Arial, sans-serif;
-	font-size:16px;
-	line-height: 20px;
-	max-width:740px;
-	margin:20px auto;
-	border:solid 1px #bbb;
-	padding:50px;
-	background: white;
-	border-radius: 4px;
-	color: #2b2626;
+  font-family: Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 20px;
+  width: auto;
+  border: solid 1px #bbb;
+  background: white;
+  border-radius: 4px;
+  color: #2b2626;
 }
 
-a, a:visited {
-	color:rgb(21,90,233);
-	text-decoration: none;
+a,
+a:visited {
+  color: rgb(21, 90, 233);
+  text-decoration: none;
 }
 
 a:hover {
-	color:black;
-	text-decoration: underline;
+  color: black;
+  text-decoration: underline;
 }
 
 html {
-	background: #f8f8f8;
+  background: #f8f8f8;
 }
 
 h1 {
-	text-align: center;
-	font-size:38px;
-	margin-bottom:80px;
+  font-size: 3rem;
+  line-height: 3rem;
+  margin-bottom: 80px;
+  letter-spacing: 2.1px;
+}
+
+h3{
+  font-size: 1.5rem;
+  line-height: 3rem;
 }
 
 h4 {
-	font-size:24px;
-	margin-bottom:0px;
-	padding-bottom:0px;
+  font-size: 1.2rem;
+  margin-bottom: 0px;
+  padding-bottom: 0px;
 }
 
 li {
-	margin:2px;
+  margin: 2px;
 }
 
 .fields li {
-	margin:10px 4px;
+  margin: 10px 4px;
 }
 
 .url {
-	font-style: italic;
+  font-style: italic;
 }
 
 td.pattern {
-	font-weight: normal;
-	background:transparent;
+  font-weight: normal;
+  background: transparent;
 }
 
 th {
-	text-align:right;
+  text-align: right;
 }
 
 table {
-	margin:10px;
-	border:solid 1px #bbb;
-	padding:8px;
-	margin-bottom:30px;
-	border-radius: 3px;
+  margin: 10px;
+  border: solid 1px #bbb;
+  padding: 8px;
+  margin-bottom: 30px;
+  border-radius: 3px;
 }
 
 .pattern {
-	color:black;
-	font-weight: bold;
-	display: inline-block;
-	padding-left:2px;
-	padding-right:2px;
-	border-radius:3px;
-	background: #eee;
+  color: black;
+  font-weight: bold;
+  display: inline-block;
+  padding-left: 2px;
+  padding-right: 2px;
+  border-radius: 3px;
+  background: #eee;
 }
 
 /* Dark mode support */
 
 @media (prefers-color-scheme: dark) {
-
-	html {
-		background: rgb(32,33,36);
-	}
-	body {
-	  background: rgb(42,43,46);
-	  color: #ddd;
-	  border: solid 1px #888;
-	}
-	th {
-		color: white;
-		font-weight: normal;
-	}
-	a, a:visited, a:hover {
-		color: rgb(138,179,241);
-	}
-
-	h1, h2, h3, h4, strong {
-		color: white;
-	}
-
-	tr .pattern {
-		color: rgb(53,180,75);
-	}
+  html {
+    background: rgb(32, 33, 36);
   }
+  body {
+    background: rgb(42, 43, 46);
+    color: #ddd;
+    border: solid 1px #888;
+  }
+  th {
+    color: white;
+    font-weight: normal;
+  }
+  a,
+  a:visited,
+  a:hover {
+    color: rgb(138, 179, 241);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    text-align: center;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  strong {
+    color: white;
+  }
+
+  tr .pattern {
+    color: rgb(53, 180, 75);
+  }
+}
