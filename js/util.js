@@ -20,9 +20,11 @@ function dataBind(el, dataObject) {
 		} else if (tag.tagName.toLowerCase() === 'select') {
 			for (let opt of tag.querySelectorAll('option')) {
 				if (opt.getAttribute('value') === dataObject[prop]) {
-					opt.setAttribute('selected', 'selected');
+					opt.setAttribute('selected', '');
+					opt.selected = true;
 				} else {
 					opt.removeAttribute('selected');
+					opt.selected = false;
 				}
 			}
 		} else if (Array.isArray(dataObject[prop])) {
