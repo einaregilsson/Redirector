@@ -1,218 +1,288 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>REDIRECTOR</title>
-		<meta charset="UTF-8">
-		<link rel="stylesheet" href="css/redirector.css" />
-		<!-- ☈ -->
-		<link rel="shortcut icon" href="images/icon-light-theme-32.png">
-		<meta name="viewport" content="width=device-width">
-	</head>
-	<body>
-		<div id="cover">
-		</div>
-
-		<!-- Confirmation form for deleting redirects -->
-		<div id="delete-redirect-form">
-			<h3>Are you sure you want to delete this redirect?</h3>
-			<div>
-				<label>Description:</label>
-				<span data-bind="description"></span>
-			</div>
-			<div>
-				<label>Example URL:</label>
-				<span data-bind="exampleUrl"></span>
-			</div>
-			<div>
-				<label>Include pattern:</label>
-				<span data-bind="includePattern"></span>
-			</div>
-			<div>
-				<label>Redirect to:</label>
-				<span data-bind="redirectUrl"></span>
-			</div>
-			<div>
-				<label>Pattern type:</label>
-				<span data-bind="patternTypeText"></span>
-			</div>
-			<div class="button-container">
-				<button id="confirm-delete" class="btn red large">Yes, delete it</button>
-				<button id="cancel-delete" class="btn grey large">No, don't delete it</button>
-			</div>
-		</div>
-
-
-		<!-- Form for creating and editing redirects -->
-		<div id="edit-redirect-form">
-			<h3>Create Redirect</h3>
-			<div class="form-grid">
-				<div>
-					<label>Description:</label>
-					<div class="input-cell"><input type="text" data-bind="description" placeholder="Enter a description for your redirect rule" /></div>
-				</div>
-				<div>
-					<label>Example URL:</label>
-					<div class="input-cell"><input type="text" data-bind="exampleUrl" placeholder="http://example.com/some/path?a=1" /></div>
-				</div>
-				<div>
-					<label>Include pattern:</label>
-					<div class="input-cell"><input type="text" data-bind="includePattern"  placeholder="Pattern that matches the urls you want to redirect" /></div>
-				</div>
-				<div>
-					<label>Redirect to:</label>
-					<div class="input-cell"><input type="text" data-bind="redirectUrl" placeholder="The url you want to redirect requests to" /></div>
-				</div>
-				<div>
-					<label>Pattern type:</label>
-					<div class="input-cell">
-						<label id="wildcardtype">
-						<input type="radio" data-bind="patternType" name="patterntype" value="W">Wildcard</label>
-						<label id="regextype">
-						<input type="radio" data-bind="patternType" name="patterntype" value="R">Regular Expression</label>
-					</div>
-				</div>
-				<div>
-					<label>Pattern Description:</label>
-					<div class="input-cell"><input type="text" data-bind="patternDesc" placeholder="Describe your pattern" /></div>
-				</div>
-				<div>
-					<label>Example result:</label>
-					<div class="input-cell"><span class="error example-result-error" data-show="error" data-bind="error"></span><span class="example-result" data-show="exampleResult" data-bind="exampleResult"></span></div>
-				</div>
-			</div>
-			<div id="advanced-toggle">
-				<a href="#show-advanced">Show advanced options...</a>
-			</div>
-			<div class="form-grid advanced hidden">
-				<div>
-					<label>Exclude pattern:</label>
-					<div class="input-cell"><input type="text" data-bind="excludePattern" placeholder="Pattern to exclude certain urls from the redirection"/></div>
-				</div>
-				<div>
-					<label for="process-matches">Process matches:</label>
-					<div class="input-cell">
-						<select id="process-matches" data-bind="processMatches">
-							<option value="noProcessing">No Processing</option>
-							<option value="urlEncode">URL Encode</option>
-							<option value="urlDecode">URL Decode</option>
-							<option value="doubleUrlDecode">Double URL Decode</option>
-							<option value="base64decode">Base64 Decode</option>
-						</select>
-						<span class="placeholder" data-bind="processMatchesExampleText"></span>
-					</div>
-				</div>
-				<div>
-					<label>Apply to:</label>
-					<div class="input-cell" id="apply-to" data-bind="appliesTo">
-						<label><input type="checkbox" checked="checked" value="main_frame"><span>Main window (address bar)</span></label>
-						<label><input type="checkbox" value="sub_frame"><span>IFrames</span></label>
-						<label><input type="checkbox" value="stylesheet"><span>Stylesheets</span></label>
-						<label><input type="checkbox" value="font"><span>Fonts</span></label>
-						<label><input type="checkbox" value="script"><span>Scripts</span></label>
-						<label><input type="checkbox" value="image"><span>Images</span></label>
-						<label><input type="checkbox" value="imageset"><span>Responsive Images in Firefox</span></label>
-						<label><input type="checkbox" value="object"><span>Objects (e.g. Flash videos, Java applets)</span></label>
-						<label><input type="checkbox" value="object_subrequest"><span>Object subrequests</span></label>
-						<label><input type="checkbox" value="xmlhttprequest"><span>XMLHttpRequests (Ajax)</span></label>
-						<label><input type="checkbox" value="history"><span>HistoryState</span></label>
-						<label><input type="checkbox" value="other"><span>Other</span></label>
-					</div>
-				</div>
-			</div>
-			<div class="button-container">
-				<button id="btn-save-redirect" data-disabled="error" data-class="disabled:error" class="btn green large">Save</button>
-				<button id="btn-cancel-edit" class="btn red large">Cancel</button>
-			</div>
-		</div>
-
-
-		<div id="blur-wrapper">
-
-			<h1>REDIRECTOR</h1>
-			<h5>Go where <em>YOU</em> want!</h5>
-
-			<div id="menu">
-				<a id="create-new-redirect" class="btn blue large">Create new redirect</a>
-
-				<!-- Importing/Exporting of redirects -->
-				<span>
-					<input type="file" id="import-file" accept=".rjson,.json,.txt"  />
-					<label for="import-file" class="btn blue large">Import</label>
-					<a class="btn blue large" id="export-link" download="Redirector.json">Export</a>
-					<button class="btn blue large" id="organize-mode">Organize</button>
-				</span>
-
-				<a class="btn blue large" href="help.html" target="_blank">Help</a>
-			</div>
-
-
-			<div id="message-box">
-				<span data-bind="message" id="message"></span>
-				<a id="hide-message">&#x2716;</a>
-			</div>
-
-			<!-- List of existing redirects -->
-			<div class="redirect-table">
-				<div class="redirect-rows">
-					<div class="redirect-row" id="redirect-row-template" >
-							<h4><span class="disabled-marker" data-show="disabled">[Disabled] </span><span data-bind="description" data-class="disabled:disabled"></span></h4>
-							<div class="redirect-info" data-class="disabled:disabled">
-								<div>
-									<label>Redirect:</label>
-									<p data-bind="includePattern"></p>
-								</div>
-								<div>
-									<label>to:</label><p data-bind="redirectUrl"></p>
-								</div>
-								<div data-show="excludePattern">
-									<label>excluding:</label><p data-bind="excludePattern"></p>
-								</div>
-								<div data-show="patternDesc">
-									<label>Hint:</label><p data-bind="patternDesc"></p>
-								</div>
-								<div>
-									<label>Example:</label> <p><span class="error" data-show="r.error" data-bind="error"></span><span data-show="exampleResult" data-bind="exampleUrl"></span> <span class="arrow">&rarr;</span> <span data-bind="exampleResult"></span></p>
-								</div>
-								<div>
-									<label>Applies to:</label> <p data-bind="appliesToText"></p>
-								</div>
-							</div>
-							<div>
-								<button class="btn medium blue" data-action="toggleDisabled"><span data-show="disabled">Enable</span><span data-show="!disabled">Disable</span></button>
-								<button class="btn medium green" data-action="editRedirect">Edit</button>
-								<button class="btn medium red" data-action="confirmDeleteRedirect">Delete</button>
-								<span class="hidden">
-									<button class="btn medium grey move-uptop-btn arrows" data-action="moveUpTop" data-disabled="$first">⟰</button>
-								</span>
-
-								<button class="btn medium grey move-up-btn" data-action="moveUp" data-disabled="$first">▲</button>
-								<button class="btn medium grey move-down-btn" data-action="moveDown" data-disabled="$last">▼</button>
-								<span class="hidden">
-									<button class="btn medium grey move-downbottom-btn arrows" data-action="moveDownBottom" data-disabled="$last">⟱</button>
-								</span>
-								<button class="btn medium grey" data-action="duplicateRedirect">Duplicate</button>
-							</div>
-							<label class="toggle-container">
-								<input class="checkbox" type="checkbox">
-								<span class="checkmark groupings hidden" data-action="toggleGrouping"></span>
-							</label>
-						</div>
-					</div>
-				<label id="storage-sync-option"><input type="checkbox" /> Enable Storage Sync</label>
-			</div>
-
-			<footer>
-				<small>Redirector is created by <a target="_blank" href="http://einaregilsson.com">Einar Egilsson</a></small>
-			</footer>
-
-		</div>
-
-		<script src="js/stub.js"></script>
-		<script src="js/util.js"></script>
-		<script src="js/redirect.js"></script>
-		<script src="js/redirectorpage.js"></script>
-		<script src="js/editredirect.js"></script>
-		<script src="js/importexport.js"></script>
-		<script src="js/organizemode.js"></script>
-	</body>
+  <head>
+    <title>REDIRECTOR</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="css/redirector.css" />
+    <link rel="shortcut icon" href="images/icon-light-theme-32.png">
+  </head>
+  <body>
+    <div id="cover"></div>
+    <!-- Confirmation form for deleting redirects -->
+    <div id="delete-redirect-form">
+      <h3>Are you sure you want to delete this redirect?</h3>
+      <div>
+        <label>Description:</label>
+        <span data-bind="description"></span>
+      </div>
+      <div>
+        <label>Example URL:</label>
+        <span data-bind="exampleUrl"></span>
+      </div>
+      <div>
+        <label>Include pattern:</label>
+        <span data-bind="includePattern"></span>
+      </div>
+      <div>
+        <label>Redirect to:</label>
+        <span data-bind="redirectUrl"></span>
+      </div>
+      <div>
+        <label>Pattern type:</label>
+        <span data-bind="patternTypeText"></span>
+      </div>
+      <div class="button-container">
+        <button id="confirm-delete" class="btn red large">Yes, delete it</button>
+        <button id="cancel-delete" class="btn grey large">No, don't delete it</button>
+      </div>
+    </div>
+    <!-- Form for creating and editing redirects -->
+    <div id="edit-redirect-form">
+      <h3>Create Redirect</h3>
+      <div class="form-grid">
+        <div>
+          <label>Description:</label>
+          <div class="input-cell">
+            <input type="text" data-bind="description" placeholder="Enter a description for your redirect rule" />
+          </div>
+        </div>
+        <div>
+          <label>Example URL:</label>
+          <div class="input-cell">
+            <input type="text" data-bind="exampleUrl" placeholder="https://example.com/some/path?a=1" />
+          </div>
+        </div>
+        <div>
+          <label>Include pattern:</label>
+          <div class="input-cell">
+            <input type="text" data-bind="includePattern" placeholder="Pattern that matches the urls you want to redirect" />
+          </div>
+        </div>
+        <div>
+          <label>Redirect to:</label>
+          <div class="input-cell">
+            <input type="text" data-bind="redirectUrl" placeholder="The url you want to redirect requests to" />
+          </div>
+        </div>
+        <div>
+          <label>Pattern type:</label>
+          <div class="input-cell">
+            <label id="wildcardtype">
+              <input type="radio" data-bind="patternType" name="patterntype" value="W">Wildcard </label>
+            <label id="regextype">
+              <input type="radio" data-bind="patternType" name="patterntype" value="R">Regular Expression </label>
+          </div>
+        </div>
+        <div>
+          <label>Pattern Description:</label>
+          <div class="input-cell">
+            <input type="text" data-bind="patternDesc" placeholder="Describe your pattern" />
+          </div>
+        </div>
+        <div>
+          <label>Example result:</label>
+          <div class="input-cell">
+            <span class="error example-result-error" data-show="error" data-bind="error"></span>
+            <span class="example-result" data-show="exampleResult" data-bind="exampleResult"></span>
+          </div>
+        </div>
+      </div>
+      <div id="advanced-toggle">
+        <a href="#show-advanced">Show advanced options...</a>
+      </div>
+      <div class="form-grid advanced hidden">
+        <div>
+          <label>Exclude pattern:</label>
+          <div class="input-cell">
+            <input type="text" data-bind="excludePattern" placeholder="Pattern to exclude certain urls from the redirection" />
+          </div>
+        </div>
+        <div>
+          <label for="process-matches">Process matches:</label>
+          <div class="input-cell">
+            <select id="process-matches" data-bind="processMatches">
+              <option value="noProcessing">No Processing</option>
+              <option value="urlEncode">URL Encode</option>
+              <option value="urlDecode">URL Decode</option>
+              <option value="doubleUrlDecode">Double URL Decode</option>
+              <option value="base64decode">Base64 Decode</option>
+            </select>
+            <span class="placeholder" data-bind="processMatchesExampleText"></span>
+          </div>
+        </div>
+        <div>
+          <label>Apply to:</label>
+          <div class="input-cell" id="apply-to" data-bind="appliesTo">
+            <label>
+              <input type="checkbox" checked="checked" value="main_frame">
+              <span>Main window (address bar)</span>
+            </label>
+            <label>
+              <input type="checkbox" value="sub_frame">
+              <span>IFrames</span>
+            </label>
+            <label>
+              <input type="checkbox" value="stylesheet">
+              <span>Stylesheets</span>
+            </label>
+            <label>
+              <input type="checkbox" value="font">
+              <span>Fonts</span>
+            </label>
+            <label>
+              <input type="checkbox" value="script">
+              <span>Scripts</span>
+            </label>
+            <label>
+              <input type="checkbox" value="image">
+              <span>Images</span>
+            </label>
+            <label>
+              <input type="checkbox" value="imageset">
+              <span>Responsive Images in Firefox</span>
+            </label>
+            <label>
+              <input type="checkbox" value="object">
+              <span>Objects (e.g. Flash videos, Java applets)</span>
+            </label>
+            <label>
+              <input type="checkbox" value="object_subrequest">
+              <span>Object subrequests</span>
+            </label>
+            <label>
+              <input type="checkbox" value="xmlhttprequest">
+              <span>XMLHttpRequests (Ajax)</span>
+            </label>
+            <label>
+              <input type="checkbox" value="history">
+              <span>HistoryState</span>
+            </label>
+            <label>
+              <input type="checkbox" value="other">
+              <span>Other</span>
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="button-container">
+        <button id="btn-save-redirect" data-disabled="error" data-class="disabled:error" class="btn green large">Save</button>
+        <button id="btn-cancel-edit" class="btn red large">Cancel</button>
+      </div>
+    </div>
+    <!-- Import Popup -->
+    <div id="import-popup">
+      <div class="popup-content">
+        <h3>Would You Like To</h3>
+        <input type="file" id="import-file-popup" style="display: none;" accept=".rjson,.json,.txt" />
+        <button id="import-file-popup-cb" class="btn blue large">Import From File</button>
+        <h3>OR</h3>
+        <div class="input-cell">
+          <input type="url" id="import-url-popup" placeholder="Import From URL" autocomplete="off" />
+        </div>
+        <button id="import-url-button" class="btn blue large">Fetch and Import</button>
+        <div class="button-container">
+          <button id="cancel-import" class="btn grey large">Cancel</button>
+        </div>
+      </div>
+    </div>
+    <div id="blur-wrapper">
+      <h1>REDIRECTOR</h1>
+      <h5>Go where <em>YOU</em> want! </h5>
+      <div id="menu">
+        <a id="create-new-redirect" class="btn blue large">Create new redirect</a>
+        <span>
+          <!-- Importing/Exporting of redirects -->
+          <label for="import-file" class="btn blue large">Import</label>
+          <a class="btn blue large" id="export-link" download="Redirector.json">Export</a>
+          <label class="btn blue large" id="organize-mode">Organize</label>
+          <a class="btn blue large" href="help.html" target="_blank">Help</a>
+        </span>
+      </div>
+      <div id="message-box">
+        <span data-bind="message" id="message"></span>
+        <a id="hide-message">&#x2716;</a>
+      </div>
+      <!-- List of existing redirects -->
+      <div class="redirect-table">
+        <div class="redirect-rows">
+          <div class="redirect-row" id="redirect-row-template">
+            <h4>
+              <span class="disabled-marker" data-show="disabled">[Disabled] </span>
+              <span data-bind="description" data-class="disabled:disabled"></span>
+            </h4>
+            <div class="redirect-info" data-class="disabled:disabled">
+              <div>
+                <label>Redirect:</label>
+                <p data-bind="includePattern"></p>
+              </div>
+              <div>
+                <label>to:</label>
+                <p data-bind="redirectUrl"></p>
+              </div>
+              <div data-show="excludePattern">
+                <label>excluding:</label>
+                <p data-bind="excludePattern"></p>
+              </div>
+              <div data-show="patternDesc">
+                <label>Hint:</label>
+                <p data-bind="patternDesc"></p>
+              </div>
+              <div>
+                <label>Example:</label>
+                <p>
+                  <span class="error" data-show="r.error" data-bind="error"></span>
+                  <span data-show="exampleResult" data-bind="exampleUrl"></span>
+                  <span class="arrow">&rarr;</span>
+                  <span data-bind="exampleResult"></span>
+                </p>
+              </div>
+              <div>
+                <label>Applies to:</label>
+                <p data-bind="appliesToText"></p>
+              </div>
+            </div>
+            <div>
+              <button class="btn medium blue" data-action="toggleDisabled">
+                <span data-show="disabled">Enable</span>
+                <span data-show="!disabled">Disable</span>
+              </button>
+              <button class="btn medium green" data-action="editRedirect">Edit</button>
+              <button class="btn medium red" data-action="confirmDeleteRedirect">Delete</button>
+              <button class="btn medium grey" data-action="duplicateRedirect">Duplicate</button>
+              <span class="hidden">
+                <button class="btn medium grey move-uptop-btn arrows" data-action="moveUpTop" data-disabled="$first">⟰</button>
+              </span>
+              <button class="btn medium grey move-up-btn" data-action="moveUp" data-disabled="$first">▲</button>
+              <button class="btn medium grey move-down-btn" data-action="moveDown" data-disabled="$last">▼</button>
+              <span class="hidden">
+                <button class="btn medium grey move-downbottom-btn arrows" data-action="moveDownBottom" data-disabled="$last">⟱</button>
+              </span>
+            </div>
+            <label class="toggle-container">
+              <input class="checkbox" type="checkbox">
+              <span class="checkmark groupings hidden" data-action="toggleGrouping"></span>
+            </label>
+          </div>
+        </div>
+        <label id="storage-sync-option">
+          <input type="checkbox" /> Enable Storage Sync </label>
+      </div>
+      <footer>
+        <small>Redirector was originally created by <a target="_blank" href="https://github.com/einaregilsson">Einar Egilsson</a>
+        </small>
+        <br>
+        <small>
+          <a target="_blank" href="https://github.com/einaregilsson/Redirector/issues/329">Unfortunately Einar passed away in 2022</a>
+        </small>
+      </footer>
+    </div>
+    <script src="js/stub.js"></script>
+    <script src="js/util.js"></script>
+    <script src="js/redirect.js"></script>
+    <script src="js/redirectorpage.js"></script>
+    <script src="js/editredirect.js"></script>
+    <script src="js/importexport.js"></script>
+    <script src="js/organizemode.js"></script>
+  </body>
 </html>

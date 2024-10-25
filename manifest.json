@@ -36,8 +36,8 @@
     "persistent": true
   },
   "options_ui": {
-    "page": "popup.html",
-    "chrome_style": true
+    "page": "redirector.html",
+    "open_in_tab": true
   },
   "browser_action": {
     "default_icon": {

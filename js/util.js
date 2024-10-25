@@ -4,22 +4,22 @@ function dataBind(el, dataObject) {
 		return prop.charAt(0) === '!' ? !dataObject[prop.substr(1)] : dataObject[prop];
 	}
 
-    if (typeof el === 'string') {
+	if (typeof el === 'string') {
 		el = document.querySelector(el)
 	}
 	for (let tag of el.querySelectorAll('[data-bind]')) {
-			let prop = tag.getAttribute('data-bind');
+		let prop = tag.getAttribute('data-bind');
 		if (tag.tagName.toLowerCase() === 'input') {
 			if (tag.getAttribute('type').toLowerCase() === 'radio') {
 				tag.checked = dataObject[prop] === tag.getAttribute('value');
-            } else if (tag.getAttribute('type').toLowerCase() === 'checkbox') {
-                tag.checked = dataObject[prop];
-            } else {
-                tag.value = dataObject[prop];
+			} else if (tag.getAttribute('type').toLowerCase() === 'checkbox') {
+				tag.checked = dataObject[prop];
+			} else {
+				tag.value = dataObject[prop];
 			}
 		} else if (tag.tagName.toLowerCase() === 'select') {
 			for (let opt of tag.querySelectorAll('option')) {
-				if (opt.getAttribute('value') === dataObject[prop]) {
+				if (opt.getAttribute('value') === dataObject[prop]) {
 					opt.setAttribute('selected', 'selected');
 				} else {
 					opt.removeAttribute('selected');
@@ -53,7 +53,7 @@ function dataBind(el, dataObject) {
 	for (let tag of el.querySelectorAll('[data-class]')) {
 		let [className, prop] = tag.getAttribute('data-class').split(':');
 		let shouldHaveClass = boolValue(prop);
-		if (shouldHaveClass) {
+		if (shouldHaveClass) {
 			tag.classList.add(className);
 		} else {
 			tag.classList.remove(className);
@@ -83,7 +83,7 @@ function showForm(selector, dataObject) {
 }
 
 function move(arr, from, to) {
-    arr.splice(to, 0, arr.splice(from, 1)[0]);
+	arr.splice(to, 0, arr.splice(from, 1)[0]);
 }
 
 function hideForm(selector) {
@@ -95,7 +95,9 @@ function hideForm(selector) {
 // Shows a message bar above the list of redirects.
 function showMessage(message, success) {
 	let messageBox = document.getElementById('message-box');
-	dataBind('#message-box', {message});
+	dataBind('#message-box', {
+		message
+	});
 	if (success) {
 		messageBox.className = 'visible success';
 	} else {

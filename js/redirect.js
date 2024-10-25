@@ -1,4 +1,3 @@
-
 function Redirect(o) {
 	this._init(o);
 }
@@ -15,36 +14,36 @@ Redirect.REGEX = 'R';
 Redirect.requestTypes = {
 	main_frame: "Main window (address bar)",
 	sub_frame: "IFrames",
-	stylesheet : "Stylesheets",
+	stylesheet: "Stylesheets",
 	font: "Fonts",
-	script : "Scripts",
-	image : "Images",
+	script: "Scripts",
+	image: "Images",
 	imageset: "Responsive Images in Firefox",
-	object : "Objects (e.g. Flash content, Java applets)",
-	object_subrequest : "Object subrequests",
-	xmlhttprequest : "XMLHttpRequests (Ajax)",
-	history : "HistoryState",
-	other : "Other"
+	object: "Objects (e.g. Flash content, Java applets)",
+	object_subrequest: "Object subrequests",
+	xmlhttprequest: "XMLHttpRequests (Ajax)",
+	history: "HistoryState",
+	other: "Other"
 };
-
 
 Redirect.prototype = {
 
 	//attributes
-	description : '',
-	exampleUrl : '',
-	exampleResult : '',
-	error : null,
-	includePattern : '',
-	excludePattern : '',
-	patternDesc:'',
-	redirectUrl : '',
-	patternType : '',
-	processMatches : 'noProcessing',
-	disabled : false,
+	description: '',
+	id: '',
+	exampleUrl: '',
+	exampleResult: '',
+	error: null,
+	includePattern: '',
+	excludePattern: '',
+	patternDesc: '',
+	redirectUrl: '',
+	patternType: '',
+	processMatches: 'noProcessing',
+	disabled: false,
 	grouped: false,
 
-	compile : function() {
+	compile: function() {
 
 		var incPattern = this._preparePattern(this.includePattern);
 		var excPattern = this._preparePattern(this.excludePattern);
@@ -57,33 +56,35 @@ Redirect.prototype = {
 		}
 	},
 
-	equals : function(redirect) {
-		return this.description == redirect.description
-			&& this.exampleUrl == redirect.exampleUrl
-			&& this.includePattern == redirect.includePattern
-			&& this.excludePattern == redirect.excludePattern
-			&& this.patternDesc == redirect.patternDesc
-			&& this.redirectUrl == redirect.redirectUrl
-			&& this.patternType == redirect.patternType
-			&& this.processMatches == redirect.processMatches
-			&& this.appliesTo.toString() == redirect.appliesTo.toString();
+	equals: function(redirect) {
+		return this.description == redirect.description &&
+			this.id == redirect.id &&
+			this.exampleUrl == redirect.exampleUrl &&
+			this.includePattern == redirect.includePattern &&
+			this.excludePattern == redirect.excludePattern &&
+			this.patternDesc == redirect.patternDesc &&
+			this.redirectUrl == redirect.redirectUrl &&
+			this.patternType == redirect.patternType &&
+			this.processMatches == redirect.processMatches &&
+			this.appliesTo.toString() == redirect.appliesTo.toString();
 	},
 
-	toObject : function() {
+	toObject: function() {
 		return {
-			description : this.description,
-			exampleUrl : this.exampleUrl,
-			exampleResult : this.exampleResult,
-			error : this.error,
-			includePattern : this.includePattern,
-			excludePattern : this.excludePattern,
-			patternDesc : this.patternDesc,
-			redirectUrl : this.redirectUrl,
-			patternType : this.patternType,
-			processMatches : this.processMatches,
-			disabled : this.disabled,
+			description: this.description,
+			id: this.id,
+			exampleUrl: this.exampleUrl,
+			exampleResult: this.exampleResult,
+			error: this.error,
+			includePattern: this.includePattern,
+			excludePattern: this.excludePattern,
+			patternDesc: this.patternDesc,
+			redirectUrl: this.redirectUrl,
+			patternType: this.patternType,
+			processMatches: this.processMatches,
+			disabled: this.disabled,
 			grouped: this.grouped,
-			appliesTo : this.appliesTo.slice(0)
+			appliesTo: this.appliesTo.slice(0)
 		};
 	},
 
@@ -92,11 +93,13 @@ Redirect.prototype = {
 			this.compile();
 		}
 		var result = {
-			isMatch : false,
-			isExcludeMatch : false,
-			isDisabledMatch : false,
-			redirectTo : '',
-			toString : function() { return JSON.stringify(this); }
+			isMatch: false,
+			isExcludeMatch: false,
+			isDisabledMatch: false,
+			redirectTo: '',
+			toString: function() {
+				return JSON.stringify(this);
+			}
 		};
 		var redirectTo = this._includeMatch(url);
 
@@ -116,7 +119,7 @@ Redirect.prototype = {
 	//Updates the .exampleResult field or the .error
 	//field depending on if the example url and patterns match
 	//and make a good redirect
-	updateExampleResult : function() {
+	updateExampleResult: function() {
 
 		//Default values
 		this.error = null;
@@ -131,7 +134,7 @@ Redirect.prototype = {
 		if (this.patternType == Redirect.REGEX && this.includePattern) {
 			try {
 				new RegExp(this.includePattern, 'gi');
-			} catch(e) {
+			} catch (e) {
 				this.error = 'Invalid regular expression in Include pattern.';
 				return;
 			}
@@ -140,7 +143,7 @@ Redirect.prototype = {
 		if (this.patternType == Redirect.REGEX && this.excludePattern) {
 			try {
 				new RegExp(this.excludePattern, 'gi');
-			} catch(e) {
+			} catch (e) {
 				this.error = 'Invalid regular expression in Exclude pattern.';
 				return;
 			}
@@ -166,7 +169,7 @@ Redirect.prototype = {
 		//	return;
 		//}
 
-    if (!match.isMatch) {
+		if (!match.isMatch) {
 			this.error = 'The include pattern does not match the example url.';
 			return;
 		}
@@ -178,19 +181,19 @@ Redirect.prototype = {
 		return this.patternType == Redirect.REGEX;
 	},
 
-	isWildcard : function() {
+	isWildcard: function() {
 		return this.patternType == Redirect.WILDCARD;
 	},
 
-	test : function() {
+	test: function() {
 		return this.getMatch(this.exampleUrl);
 	},
 
 	//Private functions below
-	_rxInclude : null,
-	_rxExclude : null,
+	_rxInclude: null,
+	_rxExclude: null,
 
-	_preparePattern : function(pattern) {
+	_preparePattern: function(pattern) {
 		if (!pattern) {
 			return null;
 		}
@@ -213,9 +216,10 @@ Redirect.prototype = {
 		}
 	},
 
-	_init : function(o) {
+	_init: function(o) {
 		o = o || {};
 		this.description = o.description || '';
+		this.id = o.id || '';
 		this.exampleUrl = o.exampleUrl || '';
 		this.exampleResult = o.exampleResult || '';
 		this.error = o.error || null;
@@ -249,21 +253,21 @@ Redirect.prototype = {
 
 	get processMatchesExampleText() {
 		let examples = {
-			noProcessing : 'Use matches as they are',
-			urlEncode : 'E.g. turn /bar/foo?x=2 into %2Fbar%2Ffoo%3Fx%3D2',
-			urlDecode : 'E.g. turn %2Fbar%2Ffoo%3Fx%3D2 into /bar/foo?x=2',
-			doubleUrlDecode : 'E.g. turn %252Fbar%252Ffoo%253Fx%253D2 into /bar/foo?x=2',
-			base64Decode : 'E.g. turn aHR0cDovL2Nubi5jb20= into http://cnn.com'
-		};
+			noProcessing: 'Use matches as they are',
+			urlEncode: 'E.g. turn /bar/foo?x=2 into %2Fbar%2Ffoo%3Fx%3D2',
+			urlDecode: 'E.g. turn %2Fbar%2Ffoo%3Fx%3D2 into /bar/foo?x=2',
+			doubleUrlDecode: 'E.g. turn %252Fbar%252Ffoo%253Fx%253D2 into /bar/foo?x=2',
+			base64Decode: 'E.g. turn aHR0cHM6Ly9nb29nbGUuY29tLw== into https://google.com/'
+		};		
 
 		return examples[this.processMatches];
 	},
 
-	toString : function() {
+	toString: function() {
 		return JSON.stringify(this.toObject(), null, 2);
 	},
 
-	_includeMatch : function(url) {
+	_includeMatch: function(url) {
 		if (!this._rxInclude) {
 			return null;
 		}
@@ -275,24 +279,27 @@ Redirect.prototype = {
 		for (var i = matches.length - 1; i > 0; i--) {
 			var repl = matches[i] || '';
 			if (this.processMatches == 'urlDecode') {
-				repl = unescape(repl);
+				repl = decodeURIComponent(repl);
 			} else if (this.processMatches == 'doubleUrlDecode') {
-				repl = unescape(unescape(repl));
+				repl = decodeURIComponent(decodeURIComponent(repl));
 			} else if (this.processMatches == 'urlEncode') {
 				repl = encodeURIComponent(repl);
 			} else if (this.processMatches == 'base64decode') {
-				if (repl.indexOf('%') > -1) {
-					repl = unescape(repl);
+				if (/^[A-Za-z0-9+/]*={0,2}$/.test(repl)) { // Check if it's valid base64
+					repl = atob(repl);
+				} else {
+					// Handle invalid base64 encoding here
+					console.error('Invalid base64 encoding:', repl);
+					repl = ''; // You can set it to an empty string or handle the error as needed
 				}
-				repl = atob(repl);
 			}
 			resultUrl = resultUrl.replace(new RegExp('\\$' + i, 'gi'), repl);
 		}
 		this._rxInclude.lastIndex = 0;
 		return resultUrl;
-	},
+	},	
 
-	_excludeMatch : function(url) {
+	_excludeMatch: function(url) {
 		if (!this._rxExclude) {
 			return false;
 		}

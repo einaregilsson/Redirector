@@ -36,6 +36,7 @@ function saveRedirect() {
 
 	updateBindings();
 	saveChanges();
+	updateExportLink();
 	hideForm('#edit-redirect-form');
 }
 
@@ -50,7 +51,6 @@ function toggleAdvancedOptions(ev) {
 		el('#advanced-toggle a').textContent = 'Show advanced options...';
 	}
 }
-
 
 function editFormChange() {
 	//Now read values back from the form...
@@ -71,13 +71,12 @@ function editFormChange() {
 	dataBind('#edit-redirect-form', activeRedirect);
 }
 
-
-
 var deleteIndex;
+
 function confirmDeleteRedirect(index) {
 	deleteIndex = index;
-		let redirect = REDIRECTS[deleteIndex];
-		showForm('#delete-redirect-form', redirect);
+	let redirect = REDIRECTS[deleteIndex];
+	showForm('#delete-redirect-form', redirect);
 }
 
 function deleteRedirect() {
@@ -93,7 +92,6 @@ function cancelDelete() {
 	hideForm('#delete-redirect-form');
 }
 
-
 function setupEditAndDeleteEventListeners() {
 
 	el('#btn-save-redirect').addEventListener('click', saveRedirect);
@@ -108,6 +106,5 @@ function setupEditAndDeleteEventListeners() {
 	//Listen to any change from the edit form...
 	el('#edit-redirect-form').addEventListener('input', editFormChange);
 }
-
 
 setupEditAndDeleteEventListeners();

@@ -1,88 +1,89 @@
-
 body {
-	width: 180px;
-	text-align: center;
-	font-family: Arial, sans-serif;
+  width: auto;
+  text-align: center;
+  font-family: Arial, sans-serif;
 }
 
 h1 {
-	margin-top: 4px;
-	font-size: 22px;
-	font-weight: bold;
-	letter-spacing: 1.5px;
+  margin-top: 4px;
+  font-size: 3rem;
+  font-weight: bold;
+  letter-spacing: 2.1px;
 }
 
 h1 span {
-	position: relative;
-	top: 1px;
-	font-size: 38px;
+  position: relative;
+  top: 1px;
+  font-size: 38px;
 }
 
 button {
-	margin: 5px auto !important;
-	display: block;
-	width: 90%;
+  margin: 5px auto !important;
+  font-size: 1.4rem;
+  display: block;
+  width: 90%;
+  min-height: 32px;
+  line-height: 29px;
 }
 
 .disabled {
-	margin-top: -16px;
-	height: 13px;
-	color: red;
-	font-size: 12px;
+  margin-top: -1.5rem;
+  color: red;
+  font-size: 2.5rem;
+  letter-spacing: 2.1px;
 }
 
 label {
-	margin: 6px auto;
-	display: block;
-	width: 85%;
-	text-align: left;
-	font-size: 12px !important;
+  margin: 6px auto;
+  display: block;
+  width: 85%;
+  text-align: left;
+  font-size: 12px !important;
 }
 
 /* Firefox only */
-@supports (-moz-appearance:none) {
-    	label input {
-        	position: relative;
-        	top: 1px;
-    	}
+@supports (-moz-appearance: none) {
+  label input {
+    position: relative;
+    top: 1px;
+  }
 }
 
 button {
-	height: 20px;
-	border: solid 1px #aaa !important;
-	border-radius: 3px;
-	color: #333;
+  height: 20px;
+  border: solid 1px #aaa !important;
+  border-radius: 3px;
+  color: #333;
 }
 
 label span {
-	position: relative;
-	top: 1px;
+  position: relative;
+  top: 1px;
 }
 
 @media (prefers-color-scheme: dark) {
+  html {
+    background: rgb(52, 53, 56);
+    color: #ddd;
+  }
 
-	html {
-		background: rgb(52,53,56);
-		color: #ddd;
-	}
+  h1,
+  label {
+    color: #eee;
+  }
 
-	h1,
-	label {
-		color: #eee;
-	}
+  th {
+    color: #eee;
+    font-weight: normal;
+  }
 
-	th {
-		color: #eee;
-		font-weight: normal;
-	}
+  .disabled span {
+    color: rgb(240, 85, 82);
+  }
 
-	.disabled span {
-		color: rgb(240,85,82);
-	}
-
-	button {
-		border: solid 1px #777 !important;
-		background-color: rgb(32,33,36) !important;
-		color: #ddd;
-	}
+  button {
+    border: solid 1px #777 !important;
+    background-color: rgb(32, 33, 36) !important;
+    color: #ddd;
+  }
 }
