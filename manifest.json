@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
-  "name": "Redirector",
+  "name": "AnotherRedirector",
   "description": "Automatically redirect content based on user-defined rules.",
-  "version": "3.5.4",
+  "version": "1.0.0",
   "icons": {
     "16": "images/icon-light-theme-16.png",
     "19": "images/icon-light-theme-19.png",
@@ -29,10 +29,7 @@
     }
   },
   "background": {
-    "scripts": [
-      "js/redirect.js",
-      "js/background.js"
-    ],
+    "scripts": ["js/redirect.js", "js/background.js"],
     "persistent": true
   },
   "options_ui": {
