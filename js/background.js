@@ -7,7 +7,8 @@ function log(msg, force) {
 	}
 }
 log.enabled = false;
-var enableNotifications=false;
+var enableNotifications = false;
+var enablePost = false;
 
 function isDarkMode() {
 	return window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -47,16 +48,15 @@ function setIcon(image) {
 			//If not checked we will get unchecked errors in the background page console...
 			log('Error in SetIcon: ' + err.message);
 		}
-	});		
+	});
 }
 
 //This is the actual function that gets called for each request and must
 //decide whether or not we want to redirect.
 function checkRedirects(details) {
-
-	//We only allow GET request to be redirected, don't want to accidentally redirect
+	//By default we only allow GET request to be redirected, don't want to accidentally redirect
 	//sensitive POST parameters
-	if (details.method != 'GET') {
+	if (!enablePost && details.method !== 'GET') {
 		return {};
 	}
 	log('Checking: ' + details.type + ': ' + details.url);
@@ -98,8 +98,8 @@ function checkRedirects(details) {
 			}
 
 
-			log('Redirecting ' + details.url + ' ===> ' + result.redirectTo + ', type: ' + details.type + ', pattern: ' + r.includePattern + ' which is in Rule : ' + r.description);
-			if(enableNotifications){
+			log('Redirecting ' + details.method.toUpperCase() + ' ' + details.url + ' ===> ' + result.redirectTo + ', type: ' + details.type + ', pattern: ' + r.includePattern + ' which is in Rule : ' + r.description);
+			if(enableNotifications) {
 				sendNotifications(r, details.url, result.redirectTo);
 			}
 			ignoreNextRequest[result.redirectTo] = new Date().getTime();
@@ -131,15 +131,21 @@ function monitorChanges(changes, namespace) {
 	if (changes.redirects) {
 		log('Redirects have changed, setting up listener again');
 		setUpRedirectListener();
-    }
+	}
 
-    if (changes.logging) {
+  if (changes.logging) {
 		log.enabled = changes.logging.newValue;
 		log('Logging settings have changed to ' + changes.logging.newValue, true); //Always want this to be logged...
 	}
-	if (changes.enableNotifications){
+
+	if (changes.enableNotifications) {
 		log('notifications setting changed to ' + changes.enableNotifications.newValue);
 		enableNotifications = changes.enableNotifications.newValue;
+	}
+
+	if (changes.enablePost) {
+		log('Enable POST setting has changed to ' + changes.enablePost.newValue);
+		enablePost = changes.enablePost.newValue;
 	}
 }
 chrome.storage.onChanged.addListener(monitorChanges);
@@ -399,13 +405,15 @@ chrome.storage.local.get({
 //wrapped the below inside a function so that we can call this once we know the value of storageArea from above. 
 
 function setupInitial() {
-	chrome.storage.local.get({enableNotifications:false},function(obj){
+	chrome.storage.local.get({ enableNotifications: false }, function(obj) {
 		enableNotifications = obj.enableNotifications;
 	});
 
-	chrome.storage.local.get({
-		disabled: false
-	}, function (obj) {
+	chrome.storage.local.get({ enablePost: false },function(obj) {
+		enablePost = obj.enablePost;
+	});
+
+	chrome.storage.local.get({ disabled: false }, function (obj) {
 		if (!obj.disabled) {
 			setUpRedirectListener();
 		} else {
