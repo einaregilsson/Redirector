@@ -1,3 +1,7 @@
+# Redirector
+
+> Automatically redirect content based on user-defined rules
+
 ## Description
 Web browser extension (Firefox, Vivaldi, Chrome, Opera, Edge) to redirect URLs based on regex or wildcard patterns.
 
@@ -11,6 +15,12 @@ In loving memory of Einar Egilsson, who gave us Redirector and selflessly nurtur
 Opera extension is no longer present (as of 2023/01/16)
 * [Opera](https://addons.opera.com/extensions/details/redirector-2/)
 -->
+
+## Enable POST redirects
+
+By default, only GET requests are allowed to be redirected to prevent accidental exposure of sensitive POST parameters.
+
+If you wish to include POST requests in your Redirector rules, you can enable this option by checking the "Enable POST redirects" box in the configuration settings.
 
 ## Examples
 ### De-mobilizer
@@ -75,7 +85,7 @@ What are bangs?: <https://duckduckgo.com/bangs>
 - Description: Create new !ghh bang that redirects to <https://githistory.xyz>
 - Advanced:
     - Process matches: URL decode
-    
+
 ### Fast DuckDuckGo.com !bangs
 
 Go directly to frequently used DuckDuckGo bangs to avoid intermediary network requests.
@@ -85,9 +95,9 @@ Go directly to frequently used DuckDuckGo bangs to avoid intermediary network re
 - Redirect to: `https://google.com/search?hl=en&q=$1+$2`
 - Pattern type: Regular Expression
 - Description: DuckDuckGo → Google !bang shortcut (prefix AND suffix)
-- Pattern Description: Avoid extraneous + in URL with two separate patterns  
+- Pattern Description: Avoid extraneous + in URL with two separate patterns
 ###
-  
+
 - Example URL: `https://duckduckgo.com/?q=foo+bar+%21google`
 - Include pattern: `^https://duckduckgo\.com/\?q=(.*?)\+?(?:%21|!)google\b\+?(.*?)(?:&|$)`
 - Redirect to: `https://google.com/search?hl=en&q=$1$2`
