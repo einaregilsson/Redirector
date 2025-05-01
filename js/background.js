@@ -1,4 +1,3 @@
-
 //This is the background script. It is responsible for actually redirecting requests,
 //as well as monitoring changes in the redirects and the disabled status and reacting to them.
 function log(msg, force) {
@@ -292,6 +291,13 @@ chrome.runtime.onMessage.addListener(
 			});
 		} else if (request.type == 'update-icon') {
 			updateIcon();
+		} else if (request.type == 'get-sync-state') {
+			// Get the current sync state and send it back to the requestor
+			chrome.storage.local.get({isSyncEnabled: false}, function(obj) {
+				sendResponse({
+					isSyncEnabled: obj.isSyncEnabled
+				});
+			});
 		} else if (request.type == 'toggle-sync') {
 			// Notes on Toggle Sync feature here https://github.com/einaregilsson/Redirector/issues/86#issuecomment-389943854
 			// This provides for feature request - issue 86
