@@ -265,6 +265,22 @@ function moveDownBottom(index) {
 	saveChanges();
 }
 
+function deleteAllRedirects() {
+	showForm('#delete-all-form');
+}
+
+function confirmDeleteAll() {
+	REDIRECTS = [];
+	renderRedirects();
+	saveChanges();
+	hideForm('#delete-all-form');
+	showMessage('All redirects have been deleted.', true);
+}
+
+function cancelDeleteAll() {
+	hideForm('#delete-all-form');
+}
+
 //All the setup stuff for the page
 function pageLoad() {
 	template = el('#redirect-row-template');
@@ -315,6 +331,9 @@ function pageLoad() {
 	//Setup event listeners
 	el('#hide-message').addEventListener('click', hideMessage);
 	el('#storage-sync-option input').addEventListener('click', toggleSyncSetting);
+	el('#delete-all-btn').addEventListener('click', deleteAllRedirects);
+	el('#confirm-delete-all').addEventListener('click', confirmDeleteAll);
+	el('#cancel-delete-all').addEventListener('click', cancelDeleteAll);
 	el('.redirect-rows').addEventListener('click', function(ev) {
 		if(ev.target.type == 'checkbox') {
 			ev.target.nextElementSibling.classList.add("checkMarked");

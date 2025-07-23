@@ -364,6 +364,86 @@ a.disabled:hover, button[disabled]:hover {
   vertical-align: top;
 }
 
+#delete-all-form {
+  position: fixed;
+  padding: 20px;
+  width: 500px;
+  background: white;
+  border: solid 2px #d32f2f;
+  border-radius: 8px;
+  z-index: 6000;
+  left: 50%;
+  margin-left: -260px;
+  top: 50%;
+  margin-top: -150px;
+  height: auto;
+  min-height: 200px;
+  display: none;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+#delete-all-form h3 {
+  color: #d32f2f;
+  margin: 0 0 15px 0;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+}
+
+#delete-all-form p {
+  color: #333;
+  margin: 10px 0;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+#delete-all-form p strong {
+  color: #d32f2f;
+  font-weight: bold;
+}
+
+/* Dark mode styles for delete all form */
+@media (prefers-color-scheme: dark) {
+  #delete-all-form {
+    background: #2d2d2d;
+    border-color: #f44336;
+    color: #ffffff;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+  }
+  
+  #delete-all-form h3 {
+    color: #f44336;
+  }
+  
+  #delete-all-form p {
+    color: #e0e0e0;
+  }
+  
+  #delete-all-form p strong {
+    color: #f44336;
+  }
+}
+
+/* JavaScript-controlled dark theme classes */
+#delete-all-form.dark-theme {
+  background: #2d2d2d;
+  border-color: #f44336;
+  color: #ffffff;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+}
+
+#delete-all-form.dark-theme h3 {
+  color: #f44336;
+}
+
+#delete-all-form.dark-theme p {
+  color: #e0e0e0;
+}
+
+#delete-all-form.dark-theme p strong {
+  color: #f44336;
+}
+
 /* Edit form */
 
 #cover {
