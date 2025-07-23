@@ -122,15 +122,21 @@ function monitorChanges(changes, namespace) {
 			log('Disabling Redirector, removing listener');
 			chrome.webRequest.onBeforeRequest.removeListener(checkRedirects);
 			chrome.webNavigation.onHistoryStateUpdated.removeListener(checkHistoryStateRedirects);
+			// Remove context menu when disabled
+			chrome.contextMenus.removeAll();
 		} else {
 			log('Enabling Redirector, setting up listener');
 			setUpRedirectListener();
+			// Recreate context menu when enabled
+			setupContextMenu();
 		}
 	}
 
 	if (changes.redirects) {
 		log('Redirects have changed, setting up listener again');
 		setUpRedirectListener();
+		// Update context menu when redirects change
+		setupContextMenu();
     }
 
     if (changes.logging) {
@@ -379,6 +385,7 @@ chrome.runtime.onMessage.addListener(
 
 //First time setup
 updateIcon();
+setupContextMenu();
 
 chrome.storage.local.get({logging:false}, function(obj) {
 	log.enabled = obj.logging;
@@ -397,6 +404,86 @@ chrome.storage.local.get({
 });
 
 //wrapped the below inside a function so that we can call this once we know the value of storageArea from above. 
+
+// Setup context menu for "Copy with Redirect" feature
+function setupContextMenu() {
+	chrome.contextMenus.removeAll(function() {
+		chrome.contextMenus.create({
+			id: "copyWithRedirect",
+			title: "Copy with Redirect",
+			contexts: ["link"],
+			documentUrlPatterns: ["http://*/*", "https://*/*"]
+		});
+	});
+}
+
+// Handle context menu clicks
+chrome.contextMenus.onClicked.addListener(function(info, tab) {
+	if (info.menuItemId === "copyWithRedirect") {
+		handleCopyWithRedirect(info.linkUrl, tab);
+	}
+});
+
+// Handle the "Copy with Redirect" functionality
+function handleCopyWithRedirect(originalUrl, tab) {
+	// Check if there are any redirects that would apply to this URL
+	var hasRedirect = false;
+	var redirectedUrl = originalUrl;
+	
+	// Check all redirect types for a match
+	for (var requestType in partitionedRedirects) {
+		var list = partitionedRedirects[requestType];
+		if (list) {
+			for (var i = 0; i < list.length; i++) {
+				var r = list[i];
+				var result = r.getMatch(originalUrl);
+				
+				if (result.isMatch) {
+					hasRedirect = true;
+					redirectedUrl = result.redirectTo;
+					break;
+				}
+			}
+			if (hasRedirect) break;
+		}
+	}
+	
+	// Copy the appropriate URL to clipboard
+	var urlToCopy = hasRedirect ? redirectedUrl : originalUrl;
+	
+	// Use the clipboard API to copy the URL
+	navigator.clipboard.writeText(urlToCopy).then(function() {
+		// Show a notification that the URL was copied
+		if (enableNotifications) {
+			let icon = isDarkMode() ? "images/icon-dark-theme-48.png": "images/icon-light-theme-48.png";
+			
+			if(navigator.userAgent.toLowerCase().indexOf("chrome") > -1 && navigator.userAgent.toLowerCase().indexOf("opr")<0){
+				var items = [{title:"Original URL: ", message: originalUrl},{title:"Copied URL: ",message: urlToCopy}];
+				var head = "Redirector - Copied URL";
+				chrome.notifications.create({
+					type : "list",
+					items : items,
+					title : head,
+					message : head,
+					iconUrl : icon
+				});
+			} else {
+				var message = hasRedirect ? 
+					"Copied redirected URL: " + urlToCopy + " (original: " + originalUrl + ")" :
+					"Copied URL: " + urlToCopy;
+				
+				chrome.notifications.create({
+					type : "basic",
+					title : "Redirector",
+					message : message,
+					iconUrl : icon
+				});
+			}
+		}
+	}).catch(function(err) {
+		log('Failed to copy URL to clipboard: ' + err);
+	});
+}
 
 function setupInitial() {
 	chrome.storage.local.get({enableNotifications:false},function(obj){

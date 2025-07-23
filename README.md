@@ -1,6 +1,13 @@
 ## Description
 Web browser extension (Firefox, Vivaldi, Chrome, Opera, Edge) to redirect URLs based on regex or wildcard patterns.
 
+## Features
+- **URL Redirection**: Automatically redirect URLs based on user-defined patterns
+- **Context Menu Integration**: Right-click on any link and select "Copy with Redirect" to copy the redirected URL to clipboard
+- **Pattern Support**: Both regex and wildcard pattern matching
+- **Multiple Request Types**: Redirect main frames, sub-frames, stylesheets, scripts, images, and more
+- **Dark Theme Support**: Automatic icon switching for dark/light themes
+
 ## Tribute
 In loving memory of Einar Egilsson, who gave us Redirector and selflessly nurtured it for many years.  We miss you Einar, and will always remember your kindness and generosity.
 
@@ -11,6 +18,14 @@ In loving memory of Einar Egilsson, who gave us Redirector and selflessly nurtur
 Opera extension is no longer present (as of 2023/01/16)
 * [Opera](https://addons.opera.com/extensions/details/redirector-2/)
 -->
+
+## Context Menu Feature
+Right-click on any link and select "Copy with Redirect" from the context menu to copy the redirected URL to your clipboard. This is useful when you want to:
+- Copy a redirected URL without opening the page
+- Share redirected URLs with others
+- Avoid waiting for redirects to complete
+
+The feature works with all your configured redirect rules and will copy either the original URL (if no redirect applies) or the redirected URL.
 
 ## Examples
 ### De-mobilizer
