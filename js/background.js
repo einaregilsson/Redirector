@@ -220,6 +220,9 @@ function setUpRedirectListener() {
 			}
 			chrome.webNavigation.onHistoryStateUpdated.addListener(checkHistoryStateRedirects, filter);
 		}
+		
+		// Update context menu based on current redirects
+		setupContextMenu();
 	});
 }
 
@@ -405,6 +408,30 @@ chrome.storage.local.get({
 
 //wrapped the below inside a function so that we can call this once we know the value of storageArea from above. 
 
+// Check if there are any matching redirect rules for a specific URL
+function hasMatchingRedirects(url) {
+	if (!partitionedRedirects || Object.keys(partitionedRedirects).length === 0) {
+		return false;
+	}
+	
+	// Check if there are any enabled redirect rules that match this URL
+	for (var requestType in partitionedRedirects) {
+		var list = partitionedRedirects[requestType];
+		if (list) {
+			for (var i = 0; i < list.length; i++) {
+				var r = list[i];
+				if (!r.disabled) {
+					var result = r.getMatch(url);
+					if (result.isMatch) {
+						return true;
+					}
+				}
+			}
+		}
+	}
+	return false;
+}
+
 // Setup context menu for "Copy with Redirect" feature
 function setupContextMenu() {
 	chrome.contextMenus.removeAll(function() {
@@ -420,7 +447,10 @@ function setupContextMenu() {
 // Handle context menu clicks
 chrome.contextMenus.onClicked.addListener(function(info, tab) {
 	if (info.menuItemId === "copyWithRedirect") {
-		handleCopyWithRedirect(info.linkUrl, tab);
+		// Only proceed if there are matching redirects for this URL
+		if (hasMatchingRedirects(info.linkUrl)) {
+			handleCopyWithRedirect(info.linkUrl, tab);
+		}
 	}
 });
 
@@ -497,6 +527,8 @@ function setupInitial() {
 			setUpRedirectListener();
 		} else {
 			log('Redirector is disabled');
+			// Remove context menu when disabled
+			chrome.contextMenus.removeAll();
 		}
 	});
 }
