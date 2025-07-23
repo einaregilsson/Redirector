@@ -21,6 +21,7 @@
     "tabs",
     "http://*/*",
     "https://*/*",
+    "data:*/*",
     "notifications"
   ],
   "applications": {
