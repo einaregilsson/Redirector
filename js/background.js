@@ -1,4 +1,3 @@
-
 //This is the background script. It is responsible for actually redirecting requests,
 //as well as monitoring changes in the redirects and the disabled status and reacting to them.
 function log(msg, force) {
@@ -7,12 +6,16 @@ function log(msg, force) {
 	}
 }
 log.enabled = false;
-var enableNotifications=false;
+let
+	enableNotifications = false,
+	disableContextMenu = false
 
 function isDarkMode() {
 	return window.matchMedia('(prefers-color-scheme: dark)').matches;
 }
-var isFirefox = !!navigator.userAgent.match(/Firefox/i);
+const
+	isFirefox = navigator.userAgent.includes(' Firefox/'),
+	isChromium = navigator.userAgent.includes(' Chrome/')
 
 var storageArea = chrome.storage.local;
 //Redirects partitioned by request type, so we have to run through
@@ -33,7 +36,7 @@ var justRedirected = {
 var redirectThreshold = 3;
 
 function setIcon(image) {
-	var data = { 
+	var data = {
 		path: {}
 	};
 
@@ -47,7 +50,7 @@ function setIcon(image) {
 			//If not checked we will get unchecked errors in the background page console...
 			log('Error in SetIcon: ' + err.message);
 		}
-	});		
+	});
 }
 
 //This is the actual function that gets called for each request and must
@@ -74,7 +77,7 @@ function checkRedirects(details) {
 		return {};
 	}
 
-	
+
 	for (var i = 0; i < list.length; i++) {
 		var r = list[i];
 		var result = r.getMatch(details.url);
@@ -94,7 +97,7 @@ function checkRedirects(details) {
 				if (data.count >= redirectThreshold) {
 					log('Ignoring ' + details.url + ' because we have redirected it ' + data.count + ' times in the last ' + threshold + 'ms');
 					return {};
-				} 
+				}
 			}
 
 
@@ -103,18 +106,92 @@ function checkRedirects(details) {
 				sendNotifications(r, details.url, result.redirectTo);
 			}
 			ignoreNextRequest[result.redirectTo] = new Date().getTime();
-			
+
 			return { redirectUrl: result.redirectTo };
 		}
 	}
 
-  	return {}; 
+  	return {};
 }
+
+// https://pastebin.com/mpCxwADU kind of inconsistently worked on Firefox.
+// I think with some refactoring + better data structures, it could've been made consistent.
+// However, Chromium's `contextMenus` API's way too limited, conditional target `link` types just aren't possible when supporting Chromium.
+// https://issues.chromium.org/issues/40467152
+
+let
+	hasRedirect = false,
+	linkUrl
+
+const
+	id = 'copyWithRedirect',
+	initContextMenu = () => {
+		chrome.storage.local.get({ disableContextMenu: false }, obj => {
+			if (obj.disableContextMenu) {
+				chrome.contextMenus.remove(id)
+				return
+			}
+
+			chrome.contextMenus.create({
+				id,
+				title: 'Copy with Redirect',
+				contexts: ['link'],
+				documentUrlPatterns: ['http://*/*', 'https://*/*']
+			})
+
+			chrome.contextMenus.onClicked.addListener(async info => {
+				if (info.menuItemId !== id) {
+					chrome.contextMenus.remove(id)
+					return
+				}
+
+				hasRedirect = false
+				linkUrl = info.linkUrl
+
+				redirects:
+				for (const requestType in partitionedRedirects)
+					for (let redirect of partitionedRedirects[requestType])
+						if (!redirect.disabled && (redirect = redirect.getMatch(linkUrl)).isMatch) {
+							hasRedirect = true
+							linkUrl = redirect.redirectTo
+							break redirects
+						}
+
+				try {
+					// https://issues.chromium.org/issues/40738001
+					if (isChromium) {
+						const textarea = document.createElement('textarea')
+						textarea.style.position = 'fixed'
+						textarea.style.opacity = 0
+						textarea.value = linkUrl
+						document.body.appendChild(textarea)
+						textarea.select()
+						document.execCommand('copy')
+						document.body.removeChild(textarea)
+					}
+					else
+						await navigator.clipboard.writeText(linkUrl)
+
+					if (enableNotifications)
+						chrome.notifications.create({
+							type: 'basic',
+							title: 'Redirector - Copied URL',
+							message: `Copied${hasRedirect ? ' redirected': ''} URL: ${linkUrl}`,
+							iconUrl: `images/icon-${isDarkMode() ? 'dark' : 'light'}-theme-48.png`
+						})
+				}
+				catch (err) {
+					log('Failed to copy URL to clipboard: ' + err.message)
+				}
+			})
+		})
+	}
+initContextMenu()
 
 //Monitor changes in data, and setup everything again.
 //This could probably be optimized to not do everything on every change
 //but why bother?
-function monitorChanges(changes, namespace) {
+function monitorChanges(changes) {
 	if (changes.disabled) {
 		updateIcon();
 
@@ -133,13 +210,15 @@ function monitorChanges(changes, namespace) {
 		setUpRedirectListener();
     }
 
-    if (changes.logging) {
-		log.enabled = changes.logging.newValue;
-		log('Logging settings have changed to ' + changes.logging.newValue, true); //Always want this to be logged...
-	}
-	if (changes.enableNotifications){
-		log('notifications setting changed to ' + changes.enableNotifications.newValue);
-		enableNotifications = changes.enableNotifications.newValue;
+    if (changes.logging)
+		log('Logging settings have changed to ' + (log.enabled = changes.logging.newValue), true) // Always want this to be logged...
+
+	if (changes.enableNotifications)
+		log('Notifications setting changed to ' + (enableNotifications = changes.enableNotifications.newValue))
+
+	if (changes.disableContextMenu) {
+		log('Disable context menu setting has been changed to ' + (disableContextMenu = changes.disableContextMenu.newValue))
+		initContextMenu()
 	}
 }
 chrome.storage.onChanged.addListener(monitorChanges);
@@ -149,7 +228,7 @@ chrome.storage.onChanged.addListener(monitorChanges);
 function createFilter(redirects) {
 	var types = [];
 	for (var i = 0; i < redirects.length; i++) {
-		redirects[i].appliesTo.forEach(function(type) { 
+		redirects[i].appliesTo.forEach(function(type) {
 			// Added this condition below as part of fix for issue 115 https://github.com/einaregilsson/Redirector/issues/115
 			// Firefox considers responsive web images request as imageset. Chrome doesn't.
 			// Chrome throws an error for imageset type, so let's add to 'types' only for the values that chrome or firefox supports
@@ -177,13 +256,13 @@ function createPartitionedRedirects(redirects) {
 		for (var j=0; j<redirect.appliesTo.length;j++) {
 			var requestType = redirect.appliesTo[j];
 			if (partitioned[requestType]) {
-				partitioned[requestType].push(redirect); 
+				partitioned[requestType].push(redirect);
 			} else {
 				partitioned[requestType] = [redirect];
 			}
 		}
 	}
-	return partitioned;	
+	return partitioned;
 }
 
 //Sets up the listener, partitions the redirects, creates the appropriate filters etc.
@@ -232,7 +311,7 @@ function updateIcon() {
 	chrome.storage.local.get({disabled:false}, function(obj) {
 
 		//Do this here so even in Chrome we get the icon not too long after an dark/light mode switch...
-		if (!isFirefox) {
+		if (!isFirefox) {
 			if (isDarkMode()) {
 				setIcon('icon-dark-theme');
 			} else {
@@ -253,7 +332,7 @@ function updateIcon() {
 				chrome.browserAction.setBadgeTextColor({color: '#fafafa'});
 			}
 		}
-	});	
+	});
 }
 
 
@@ -311,7 +390,7 @@ chrome.runtime.onMessage.addListener(
 								if (size > storageArea.QUOTA_BYTES_PER_ITEM) {
 									log("size of redirects " + size + " is greater than allowed for Sync which is " + storageArea.QUOTA_BYTES_PER_ITEM);
 									// Setting storageArea back to Local.
-									storageArea = chrome.storage.local; 
+									storageArea = chrome.storage.local;
 									sendResponse({
 										message: "Sync Not Possible - size of Redirects larger than what's allowed by Sync. Refer Help page"
 									});
@@ -325,7 +404,7 @@ chrome.runtime.onMessage.addListener(
 												log('redirects moved from Local to Sync Storage Area');
 												//Remove Redirects from Local storage
 												chrome.storage.local.remove("redirects");
-												// Call setupRedirectListener to setup the redirects 
+												// Call setupRedirectListener to setup the redirects
 												setUpRedirectListener();
 												sendResponse({
 													message: "sync-enabled"
@@ -351,7 +430,7 @@ chrome.runtime.onMessage.addListener(
 									log('redirects moved from Sync to Local Storage Area');
 									//Remove Redirects from sync storage
 									chrome.storage.sync.remove("redirects");
-									// Call setupRedirectListener to setup the redirects 
+									// Call setupRedirectListener to setup the redirects
 									setUpRedirectListener();
 									sendResponse({
 										message: "sync-disabled"
@@ -393,10 +472,8 @@ chrome.storage.local.get({
 		storageArea = chrome.storage.local;
 	}
 	// Now we know which storageArea to use, call setupInitial function
-	setupInitial(); 
+	setupInitial();
 });
-
-//wrapped the below inside a function so that we can call this once we know the value of storageArea from above. 
 
 function setupInitial() {
 	chrome.storage.local.get({enableNotifications:false},function(obj){
@@ -416,7 +493,7 @@ function setupInitial() {
 log('Redirector starting up...');
 
 
-// Below is a feature request by an user who wished to see visual indication for an Redirect rule being applied on URL 
+// Below is a feature request by an user who wished to see visual indication for an Redirect rule being applied on URL
 // https://github.com/einaregilsson/Redirector/issues/72
 // By default, we will have it as false. If user wishes to enable it from settings page, we can make it true until user disables it (or browser is restarted)
 
@@ -428,13 +505,13 @@ function sendNotifications(redirect, originalUrl, redirectedUrl ){
 	//Firefox and other browsers does not yet support "list" type notification like in Chrome.
 	// Console.log(JSON.stringify(chrome.notifications)); -- This will still show "list" as one option but it just won't work as it's not implemented by Firefox yet
 	// Can't check if "chrome" typeof either, as Firefox supports both chrome and browser namespace.
-	// So let's use useragent. 
+	// So let's use useragent.
 	// Opera UA has both chrome and OPR. So check against that ( Only chrome which supports list) - other browsers to get BASIC type notifications.
 
 	let icon = isDarkMode() ? "images/icon-dark-theme-48.png": "images/icon-light-theme-48.png";
 
 	if(navigator.userAgent.toLowerCase().indexOf("chrome") > -1 && navigator.userAgent.toLowerCase().indexOf("opr")<0){
-		
+
 		var items = [{title:"Original page: ", message: originalUrl},{title:"Redirected to: ",message: redirectedUrl}];
 		var head = "Redirector - Applied rule : " + redirect.description;
 		chrome.notifications.create({
@@ -443,7 +520,7 @@ function sendNotifications(redirect, originalUrl, redirectedUrl ){
 			title : head,
 			message : head,
 			iconUrl : icon
-		  });	
+		  });
 		}
 	else{
 		var message = "Applied rule : " + redirect.description + " and redirected original page " + originalUrl + " to " + redirectedUrl;

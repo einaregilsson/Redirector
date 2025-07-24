@@ -21,7 +21,9 @@
     "tabs",
     "http://*/*",
     "https://*/*",
-    "notifications"
+    "notifications",
+    "contextMenus",
+    "clipboardWrite"
   ],
   "applications": {
     "gecko": {
