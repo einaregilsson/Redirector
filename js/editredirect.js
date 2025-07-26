@@ -65,6 +65,7 @@ function editFormChange() {
 
 	activeRedirect.processMatches = el('#process-matches option:checked').value;
 	activeRedirect.patternType = el('[name="patterntype"]:checked').value;
+	activeRedirect.errorCodes = el('input[data-bind="errorCodes"]').value;
 
 	activeRedirect.updateExampleResult();
 
