@@ -40,6 +40,7 @@ Opera extension is no longer present (as of 2023/01/16)
 - Redirect to: `https://www.youtube.com/watch?v=$1$2`
 - Pattern type: Regular Expression
 - Description: Redirect YouTube Shorts to regular YouTube
+- Advanced option: enable `historyState`
 
 ### Fun with !bangs
 What are bangs?: <https://duckduckgo.com/bangs>
