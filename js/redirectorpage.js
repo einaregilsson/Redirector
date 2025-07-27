@@ -25,7 +25,8 @@ function saveChanges() {
 }
 
 function toggleSyncSetting() {
-	chrome.runtime.sendMessage({type:"toggle-sync", isSyncEnabled: !options.isSyncEnabled}, function(response) {
+	const isChecked = el('#storage-sync-option input').checked;
+	chrome.runtime.sendMessage({type:"toggle-sync", isSyncEnabled: isChecked}, function(response) {
 		if(response.message === "sync-enabled"){
 			options.isSyncEnabled = true;
 			showMessage('Sync is enabled!', true);
@@ -34,7 +35,7 @@ function toggleSyncSetting() {
 			showMessage('Sync is disabled - local storage will be used!', true);
 		} else if(response.message.indexOf("Sync Not Possible")>-1){
 			options.isSyncEnabled = false;
-			chrome.storage.local.set({isSyncEnabled: $s.isSyncEnabled}, function(){
+			chrome.storage.local.set({isSyncEnabled: options.isSyncEnabled}, function(){
 			 // console.log("set back to false");
 			});
 			showMessage(response.message, false);
@@ -43,6 +44,7 @@ function toggleSyncSetting() {
 			alert(response.message)
 			showMessage('Error occured when trying to change Sync settings. Look at the logs and raise an issue',false);
 		}
+		// Update checkbox to match the actual state
 		el('#storage-sync-option input').checked = options.isSyncEnabled;
 	});
 }
@@ -302,9 +304,18 @@ function pageLoad() {
 		renderRedirects();
 	});
 
-	chrome.storage.local.get({isSyncEnabled:false}, function(obj){
-		options.isSyncEnabled = obj.isSyncEnabled;
-		el('#storage-sync-option input').checked = options.isSyncEnabled;
+	// Get the sync state properly from background page instead of direct storage access
+	chrome.runtime.sendMessage({type: "get-sync-state"}, function(response) {
+		if (response && response.isSyncEnabled !== undefined) {
+			options.isSyncEnabled = response.isSyncEnabled;
+			el('#storage-sync-option input').checked = options.isSyncEnabled;
+		} else {
+			// Fallback to local storage if background messaging fails
+			chrome.storage.local.get({isSyncEnabled:false}, function(obj){
+				options.isSyncEnabled = obj.isSyncEnabled;
+				el('#storage-sync-option input').checked = options.isSyncEnabled;
+			});
+		}
 	});
 
 	if(navigator.userAgent.toLowerCase().indexOf("chrome") > -1){
