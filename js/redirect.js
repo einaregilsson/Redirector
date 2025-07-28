@@ -152,6 +152,11 @@ Redirect.prototype = {
 			return;
 		}
 
+		if (!this.patternType == Redirect.REGEX && !this.includePattern.includes('.') && this.includePattern.slice(-1)!='/') {
+			this.error = 'Warning: this will not redirect properly.';
+			return;
+		}
+
 		this.compile();
 
 		var match = this.getMatch(this.exampleUrl, true);
