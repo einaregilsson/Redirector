@@ -254,6 +254,7 @@ Redirect.prototype = {
 			urlEncode : 'E.g. turn /bar/foo?x=2 into %2Fbar%2Ffoo%3Fx%3D2',
 			urlDecode : 'E.g. turn %2Fbar%2Ffoo%3Fx%3D2 into /bar/foo?x=2',
 			doubleUrlDecode : 'E.g. turn %252Fbar%252Ffoo%253Fx%253D2 into /bar/foo?x=2',
+			base64Encode : 'E.g. turn http://cnn.com into aHR0cDovL2Nubi5jb20=',
 			base64Decode : 'E.g. turn aHR0cDovL2Nubi5jb20= into http://cnn.com'
 		};
 
@@ -281,7 +282,9 @@ Redirect.prototype = {
 				repl = unescape(unescape(repl));
 			} else if (this.processMatches == 'urlEncode') {
 				repl = encodeURIComponent(repl);
-			} else if (this.processMatches == 'base64decode') {
+			} else if (this.processMatches == 'base64Encode') {
+				repl = btoa(repl);
+			} else if (this.processMatches == 'base64Decode') {
 				if (repl.indexOf('%') > -1) {
 					repl = unescape(repl);
 				}
