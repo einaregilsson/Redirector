@@ -1,0 +1,32 @@
+name: Mark stale issues and pull requests
+
+on:
+  schedule:
+    - cron: '30 1 * * *'  # Run daily at 1:30 AM UTC
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Mark stale issues and pull requests
+        uses: actions/stale@v8
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          stale-issue-message: |
+            This issue has been automatically marked as stale because it has not had recent activity. It will be closed if no further activity occurs. Thank you for your contributions.
+          stale-pr-message: |
+            This pull request has been automatically marked as stale because it has not had recent activity. It will be closed if no further activity occurs. Thank you for your contributions.
+          stale-issue-label: 'no-issue-activity'
+          stale-pr-label: 'no-pr-activity'
+          days-before-stale: 60
+          days-before-close: 7
+          stale-issue-assignees: ''
+          stale-pr-assignees: ''
+          stale-issue-reviewers: ''
+          stale-pr-reviewers: ''
+          stale-issue-milestone: ''
+          stale-pr-milestone: ''
+          stale-issue-project: ''
+          stale-pr-project: ''
+          stale-issue-limit: 100
+          stale-pr-limit: 100 
