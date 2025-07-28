@@ -12,6 +12,14 @@ Opera extension is no longer present (as of 2023/01/16)
 * [Opera](https://addons.opera.com/extensions/details/redirector-2/)
 -->
 
+## Development
+
+### Building
+Run `python build.py` to build extensions for all supported browsers.
+
+### Publishing to Chrome Web Store
+This repository includes automated publishing to the Chrome Web Store via GitHub Actions. See [Chrome Web Store Setup Guide](docs/chrome-web-store-setup.md) for configuration details.
+
 ## Examples
 ### De-mobilizer
 - Example URL: `https://en.m.wikipedia.org/`
