@@ -86,7 +86,10 @@
             include pattern. You can use the special signs $1, $2, $3 etc. in the url, they will be replaced by the results of captures with regular
             expressions or stars with wildcards. For instance, if you have the include pattern <span class="pattern">http://google.com/*</span>, redirect to <span class="pattern">http://froogle.com/$1</span>
             and you open the page <span class="url">http://google.com/foobar</span>, then you will be redirected to <span class="url">http://froogle.com/foobar</span>, since 'foobar' was what the star replaced. $1 is for the
-            first star in the pattern, $2 for the second and so on. For regular expression $1 is for the first parentheses, $2 for the second etc.</li>
+            first star in the pattern, $2 for the second and so on. For regular expression $1 is for the first parentheses, $2 for the second etc.
+            <br><br>
+            <strong>Data URIs:</strong> You can also redirect to data URIs (data: URLs) to display custom messages or content. For example, you can redirect to 
+            <span class="pattern">data:text/html,<html><body><h1>Blocked</h1><p>This site has been blocked.</p></body></html></span> to show a custom message instead of loading a page.</li>
 		
             <li><a name="patterntype"></a><strong>Pattern type:</strong> This specifies how Redirector should interpret the patterns, either as
             <a href="#wildcards">wildcards</a> or <a href="#regularexpressions">regular expressions</a>.</li>

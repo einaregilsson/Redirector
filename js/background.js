@@ -163,7 +163,7 @@ function createFilter(redirects) {
 	types.sort();
 
 	return {
-		urls: ["https://*/*", "http://*/*"],
+		urls: ["https://*/*", "http://*/*", "data:*/*"],
 		types : types
 	};
 }
