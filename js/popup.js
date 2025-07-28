@@ -18,7 +18,6 @@ function toggle(prop) {
 
 
 function openRedirectorSettings() {
-
 	//switch to open one if we have it to minimize conflicts
 	var url = chrome.extension.getURL('redirector.html');
 	
@@ -41,14 +40,20 @@ function openRedirectorSettings() {
 
 
 function pageLoad() {
-	storage.get({logging:false, enableNotifications:false, disabled: false}, function(obj) {
+	storage.get({
+		logging:false,
+		enableNotifications:false,
+		disabled: false,
+		enablePost: false
+	}, function(obj) {
 		viewModel = obj;
 		applyBinding();
-	})
+	});
 
 	el('#enable-notifications').addEventListener('input', () => toggle('enableNotifications'));
 	el('#enable-logging').addEventListener('input', () => toggle('logging'));
 	el('#toggle-disabled').addEventListener('click', () => toggle('disabled'));
+	el('#enable-post').addEventListener('click', () => toggle('enablePost'));
 	el('#open-redirector-settings').addEventListener('click', openRedirectorSettings);
 }
 
