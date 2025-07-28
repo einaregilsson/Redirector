@@ -44,6 +44,7 @@ Redirect.prototype = {
 	processMatches : 'noProcessing',
 	disabled : false,
 	grouped: false,
+	errorCodes : '', // Comma-separated list of HTTP error codes (e.g., "404,500")
 
 	compile : function() {
 
@@ -67,6 +68,7 @@ Redirect.prototype = {
 			&& this.redirectUrl == redirect.redirectUrl
 			&& this.patternType == redirect.patternType
 			&& this.processMatches == redirect.processMatches
+			&& this.errorCodes == redirect.errorCodes
 			&& this.appliesTo.toString() == redirect.appliesTo.toString();
 	},
 
@@ -84,6 +86,7 @@ Redirect.prototype = {
 			processMatches : this.processMatches,
 			disabled : this.disabled,
 			grouped: this.grouped,
+			errorCodes : this.errorCodes,
 			appliesTo : this.appliesTo.slice(0)
 		};
 	},
@@ -237,6 +240,7 @@ Redirect.prototype = {
 		}
 
 		this.disabled = !!o.disabled;
+		this.errorCodes = o.errorCodes || '';
 		if (o.appliesTo && o.appliesTo.length) {
 			this.appliesTo = o.appliesTo.slice(0);
 		} else {
@@ -300,5 +304,18 @@ Redirect.prototype = {
 		var shouldExclude = this._rxExclude.test(url);
 		this._rxExclude.lastIndex = 0;
 		return shouldExclude;
+	},
+
+	// Check if this redirect should be applied based on HTTP status code
+	shouldApplyOnErrorCode : function(statusCode) {
+		if (!this.errorCodes || this.errorCodes.trim() === '') {
+			return true; // No error codes specified, apply always
+		}
+		
+		var codes = this.errorCodes.split(',').map(function(code) {
+			return code.trim();
+		});
+		
+		return codes.indexOf(statusCode.toString()) !== -1;
 	}
 };

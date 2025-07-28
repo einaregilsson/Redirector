@@ -76,6 +76,10 @@
 					<div class="input-cell"><input type="text" data-bind="patternDesc" placeholder="Describe your pattern" /></div>
 				</div>
 				<div>
+					<label>Error Codes (optional):</label>
+					<div class="input-cell"><input type="text" data-bind="errorCodes" placeholder="e.g., 404,500 (leave empty to redirect always)" /></div>
+				</div>
+				<div>
 					<label>Example result:</label>
 					<div class="input-cell"><span class="error example-result-error" data-show="error" data-bind="error"></span><span class="example-result" data-show="exampleResult" data-bind="exampleResult"></span></div>
 				</div>
@@ -167,6 +171,9 @@
 								</div>
 								<div data-show="excludePattern">
 									<label>excluding:</label><p data-bind="excludePattern"></p>
+								</div>
+								<div data-show="errorCodes">
+									<label>Error codes:</label><p data-bind="errorCodes"></p>
 								</div>
 								<div data-show="patternDesc">
 									<label>Hint:</label><p data-bind="patternDesc"></p>

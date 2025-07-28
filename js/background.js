@@ -80,6 +80,15 @@ function checkRedirects(details) {
 		var result = r.getMatch(details.url);
 
 		if (result.isMatch) {
+			// If this redirect has error codes specified, store it for later checking
+			if (r.errorCodes && r.errorCodes.trim() !== '') {
+				pendingRedirects[details.url] = {
+					redirectTo: result.redirectTo,
+					errorCodes: r.errorCodes
+				};
+				log('Storing redirect for error code checking: ' + details.url + ' with error codes: ' + r.errorCodes);
+				return {}; // Don't redirect immediately, wait for response
+			}
 
 			//Check if we're stuck in a loop where we keep redirecting this, in that
 			//case ignore!
@@ -109,6 +118,43 @@ function checkRedirects(details) {
 	}
 
   	return {}; 
+}
+
+// Store pending redirects that need error code verification
+var pendingRedirects = {};
+
+// Function to check redirects on HTTP response (for error code checking)
+function checkRedirectsOnResponse(details) {
+	var url = details.url;
+	var statusCode = details.statusCode;
+	
+	if (pendingRedirects[url]) {
+		var redirect = pendingRedirects[url];
+		delete pendingRedirects[url];
+		
+		// Check if this redirect should be applied based on the error code
+		var shouldApply = true;
+		if (redirect.errorCodes && redirect.errorCodes.trim() !== '') {
+			var codes = redirect.errorCodes.split(',').map(function(code) {
+				return code.trim();
+			});
+			shouldApply = codes.indexOf(statusCode.toString()) !== -1;
+		}
+		
+		if (shouldApply) {
+			log('Redirecting on error ' + statusCode + ': ' + url + ' ===> ' + redirect.redirectTo);
+			ignoreNextRequest[redirect.redirectTo] = new Date().getTime();
+			
+			// Update the tab with the redirect URL
+			chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+				if (tabs[0]) {
+					chrome.tabs.update(tabs[0].id, {url: redirect.redirectTo});
+				}
+			});
+		} else {
+			log('Not redirecting ' + url + ' because status code ' + statusCode + ' does not match error codes: ' + redirect.errorCodes);
+		}
+	}
 }
 
 //Monitor changes in data, and setup everything again.
@@ -190,6 +236,7 @@ function createPartitionedRedirects(redirects) {
 function setUpRedirectListener() {
 
 	chrome.webRequest.onBeforeRequest.removeListener(checkRedirects); //Unsubscribe first, in case there are changes...
+	chrome.webRequest.onCompleted.removeListener(checkRedirectsOnResponse);
 	chrome.webNavigation.onHistoryStateUpdated.removeListener(checkHistoryStateRedirects);
 
 	storageArea.get({redirects:[]}, function(obj) {
@@ -204,6 +251,9 @@ function setUpRedirectListener() {
 
 		log('Setting filter for listener: ' + JSON.stringify(filter));
 		chrome.webRequest.onBeforeRequest.addListener(checkRedirects, filter, ["blocking"]);
+		
+		// Add response listener for error code checking
+		chrome.webRequest.onCompleted.addListener(checkRedirectsOnResponse, filter);
 
 		if (partitionedRedirects.history) {
 			log('Adding HistoryState Listener');
