@@ -76,7 +76,7 @@ What are bangs?: <https://duckduckgo.com/bangs>
 - Description: Create new !ghh bang that redirects to <https://githistory.xyz>
 - Advanced:
     - Process matches: URL decode
-    
+
 ### Fast DuckDuckGo.com !bangs
 
 Go directly to frequently used DuckDuckGo bangs to avoid intermediary network requests.
@@ -86,9 +86,9 @@ Go directly to frequently used DuckDuckGo bangs to avoid intermediary network re
 - Redirect to: `https://google.com/search?hl=en&q=$1+$2`
 - Pattern type: Regular Expression
 - Description: DuckDuckGo → Google !bang shortcut (prefix AND suffix)
-- Pattern Description: Avoid extraneous + in URL with two separate patterns  
+- Pattern Description: Avoid extraneous + in URL with two separate patterns
 ###
-  
+
 - Example URL: `https://duckduckgo.com/?q=foo+bar+%21google`
 - Include pattern: `^https://duckduckgo\.com/\?q=(.*?)\+?(?:%21|!)google\b\+?(.*?)(?:&|$)`
 - Redirect to: `https://google.com/search?hl=en&q=$1$2`

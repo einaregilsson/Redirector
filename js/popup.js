@@ -21,7 +21,7 @@ function openRedirectorSettings() {
 
 	//switch to open one if we have it to minimize conflicts
 	var url = chrome.extension.getURL('redirector.html');
-	
+
 	//FIREFOXBUG: Firefox chokes on url:url filter if the url is a moz-extension:// url
 	//so we don't use that, do it the more manual way instead.
 	chrome.tabs.query({currentWindow:true}, function(tabs) {
@@ -41,12 +41,13 @@ function openRedirectorSettings() {
 
 
 function pageLoad() {
-	storage.get({logging:false, enableNotifications:false, disabled: false}, function(obj) {
+	storage.get({ logging: false, enableNotifications: false, disableContextMenu: false, disabled: false }, function(obj) {
 		viewModel = obj;
 		applyBinding();
 	})
 
 	el('#enable-notifications').addEventListener('input', () => toggle('enableNotifications'));
+	el('#disable-context-menu').addEventListener('input', () => toggle('disableContextMenu'));
 	el('#enable-logging').addEventListener('input', () => toggle('logging'));
 	el('#toggle-disabled').addEventListener('click', () => toggle('disabled'));
 	el('#open-redirector-settings').addEventListener('click', openRedirectorSettings);
