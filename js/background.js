@@ -192,7 +192,7 @@ function setUpRedirectListener() {
 	chrome.webRequest.onBeforeRequest.removeListener(checkRedirects); //Unsubscribe first, in case there are changes...
 	chrome.webNavigation.onHistoryStateUpdated.removeListener(checkHistoryStateRedirects);
 
-	storageArea.get({redirects:[]}, function(obj) {
+	getRedirects(function(obj) {
 		var redirects = obj.redirects;
 		if (redirects.length == 0) {
 			log('No redirects defined, not setting up listener');
@@ -256,6 +256,20 @@ function updateIcon() {
 	});	
 }
 
+function getRedirects(callback) {
+	if (chrome.storage.managed instanceof Object) {
+		chrome.storage.managed.get('redirects', function (obj) {
+			if (obj) {
+				callback(obj);
+			} else {
+				storageArea.get({redirects: []}, callback);
+			}
+		});
+	} else {
+		storageArea.get({redirects: []}, callback);
+	}
+}
+
 
 //Firefox doesn't allow the "content script" which is actually privileged
 //to access the objects it gets from chrome.storage directly, so we
@@ -265,9 +279,7 @@ chrome.runtime.onMessage.addListener(
 		log('Received background message: ' + JSON.stringify(request));
 		if (request.type == 'get-redirects') {
 			log('Getting redirects from storage');
-			storageArea.get({
-				redirects: []
-			}, function (obj) {
+			getRedirects(function (obj) {
 				log('Got redirects from storage: ' + JSON.stringify(obj));
 				sendResponse(obj);
 				log('Sent redirects to content page');
