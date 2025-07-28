@@ -478,7 +478,7 @@ a.disabled:hover, button[disabled]:hover {
   margin-top:8px;
 }
 
-.hidden {
+.hidden, .replace-process-input.hidden {
   display:none;
 }
 
@@ -519,6 +519,10 @@ a[ng-click] {
   margin-top:20px;
   text-align: center;
   padding-bottom:10px;
+}
+
+.replace-process-input input[type='checkbox'] {
+  margin-top: 6px;
 }
 
 /* Footer with link */

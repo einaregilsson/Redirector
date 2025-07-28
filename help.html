@@ -23,6 +23,7 @@
 					<li><a href="#processmatches">Process Matches</a>
 						<ol>
 							<li><a href="#noprocessing">No Processing</a></li>
+							<li><a href="#replacematches">Replace matches</a></li>
 							<li><a href="#urldecodematches">URL decode matches</a></li>
 							<li><a href="#doubleurldecodematches">Double URL decode matches</a></li>
 							<li><a href="#urlencodematches">URL encode matches</a></li>
@@ -95,6 +96,10 @@
             	different ways to process the Regular expression matches before using them. The decoding options available are:
             	<ul>
             		<li><a name="noprocessing"></a><strong>No Processing:</strong> This is the default. Just use the matches from the original url exactly as they are.</li>
+					<li><a name="replacematches"></a><strong>Replace matches:</strong> Sometimes you may want to modify some parts of your matches. 
+						This helps you replace, delete or add something. You can use this as simple as possible like finding a character and changing it or by using search patterns to find something and javascript 
+						<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace#specifying_a_string_as_a_parameter" target="_blank">replacement patterns</a> to replace it.
+					</li>
 		            <li><a name="urldecodematches"></a><strong>URL Decode matches:</strong> A common usage of Redirector is to catch urls like
 		            <span class="url">http://foo.com/redirect.php?url=http%3A%2F%2Fbar%2Ecom%2Fpath</span> and try to catch the url parameter and redirect to it. A pattern
 		            like <span class="pattern">http://foo.com/redirect.php?url=*</span> might be used for that purpose. However, if the url parameter is <em>escaped</em> (also known
