@@ -96,15 +96,18 @@ function checkRedirects(details) {
 					return {};
 				} 
 			}
-
-
-			log('Redirecting ' + details.url + ' ===> ' + result.redirectTo + ', type: ' + details.type + ', pattern: ' + r.includePattern + ' which is in Rule : ' + r.description);
-			if(enableNotifications){
-				sendNotifications(r, details.url, result.redirectTo);
+			var redirectTo = result.redirectTo;
+			if (redirectTo.trim().startsWith('/')){
+				var url = new URL(details.originalUrl);
+				redirectTo = url.protocol + "//" + url.host + redirectTo;
 			}
-			ignoreNextRequest[result.redirectTo] = new Date().getTime();
+			log('Redirecting ' + details.url + ' ===> ' + redirectTo + ', type: ' + details.type + ', pattern: ' + r.includePattern + ' which is in Rule : ' + r.description);
+			if(enableNotifications){
+				sendNotifications(r, details.url, redirectTo);
+			}
+			ignoreNextRequest[redirectTo] = new Date().getTime();
 			
-			return { redirectUrl: result.redirectTo };
+			return { redirectUrl: redirectTo };
 		}
 	}
 
