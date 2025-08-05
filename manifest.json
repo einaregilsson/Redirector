@@ -1,8 +1,11 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "Redirector",
   "description": "Automatically redirect content based on user-defined rules.",
-  "version": "3.5.4",
+  "version": "4.1.1",
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  },
   "icons": {
     "16": "images/icon-light-theme-16.png",
     "19": "images/icon-light-theme-19.png",
@@ -12,34 +15,36 @@
     "64": "images/icon-light-theme-64.png",
     "128": "images/icon-light-theme-128.png"
   },
-
   "permissions": [
-    "webRequest",
-    "webRequestBlocking",
-    "webNavigation",
     "storage",
     "tabs",
-    "http://*/*",
-    "https://*/*",
+    "webNavigation",
+    "declarativeNetRequest",
     "notifications"
   ],
-  "applications": {
-    "gecko": {
-      "id": "redirector@einaregilsson.com"
-    }
-  },
+  "host_permissions": [
+    "http://*/*",
+    "https://*/*"
+  ],
   "background": {
-    "scripts": [
-      "js/redirect.js",
-      "js/background.js"
-    ],
-    "persistent": true
+    "service_worker": "js/background.js"
   },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "js/redirect.js",
+        "js/redirect-polyfill.js",
+        "js/theme-detector.js",
+        "js/theme-detector-redirectorpage.js",
+        "images/*.png"
+      ],
+      "matches": ["<all_urls>"]
+    }
+  ],
   "options_ui": {
-    "page": "popup.html",
-    "chrome_style": true
+    "page": "popup.html"
   },
-  "browser_action": {
+  "action": {
     "default_icon": {
       "16": "images/icon-light-theme-16.png",
       "19": "images/icon-light-theme-19.png",
@@ -50,43 +55,6 @@
       "128": "images/icon-light-theme-128.png"
     },
     "default_title": "Redirector",
-    "default_popup": "popup.html",
-    "theme_icons": [
-      {
-        "dark": "images/icon-light-theme-16.png",
-        "light": "images/icon-dark-theme-16.png",
-        "size": 16
-      },
-      {
-        "dark": "images/icon-light-theme-19.png",
-        "light": "images/icon-dark-theme-19.png",
-        "size": 19
-      },
-      {
-        "dark": "images/icon-light-theme-32.png",
-        "light": "images/icon-dark-theme-32.png",
-        "size": 32
-      },
-      {
-        "dark": "images/icon-light-theme-38.png",
-        "light": "images/icon-dark-theme-38.png",
-        "size": 38
-      },
-      {
-        "dark": "images/icon-light-theme-48.png",
-        "light": "images/icon-dark-theme-48.png",
-        "size": 48
-      },
-      {
-        "dark": "images/icon-light-theme-64.png",
-        "light": "images/icon-dark-theme-64.png",
-        "size": 64
-      },
-      {
-        "dark": "images/icon-light-theme-128.png",
-        "light": "images/icon-dark-theme-128.png",
-        "size": 128
-      }
-    ]
+    "default_popup": "popup.html"
   }
 }

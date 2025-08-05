@@ -1,6 +1,13 @@
 ## Description
 Web browser extension (Firefox, Vivaldi, Chrome, Opera, Edge) to redirect URLs based on regex or wildcard patterns.
 
+## Manifest V3 Support
+A versão atualizada do Redirector agora suporta o Manifest V3, com as seguintes melhorias:
+
+### Declarative Net Request
+- Usando a nova API declarativeNetRequest do Chrome para melhor desempenho
+- Sem perda de funcionalidade em relação à versão Manifest V2
+
 ## Tribute
 In loving memory of Einar Egilsson, who gave us Redirector and selflessly nurtured it for many years.  We miss you Einar, and will always remember your kindness and generosity.
 
