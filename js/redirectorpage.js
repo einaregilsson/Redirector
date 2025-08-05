@@ -8,6 +8,51 @@ function normalize(r) {
 	return new Redirect(r).toObject(); //Cleans out any extra props, and adds default values for missing ones.
 }
 
+// Verifica se estamos usando o Manifest V3 e adapta comportamento
+function isManifestV3() {
+    return typeof chrome.extension === 'undefined' || chrome.extension.getBackgroundPage === undefined;
+}
+
+// Função que obtém os redirecionamentos do storage (compatível com V2 e V3)
+function loadRedirects() {
+    chrome.runtime.sendMessage({type:"get-redirects"}, function(response) {
+        if (response && response.redirects) {
+            console.log('Received redirects message, count=' + response.redirects.length);
+            REDIRECTS = [];
+            for (var i=0; i < response.redirects.length; i++) {
+                REDIRECTS.push(new Redirect(response.redirects[i]));
+            }
+
+            if (response.redirects.length === 0) {
+                //Add example redirect for first time users...
+                REDIRECTS.push(new Redirect(
+                    {
+                        "description": "Example redirect, try going to http://example.com/anywordhere",
+                        "exampleUrl": "http://example.com/some-word-that-matches-wildcard",
+                        "exampleResult": "https://google.com/search?q=some-word-that-matches-wildcard",
+                        "error": null,
+                        "includePattern": "http://example.com/*",
+                        "excludePattern": "",
+                        "patternDesc": "Any word after example.com leads to google search for that word.",
+                        "redirectUrl": "https://google.com/search?q=$1",
+                        "patternType": "W",
+                        "processMatches": "noProcessing",
+                        "disabled": false,
+                        "appliesTo": [
+                            "main_frame"
+                        ]
+                    }
+                ));
+            }
+            renderRedirects();
+        } else if (chrome.runtime.lastError) {
+            // Tentar novamente se houver um erro
+            console.log('Erro ao obter redirecionamentos, tentando novamente em 500ms:', chrome.runtime.lastError);
+            setTimeout(loadRedirects, 500);
+        }
+    });
+}
+
 // Saves the entire list of redirects to storage.
 function saveChanges() {
 
@@ -270,37 +315,21 @@ function pageLoad() {
 	template = el('#redirect-row-template');
 	template.parentNode.removeChild(template);
 
-	//Need to proxy this through the background page, because Firefox gives us dead objects
-	//nonsense when accessing chrome.storage directly.
-	chrome.runtime.sendMessage({type: "get-redirects"}, function(response) {
-		console.log('Received redirects message, count=' + response.redirects.length);
-		for (var i=0; i < response.redirects.length; i++) {
-			REDIRECTS.push(new Redirect(response.redirects[i]));
-		}
-
-		if (response.redirects.length === 0) {
-			//Add example redirect for first time users...
-			REDIRECTS.push(new Redirect(
-				{
-					"description": "Example redirect, try going to http://example.com/anywordhere",
-					"exampleUrl": "http://example.com/some-word-that-matches-wildcard",
-					"exampleResult": "https://google.com/search?q=some-word-that-matches-wildcard",
-					"error": null,
-					"includePattern": "http://example.com/*",
-					"excludePattern": "",
-					"patternDesc": "Any word after example.com leads to google search for that word.",
-					"redirectUrl": "https://google.com/search?q=$1",
-					"patternType": "W",
-					"processMatches": "noProcessing",
-					"disabled": false,
-					"appliesTo": [
-						"main_frame"
-					]
-				}
-			));
-		}
-		renderRedirects();
-	});
+	// Para o Manifest V3, precisamos garantir que o service worker esteja ativo
+	if (isManifestV3()) {
+		// Verificar se o service worker está ativo
+		chrome.runtime.sendMessage({type: "ping"}, function(response) {
+			if (chrome.runtime.lastError) {
+				console.log("Service worker não está pronto, tentando novamente em 500ms");
+				setTimeout(loadRedirects, 500);
+			} else {
+				loadRedirects();
+			}
+		});
+	} else {
+		// Manifest V2 - método antigo
+		loadRedirects();
+	}
 
 	chrome.storage.local.get({isSyncEnabled:false}, function(obj){
 		options.isSyncEnabled = obj.isSyncEnabled;
@@ -338,21 +367,11 @@ function pageLoad() {
 	});
 }
 
-function updateFavicon(e) {
-	let type = e.matches ? 'dark' : 'light'
-	el('link[rel="shortcut icon"]').href = `images/icon-${type}-theme-32.png`;
-	chrome.runtime.sendMessage({type: "update-icon"}); //Only works if this page is open, but still, better than nothing...
-}
-
-let mql = window.matchMedia('(prefers-color-scheme:dark)');
-
-mql.onchange = updateFavicon;
-updateFavicon(mql);
-
 function toggleGrouping(index) {
 	if(REDIRECTS[index]) {
 		REDIRECTS[index].grouped = !REDIRECTS[index].grouped;
 	}
 }
 
+// A detecção de tema foi movida para theme-detector-redirectorpage.js
 pageLoad();

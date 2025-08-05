@@ -15,12 +15,9 @@ function toggle(prop) {
 	});
 }
 
-
-
 function openRedirectorSettings() {
-
 	//switch to open one if we have it to minimize conflicts
-	var url = chrome.extension.getURL('redirector.html');
+	var url = chrome.runtime.getURL('redirector.html');
 	
 	//FIREFOXBUG: Firefox chokes on url:url filter if the url is a moz-extension:// url
 	//so we don't use that, do it the more manual way instead.
@@ -39,7 +36,6 @@ function openRedirectorSettings() {
 	return;
 };
 
-
 function pageLoad() {
 	storage.get({logging:false, enableNotifications:false, disabled: false}, function(obj) {
 		viewModel = obj;
@@ -53,4 +49,3 @@ function pageLoad() {
 }
 
 pageLoad();
-//Setup page...
