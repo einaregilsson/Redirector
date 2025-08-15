@@ -1,472 +1,557 @@
+// Manifest V3 Service Worker for Redirector
+// Most redirect functionality is now handled by declarativeNetRequest
 
-//This is the background script. It is responsible for actually redirecting requests,
-//as well as monitoring changes in the redirects and the disabled status and reacting to them.
 function log(msg, force) {
-	if (log.enabled || force) {
-		console.log('REDIRECTOR: ' + msg);
-	}
+  if (log.enabled || force) {
+    console.log('REDIRECTOR V3: ' + msg);
+  }
 }
-log.enabled = false;
-var enableNotifications=false;
+// Enable logging in development (unpacked) builds, disable in production (store) builds
+log.enabled = !chrome.runtime.getManifest().key;
 
-function isDarkMode() {
-	return window.matchMedia('(prefers-color-scheme: dark)').matches;
-}
-var isFirefox = !!navigator.userAgent.match(/Firefox/i);
+var enableNotifications = false;
+var storageArea = chrome.storage.local; // Default to local storage
 
-var storageArea = chrome.storage.local;
-//Redirects partitioned by request type, so we have to run through
-//the minimum number of redirects for each request.
-var partitionedRedirects = {};
+// Default to light mode
+let isDarkModeEnabled = false;
 
-//Cache of urls that have just been redirected to. They will not be redirected again, to
-//stop recursive redirects, and endless redirect chains.
-//Key is url, value is timestamp of redirect.
-var ignoreNextRequest = {
+// Listen for theme changes from popup or content scripts
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === 'theme-changed') {
+    isDarkModeEnabled = message.isDarkMode;
+    updateIcon();
+  }
+});
 
-};
-
-//url => { timestamp:ms, count:1...n};
-var justRedirected = {
-
-};
-var redirectThreshold = 3;
+var isFirefox = false; // Service workers don't have navigator.userAgent directly
 
 function setIcon(image) {
-	var data = { 
-		path: {}
-	};
+  var data = {
+    path: {}
+  };
 
-	for (let nr of [16,19,32,38,48,64,128]) {
-		data.path[nr] = `images/${image}-${nr}.png`;
-	}
+  for (let nr of [16, 19, 32, 38, 48, 64, 128]) {
+    data.path[nr] = `images/${image}-${nr}.png`;
+  }
 
-	chrome.browserAction.setIcon(data, function() {
-		var err = chrome.runtime.lastError;
-		if (err) {
-			//If not checked we will get unchecked errors in the background page console...
-			log('Error in SetIcon: ' + err.message);
-		}
-	});		
+  chrome.action.setIcon(data, function () {
+    var err = chrome.runtime.lastError;
+    if (err) {
+      log('Error in SetIcon: ' + err.message);
+    }
+  });
 }
 
-//This is the actual function that gets called for each request and must
-//decide whether or not we want to redirect.
-function checkRedirects(details) {
-
-	//We only allow GET request to be redirected, don't want to accidentally redirect
-	//sensitive POST parameters
-	if (details.method != 'GET') {
-		return {};
-	}
-	log('Checking: ' + details.type + ': ' + details.url);
-
-	var list = partitionedRedirects[details.type];
-	if (!list) {
-		log('No list for type: ' + details.type);
-		return {};
-	}
-
-	var timestamp = ignoreNextRequest[details.url];
-	if (timestamp) {
-		log('Ignoring ' + details.url + ', was just redirected ' + (new Date().getTime()-timestamp) + 'ms ago');
-		delete ignoreNextRequest[details.url];
-		return {};
-	}
-
-	
-	for (var i = 0; i < list.length; i++) {
-		var r = list[i];
-		var result = r.getMatch(details.url);
-
-		if (result.isMatch) {
-
-			//Check if we're stuck in a loop where we keep redirecting this, in that
-			//case ignore!
-			var data = justRedirected[details.url];
-
-			var threshold = 3000;
-			if(!data || ((new Date().getTime()-data.timestamp) > threshold)) { //Obsolete after 3 seconds
-				justRedirected[details.url] = { timestamp : new Date().getTime(), count: 1};
-			} else {
-				data.count++;
-				justRedirected[details.url] = data;
-				if (data.count >= redirectThreshold) {
-					log('Ignoring ' + details.url + ' because we have redirected it ' + data.count + ' times in the last ' + threshold + 'ms');
-					return {};
-				} 
-			}
-
-
-			log('Redirecting ' + details.url + ' ===> ' + result.redirectTo + ', type: ' + details.type + ', pattern: ' + r.includePattern + ' which is in Rule : ' + r.description);
-			if(enableNotifications){
-				sendNotifications(r, details.url, result.redirectTo);
-			}
-			ignoreNextRequest[result.redirectTo] = new Date().getTime();
-			
-			return { redirectUrl: result.redirectTo };
-		}
-	}
-
-  	return {}; 
-}
-
-//Monitor changes in data, and setup everything again.
-//This could probably be optimized to not do everything on every change
-//but why bother?
-function monitorChanges(changes, namespace) {
-	if (changes.disabled) {
-		updateIcon();
-
-		if (changes.disabled.newValue == true) {
-			log('Disabling Redirector, removing listener');
-			chrome.webRequest.onBeforeRequest.removeListener(checkRedirects);
-			chrome.webNavigation.onHistoryStateUpdated.removeListener(checkHistoryStateRedirects);
-		} else {
-			log('Enabling Redirector, setting up listener');
-			setUpRedirectListener();
-		}
-	}
-
-	if (changes.redirects) {
-		log('Redirects have changed, setting up listener again');
-		setUpRedirectListener();
+// Update icon based on disabled status
+function updateIcon() {
+  chrome.storage.local.get({ disabled: false }, function (obj) {
+    // Set icon based on theme
+    if (isDarkModeEnabled) {
+      setIcon('icon-dark-theme');
+    } else {
+      setIcon('icon-light-theme');
     }
 
-    if (changes.logging) {
-		log.enabled = changes.logging.newValue;
-		log('Logging settings have changed to ' + changes.logging.newValue, true); //Always want this to be logged...
-	}
-	if (changes.enableNotifications){
-		log('notifications setting changed to ' + changes.enableNotifications.newValue);
-		enableNotifications = changes.enableNotifications.newValue;
-	}
-}
-chrome.storage.onChanged.addListener(monitorChanges);
-
-//Creates a filter to pass to the listener so we don't have to run through
-//all the redirects for all the request types we don't have any redirects for anyway.
-function createFilter(redirects) {
-	var types = [];
-	for (var i = 0; i < redirects.length; i++) {
-		redirects[i].appliesTo.forEach(function(type) { 
-			// Added this condition below as part of fix for issue 115 https://github.com/einaregilsson/Redirector/issues/115
-			// Firefox considers responsive web images request as imageset. Chrome doesn't.
-			// Chrome throws an error for imageset type, so let's add to 'types' only for the values that chrome or firefox supports
-			if(chrome.webRequest.ResourceType[type.toUpperCase()]!== undefined){
-			if (types.indexOf(type) == -1) {
-				types.push(type);
-			}
-		}
-		});
-	}
-	types.sort();
-
-	return {
-		urls: ["https://*/*", "http://*/*"],
-		types : types
-	};
+    // Set badge
+    if (obj.disabled) {
+      chrome.action.setBadgeText({ text: 'off' });
+      chrome.action.setBadgeBackgroundColor({ color: '#fc5953' });
+    } else {
+      chrome.action.setBadgeText({ text: '' });
+    }
+  });
 }
 
-function createPartitionedRedirects(redirects) {
-	var partitioned = {};
+// Convert V2 redirect to V3 declarativeNetRequest rule
+function convertRedirectToV3Rule(redirect, ruleId) {
+  log(`Converting redirect rule: "${redirect.description}"`);
+  log(
+    `  Pattern: ${redirect.includePattern} (${
+      redirect.patternType === 'R' ? 'Regex' : 'Wildcard'
+    })`
+  );
+  log(`  Target: ${redirect.redirectUrl}`);
+  log(
+    `  Applies to: ${
+      redirect.appliesTo ? redirect.appliesTo.join(', ') : 'main_frame'
+    }`
+  );
 
-	for (var i = 0; i < redirects.length; i++) {
-		var redirect = new Redirect(redirects[i]);
-		redirect.compile();
-		for (var j=0; j<redirect.appliesTo.length;j++) {
-			var requestType = redirect.appliesTo[j];
-			if (partitioned[requestType]) {
-				partitioned[requestType].push(redirect); 
-			} else {
-				partitioned[requestType] = [redirect];
-			}
-		}
-	}
-	return partitioned;	
+  // Valid resourceTypes for Manifest V3
+  const validResourceTypes = [
+    'csp_report',
+    'font',
+    'image',
+    'main_frame',
+    'media',
+    'object',
+    'other',
+    'ping',
+    'script',
+    'stylesheet',
+    'sub_frame',
+    'webbundle',
+    'websocket',
+    'webtransport',
+    'xmlhttprequest'
+  ];
+
+  // Filter and map resourceTypes to valid V3 values
+  let resourceTypes = redirect.appliesTo || ['main_frame'];
+  const originalTypes = [...resourceTypes];
+
+  resourceTypes = resourceTypes
+    .map((type) => {
+      // Map old V2 types to V3 equivalents
+      if (type === 'imageset') {
+        log(`    🔄 Mapping resourceType: ${type} → image`);
+        return 'image';
+      }
+      if (type === 'object_subrequest') {
+        log(`    🔄 Mapping resourceType: ${type} → object`);
+        return 'object';
+      }
+      if (type === 'history') {
+        log(
+          `    ❌ Removing invalid resourceType: ${type} (not supported in V3)`
+        );
+        return null;
+      }
+      return type;
+    })
+    .filter((type) => type && validResourceTypes.includes(type));
+
+  // Log any filtered types
+  const filteredTypes = originalTypes.filter(
+    (type) =>
+      !resourceTypes.includes(type) &&
+      type !== 'imageset' &&
+      type !== 'object_subrequest' &&
+      type !== 'history'
+  );
+  if (filteredTypes.length > 0) {
+    log(`    ❌ Filtered invalid resourceTypes: ${filteredTypes.join(', ')}`);
+  }
+
+  // Ensure we always have at least one valid resourceType
+  if (resourceTypes.length === 0) {
+    log(`    ⚠️  No valid resourceTypes found, defaulting to main_frame`);
+    resourceTypes = ['main_frame'];
+  }
+
+  log(`    → Final resourceTypes: ${resourceTypes.join(', ')}`);
+
+  const rule = {
+    id: ruleId,
+    priority: 1,
+    condition: {
+      resourceTypes
+    },
+    action: {
+      type: 'redirect'
+    }
+  };
+
+  // Handle pattern conversion
+  if (redirect.patternType === 'R') {
+    // Regex pattern
+    rule.condition.regexFilter = redirect.includePattern;
+    rule.action.redirect = {
+      regexSubstitution: redirect.redirectUrl.replace(/\$(\d+)/g, '\\$1')
+    };
+    log(
+      `  → V3 Regex: ${rule.condition.regexFilter} → ${rule.action.redirect.regexSubstitution}`
+    );
+  } else {
+    // Wildcard pattern - convert to urlFilter if simple, otherwise regex
+    if (
+      redirect.includePattern.includes('*') &&
+      redirect.redirectUrl.includes('$')
+    ) {
+      // Complex wildcard with capture groups - convert to regex
+      const regexPattern = redirect.includePattern
+        .replace(/[.*+?^${}()|[\]\\]/g, '\\$&') // Escape special chars
+        .replace(/\\\*/g, '(.*?)'); // Convert * to capture groups
+
+      rule.condition.regexFilter = '^' + regexPattern + '$';
+      rule.action.redirect = {
+        regexSubstitution: redirect.redirectUrl.replace(/\$(\d+)/g, '\\$1')
+      };
+      log(
+        `  → V3 Wildcard→Regex: ${rule.condition.regexFilter} → ${rule.action.redirect.regexSubstitution}`
+      );
+    } else {
+      // Simple pattern - use urlFilter
+      rule.condition.urlFilter = redirect.includePattern;
+      rule.action.redirect = {
+        url: redirect.redirectUrl
+      };
+      log(
+        `  → V3 Simple URL: ${rule.condition.urlFilter} → ${rule.action.redirect.url}`
+      );
+    }
+  }
+
+  if (redirect.excludePattern) {
+    log(
+      `  Note: Exclude pattern "${redirect.excludePattern}" not supported in V3`
+    );
+  }
+
+  log(`  ✅ Created rule ID ${ruleId}`);
+  return rule;
 }
 
-//Sets up the listener, partitions the redirects, creates the appropriate filters etc.
-function setUpRedirectListener() {
+// Update declarativeNetRequest rules from storage
+function updateDynamicRules() {
+  log('🔄 Starting dynamic rules update...');
 
-	chrome.webRequest.onBeforeRequest.removeListener(checkRedirects); //Unsubscribe first, in case there are changes...
-	chrome.webNavigation.onHistoryStateUpdated.removeListener(checkHistoryStateRedirects);
+  storageArea.get({ redirects: [] }, function (obj) {
+    const allRedirects = obj.redirects || [];
+    const enabledRedirects = allRedirects.filter((r) => !r.disabled);
+    const disabledRedirects = allRedirects.filter((r) => r.disabled);
 
-	storageArea.get({redirects:[]}, function(obj) {
-		var redirects = obj.redirects;
-		if (redirects.length == 0) {
-			log('No redirects defined, not setting up listener');
-			return;
-		}
+    log(`📊 Redirect statistics:`);
+    log(`  Total redirects in storage: ${allRedirects.length}`);
+    log(`  Enabled redirects: ${enabledRedirects.length}`);
+    log(`  Disabled redirects: ${disabledRedirects.length}`);
 
-		partitionedRedirects = createPartitionedRedirects(redirects);
-		var filter = createFilter(redirects);
+    if (disabledRedirects.length > 0) {
+      log(`⏸️  Disabled redirects:`);
+      disabledRedirects.forEach((r, i) => {
+        log(`    ${i + 1}. "${r.description}" (${r.includePattern})`);
+      });
+    }
 
-		log('Setting filter for listener: ' + JSON.stringify(filter));
-		chrome.webRequest.onBeforeRequest.addListener(checkRedirects, filter, ["blocking"]);
+    if (enabledRedirects.length === 0) {
+      log('⚠️  No active redirects found in storage');
 
-		if (partitionedRedirects.history) {
-			log('Adding HistoryState Listener');
+      // Clear any existing dynamic rules
+      chrome.declarativeNetRequest.getDynamicRules(function (existingRules) {
+        if (existingRules.length > 0) {
+          const existingRuleIds = existingRules.map((rule) => rule.id);
+          log(`🗑️  Removing ${existingRules.length} existing dynamic rules`);
 
-			let filter = { url : []};
-			for (let r of partitionedRedirects.history) {
-				filter.url.push({urlMatches: r._preparePattern(r.includePattern)});
-			}
-			chrome.webNavigation.onHistoryStateUpdated.addListener(checkHistoryStateRedirects, filter);
-		}
-	});
+          chrome.declarativeNetRequest.updateDynamicRules(
+            {
+              removeRuleIds: existingRuleIds,
+              addRules: []
+            },
+            function () {
+              if (chrome.runtime.lastError) {
+                log(
+                  '❌ Error clearing dynamic rules: ' +
+                    chrome.runtime.lastError.message
+                );
+              } else {
+                log('✅ Successfully cleared all dynamic rules');
+              }
+            }
+          );
+        } else {
+          log('✅ No existing dynamic rules to clear');
+        }
+      });
+      return;
+    }
+
+    log(
+      `🔧 Converting ${enabledRedirects.length} active redirects to V3 rules:`
+    );
+
+    // Convert V2 redirects to V3 rules
+    const newRules = enabledRedirects.map(
+      (redirect, index) => convertRedirectToV3Rule(redirect, index + 1000) // Start from 1000 to avoid conflicts
+    );
+
+    // Get existing dynamic rules to remove them
+    chrome.declarativeNetRequest.getDynamicRules(function (existingRules) {
+      const existingRuleIds = existingRules.map((rule) => rule.id);
+
+      if (existingRules.length > 0) {
+        log(`🗑️  Removing ${existingRules.length} existing dynamic rules`);
+        existingRules.forEach((rule, i) => {
+          log(`    Removing rule ID ${rule.id}`);
+        });
+      }
+
+      log(`➕ Adding ${newRules.length} new dynamic rules`);
+
+      // Update rules
+      chrome.declarativeNetRequest.updateDynamicRules(
+        {
+          removeRuleIds: existingRuleIds,
+          addRules: newRules
+        },
+        function () {
+          if (chrome.runtime.lastError) {
+            log(
+              '❌ Error updating dynamic rules: ' +
+                chrome.runtime.lastError.message
+            );
+          } else {
+            log('✅ Successfully updated dynamic redirect rules!');
+            log(`📋 Active redirect patterns:`);
+            newRules.forEach((rule, i) => {
+              const pattern =
+                rule.condition.regexFilter || rule.condition.urlFilter;
+              const target =
+                rule.action.redirect.regexSubstitution ||
+                rule.action.redirect.url;
+              log(`  ${i + 1}. [ID ${rule.id}] ${pattern} → ${target}`);
+            });
+            log(
+              '🎯 Redirects are now active and will intercept matching requests'
+            );
+          }
+        }
+      );
+    });
+  });
 }
 
-//Redirect urls on places like Facebook and Twitter who don't do real reloads, only do ajax updates and push a new url to the address bar...
-function checkHistoryStateRedirects(ev) {
-	ev.type = 'history';
-	ev.method = 'GET';
-	let result = checkRedirects(ev);
-	if (result.redirectUrl) {
-		chrome.tabs.update(ev.tabId, {url: result.redirectUrl});
-	}
-}
+// Storage change monitoring
+chrome.storage.onChanged.addListener(function (changes, namespace) {
+  log(`📦 Storage changes detected in ${namespace}:`);
 
-//Sets on/off badge, and for Chrome updates dark/light mode icon
-function updateIcon() {
-	chrome.storage.local.get({disabled:false}, function(obj) {
+  if (changes.logging) {
+    const oldValue = changes.logging.oldValue;
+    const newValue = changes.logging.newValue;
+    log.enabled = newValue;
+    log(
+      `🔍 Logging ${oldValue ? 'disabled' : 'enabled'} → ${
+        newValue ? 'enabled' : 'disabled'
+      }`
+    );
+  }
 
-		//Do this here so even in Chrome we get the icon not too long after an dark/light mode switch...
-		if (!isFirefox) {
-			if (isDarkMode()) {
-				setIcon('icon-dark-theme');
-			} else {
-				setIcon('icon-light-theme');
-			}
-		}
+  if (changes.enableNotifications) {
+    const oldValue = changes.enableNotifications.oldValue;
+    const newValue = changes.enableNotifications.newValue;
+    enableNotifications = newValue;
+    log(
+      `🔔 Notifications ${oldValue ? 'disabled' : 'enabled'} → ${
+        newValue ? 'enabled' : 'disabled'
+      }`
+    );
+  }
 
-		if (obj.disabled) {
-			chrome.browserAction.setBadgeText({text: 'off'});
-			chrome.browserAction.setBadgeBackgroundColor({color: '#fc5953'});
-			if (chrome.browserAction.setBadgeTextColor) { //Not supported in Chrome
-				chrome.browserAction.setBadgeTextColor({color: '#fafafa'});
-			}
-		} else {
-			chrome.browserAction.setBadgeText({text: 'on'});
-			chrome.browserAction.setBadgeBackgroundColor({color: '#35b44a'});
-			if (chrome.browserAction.setBadgeTextColor) { //Not supported in Chrome
-				chrome.browserAction.setBadgeTextColor({color: '#fafafa'});
-			}
-		}
-	});	
-}
+  if (changes.redirects) {
+    const oldCount = changes.redirects.oldValue
+      ? changes.redirects.oldValue.length
+      : 0;
+    const newCount = changes.redirects.newValue
+      ? changes.redirects.newValue.length
+      : 0;
+    log(`🔄 Redirects changed: ${oldCount} → ${newCount} rules`);
 
+    if (changes.redirects.newValue) {
+      const newRedirects = changes.redirects.newValue;
+      log(`📝 Updated redirect rules:`);
+      newRedirects.forEach((redirect, i) => {
+        const status = redirect.disabled ? '⏸️ [DISABLED]' : '✅ [ENABLED]';
+        log(`  ${i + 1}. ${status} "${redirect.description}"`);
+        log(`      ${redirect.includePattern} → ${redirect.redirectUrl}`);
+      });
+    }
 
-//Firefox doesn't allow the "content script" which is actually privileged
-//to access the objects it gets from chrome.storage directly, so we
-//proxy it through here.
-chrome.runtime.onMessage.addListener(
-	function(request, sender, sendResponse) {
-		log('Received background message: ' + JSON.stringify(request));
-		if (request.type == 'get-redirects') {
-			log('Getting redirects from storage');
-			storageArea.get({
-				redirects: []
-			}, function (obj) {
-				log('Got redirects from storage: ' + JSON.stringify(obj));
-				sendResponse(obj);
-				log('Sent redirects to content page');
-			});
-		} else if (request.type == 'save-redirects') {
-			console.log('Saving redirects, count=' + request.redirects.length);
-			delete request.type;
-			storageArea.set(request, function (a) {
-				if(chrome.runtime.lastError) {
-				 if(chrome.runtime.lastError.message.indexOf("QUOTA_BYTES_PER_ITEM quota exceeded")>-1){
-					log("Redirects failed to save as size of redirects larger than allowed limit per item by Sync");
-					sendResponse({
-						message: "Redirects failed to save as size of redirects larger than what's allowed by Sync. Refer Help Page"
-					});
-				 }
-				} else {
-				log('Finished saving redirects to storage');
-				sendResponse({
-					message: "Redirects saved"
-				});
-			}
-			});
-		} else if (request.type == 'update-icon') {
-			updateIcon();
-		} else if (request.type == 'toggle-sync') {
-			// Notes on Toggle Sync feature here https://github.com/einaregilsson/Redirector/issues/86#issuecomment-389943854
-			// This provides for feature request - issue 86
-			delete request.type;
-			log('toggling sync to ' + request.isSyncEnabled);
-			// Setting for Sync enabled or not, resides in Local.
-			chrome.storage.local.set({
-					isSyncEnabled: request.isSyncEnabled
-				},
-				function () {
-					if (request.isSyncEnabled) {
-						storageArea = chrome.storage.sync;
-						log('storageArea size for sync is 5 MB but one object (redirects) is allowed to hold only ' + storageArea.QUOTA_BYTES_PER_ITEM  / 1000000 + ' MB, that is .. ' + storageArea.QUOTA_BYTES_PER_ITEM  + " bytes");
-						chrome.storage.local.getBytesInUse("redirects",
-							function (size) {
-								log("size of redirects is " + size + " bytes");
-								if (size > storageArea.QUOTA_BYTES_PER_ITEM) {
-									log("size of redirects " + size + " is greater than allowed for Sync which is " + storageArea.QUOTA_BYTES_PER_ITEM);
-									// Setting storageArea back to Local.
-									storageArea = chrome.storage.local; 
-									sendResponse({
-										message: "Sync Not Possible - size of Redirects larger than what's allowed by Sync. Refer Help page"
-									});
-								} else {
-									chrome.storage.local.get({
-										redirects: []
-									}, function (obj) {
-										//check if at least one rule is there.
-										if (obj.redirects.length>0) {
-											chrome.storage.sync.set(obj, function (a) {
-												log('redirects moved from Local to Sync Storage Area');
-												//Remove Redirects from Local storage
-												chrome.storage.local.remove("redirects");
-												// Call setupRedirectListener to setup the redirects 
-												setUpRedirectListener();
-												sendResponse({
-													message: "sync-enabled"
-												});
-											});
-										} else {
-											log('No redirects are setup currently in Local, just enabling Sync');
-											sendResponse({
-												message: "sync-enabled"
-											});
-										}
-									});
-								}
-							});
-						} else {
-						storageArea = chrome.storage.local;
-						log('storageArea size for local is ' + storageArea.QUOTA_BYTES / 1000000 + ' MB, that is .. ' + storageArea.QUOTA_BYTES + " bytes");
-						chrome.storage.sync.get({
-							redirects: []
-						}, function (obj) {
-							if (obj.redirects.length>0) {
-								chrome.storage.local.set(obj, function (a) {
-									log('redirects moved from Sync to Local Storage Area');
-									//Remove Redirects from sync storage
-									chrome.storage.sync.remove("redirects");
-									// Call setupRedirectListener to setup the redirects 
-									setUpRedirectListener();
-									sendResponse({
-										message: "sync-disabled"
-									});
-								});
-							} else {
-								sendResponse({
-									message: "sync-disabled"
-								});
-							}
-						});
-					}
-				});
+    log('🔄 Triggering dynamic rules update...');
+    updateDynamicRules();
+  }
 
-		} else {
-			log('Unexpected message: ' + JSON.stringify(request));
-			return false;
-		}
-
-		return true; //This tells the browser to keep sendResponse alive because
-		//we're sending the response asynchronously.
-	}
-);
-
-
-//First time setup
-updateIcon();
-
-chrome.storage.local.get({logging:false}, function(obj) {
-	log.enabled = obj.logging;
+  if (changes.disabled) {
+    const newValue = changes.disabled.newValue;
+    log(`🔘 Extension ${newValue ? 'disabled' : 'enabled'}`);
+    updateIcon();
+  }
 });
 
-chrome.storage.local.get({
-	isSyncEnabled: false
-}, function (obj) {
-	if (obj.isSyncEnabled) {
-		storageArea = chrome.storage.sync;
-	} else {
-		storageArea = chrome.storage.local;
-	}
-	// Now we know which storageArea to use, call setupInitial function
-	setupInitial(); 
+// Message handling
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+  if (request.type == 'update-icon') {
+    updateIcon();
+    sendResponse({ success: true });
+  } else if (request.type == 'get-status') {
+    chrome.storage.local.get(
+      {
+        disabled: false,
+        logging: false,
+        enableNotifications: false
+      },
+      function (obj) {
+        sendResponse(obj);
+      }
+    );
+    return true; // Keep sendResponse alive
+  } else if (request.type == 'get-redirects') {
+    // Handle get-redirects message for the redirector page
+    storageArea.get({ redirects: [] }, function (obj) {
+      log('Got redirects from storage: ' + obj.redirects.length + ' rules');
+      sendResponse(obj);
+    });
+    return true; // Keep sendResponse alive
+  } else if (request.type == 'save-redirects') {
+    // Handle save-redirects message from import/edit
+    log('💾 Received save-redirects request');
+    log(`📊 Redirects to save: ${request.redirects.length}`);
+
+    // Log details of redirects being saved
+    request.redirects.forEach((redirect, i) => {
+      const status = redirect.disabled ? '⏸️ [DISABLED]' : '✅ [ENABLED]';
+      log(`  ${i + 1}. ${status} "${redirect.description}"`);
+      log(
+        `      Pattern: ${redirect.includePattern} (${
+          redirect.patternType === 'R' ? 'Regex' : 'Wildcard'
+        })`
+      );
+      log(`      Target: ${redirect.redirectUrl}`);
+      if (redirect.excludePattern) {
+        log(`      Exclude: ${redirect.excludePattern}`);
+      }
+    });
+
+    const redirectsToSave = { redirects: request.redirects };
+    log(
+      `💾 Saving to ${
+        storageArea === chrome.storage.sync ? 'sync' : 'local'
+      } storage...`
+    );
+
+    storageArea.set(redirectsToSave, function () {
+      if (chrome.runtime.lastError) {
+        if (
+          chrome.runtime.lastError.message.indexOf(
+            'QUOTA_BYTES_PER_ITEM quota exceeded'
+          ) > -1
+        ) {
+          log('❌ Redirects failed to save - quota exceeded');
+          sendResponse({
+            message:
+              "Redirects failed to save as size of redirects larger than what's allowed by Sync. Refer Help Page"
+          });
+        } else {
+          log('❌ Error saving redirects: ' + chrome.runtime.lastError.message);
+          sendResponse({
+            message:
+              'Error saving redirects: ' + chrome.runtime.lastError.message
+          });
+        }
+      } else {
+        log('✅ Successfully saved redirects to storage');
+        sendResponse({
+          message: 'Redirects saved'
+        });
+        // Update dynamic rules after saving
+        log('🔄 Updating dynamic rules after save...');
+        updateDynamicRules();
+      }
+    });
+    return true; // Keep sendResponse alive
+  } else if (request.type == 'toggle-sync') {
+    // Handle sync toggle
+    const newStorageArea = request.isSyncEnabled
+      ? chrome.storage.sync
+      : chrome.storage.local;
+
+    chrome.storage.local.set(
+      { isSyncEnabled: request.isSyncEnabled },
+      function () {
+        storageArea = newStorageArea;
+
+        if (request.isSyncEnabled) {
+          sendResponse({ message: 'sync-enabled' });
+        } else {
+          sendResponse({ message: 'sync-disabled' });
+        }
+      }
+    );
+    return true; // Keep sendResponse alive
+  } else {
+    log('Unexpected message: ' + JSON.stringify(request));
+    sendResponse({ error: 'Unknown message type' });
+  }
+
+  return true;
 });
 
-//wrapped the below inside a function so that we can call this once we know the value of storageArea from above. 
+// Initialize on startup
+function initialize() {
+  updateIcon();
 
-function setupInitial() {
-	chrome.storage.local.get({enableNotifications:false},function(obj){
-		enableNotifications = obj.enableNotifications;
-	});
+  // Load settings and set storage area
+  chrome.storage.local.get(
+    {
+      logging: false,
+      enableNotifications: false,
+      isSyncEnabled: false
+    },
+    function (obj) {
+      log.enabled = obj.logging;
+      enableNotifications = obj.enableNotifications;
+      storageArea = obj.isSyncEnabled
+        ? chrome.storage.sync
+        : chrome.storage.local;
 
-	chrome.storage.local.get({
-		disabled: false
-	}, function (obj) {
-		if (!obj.disabled) {
-			setUpRedirectListener();
-		} else {
-			log('Redirector is disabled');
-		}
-	});
-}
-log('Redirector starting up...');
+      log('Redirector V3 initialized', true);
 
+      if (obj.logging) {
+        log(
+          '🔍 Logging is ENABLED - you will see detailed redirect information'
+        );
+        log('📝 To view logs: Open Chrome DevTools (F12) → Console tab');
+        log(
+          '💡 To disable logging: Click Redirector icon → Uncheck "Enable logging"'
+        );
+      } else {
+        log(
+          '🔍 Logging is DISABLED - enable it for detailed redirect information',
+          true
+        );
+      }
 
-// Below is a feature request by an user who wished to see visual indication for an Redirect rule being applied on URL 
-// https://github.com/einaregilsson/Redirector/issues/72
-// By default, we will have it as false. If user wishes to enable it from settings page, we can make it true until user disables it (or browser is restarted)
-
-// Upon browser startup, just set enableNotifications to false.
-// Listen to a message from Settings page to change this to true.
-function sendNotifications(redirect, originalUrl, redirectedUrl ){
-	//var message = "Applied rule : " + redirect.description + " and redirected original page " + originalUrl + " to " + redirectedUrl;
-	log("Showing redirect success notification");
-	//Firefox and other browsers does not yet support "list" type notification like in Chrome.
-	// Console.log(JSON.stringify(chrome.notifications)); -- This will still show "list" as one option but it just won't work as it's not implemented by Firefox yet
-	// Can't check if "chrome" typeof either, as Firefox supports both chrome and browser namespace.
-	// So let's use useragent. 
-	// Opera UA has both chrome and OPR. So check against that ( Only chrome which supports list) - other browsers to get BASIC type notifications.
-
-	let icon = isDarkMode() ? "images/icon-dark-theme-48.png": "images/icon-light-theme-48.png";
-
-	if(navigator.userAgent.toLowerCase().indexOf("chrome") > -1 && navigator.userAgent.toLowerCase().indexOf("opr")<0){
-		
-		var items = [{title:"Original page: ", message: originalUrl},{title:"Redirected to: ",message: redirectedUrl}];
-		var head = "Redirector - Applied rule : " + redirect.description;
-		chrome.notifications.create({
-			type : "list",
-			items : items,
-			title : head,
-			message : head,
-			iconUrl : icon
-		  });	
-		}
-	else{
-		var message = "Applied rule : " + redirect.description + " and redirected original page " + originalUrl + " to " + redirectedUrl;
-
-		chrome.notifications.create({
-        	type : "basic",
-        	title : "Redirector",
-			message : message,
-			iconUrl : icon
-		});
-	}
+      // Update dynamic rules from storage on startup
+      updateDynamicRules();
+    }
+  );
 }
 
-chrome.runtime.onStartup.addListener(handleStartup);
-function handleStartup(){
-	enableNotifications=false;
-	chrome.storage.local.set({
-		enableNotifications: false
-	});
+// Service worker lifecycle events
+chrome.runtime.onStartup.addListener(initialize);
+chrome.runtime.onInstalled.addListener(function (details) {
+  if (details.reason === 'install') {
+    log('Extension installed', true);
+  } else if (details.reason === 'update') {
+    log('Extension updated', true);
+  }
+  initialize();
+});
 
-	updateIcon(); //To set dark/light icon...
+// Keep-alive mechanism
+const KEEP_ALIVE_INTERVAL = 25; // seconds
 
-	//This doesn't work yet in Chrome, but we'll put it here anyway, in case it starts working...
-	let darkModeMql = window.matchMedia('(prefers-color-scheme: dark)');
-	darkModeMql.onchange = updateIcon;
+function keepAlive() {
+  // Create an alarm that fires every KEEP_ALIVE_INTERVAL seconds
+  chrome.alarms.create('keepAlive', {
+    periodInMinutes: KEEP_ALIVE_INTERVAL / 60
+  });
+
+  // Listen for the alarm
+  chrome.alarms.onAlarm.addListener((alarm) => {
+    if (alarm.name === 'keepAlive') {
+      // Perform a lightweight operation to keep the service worker alive
+      log('Service worker keep-alive ping');
+      updateIcon();
+    }
+  });
+
+  // Also keep alive on any tab updates
+  chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+    if (changeInfo.status === 'complete') {
+      updateIcon();
+    }
+  });
 }
+
+// Initialize immediately when service worker starts
+initialize();
+keepAlive();

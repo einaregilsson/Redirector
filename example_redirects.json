@@ -1,0 +1,280 @@
+{
+  "redirects": [
+    {
+      "description": "[De-mobilizer] Remove mobile subdomain",
+      "exampleUrl": "https://en.m.wikipedia.org/wiki/Example",
+      "exampleResult": "https://en.wikipedia.org/wiki/Example",
+      "error": null,
+      "includePattern": "https://*.m.wikipedia.org/*",
+      "excludePattern": "",
+      "patternDesc": "Redirect mobile Wikipedia to desktop version",
+      "redirectUrl": "https://$1.wikipedia.org/$2",
+      "patternType": "W",
+      "processMatches": "noProcessing",
+      "disabled": true,
+      "grouped": false,
+      "appliesTo": [
+        "main_frame",
+        "sub_frame"
+      ]
+    },
+    {
+      "description": "[De-mobilizer] Mobile sites to desktop (Regex)",
+      "exampleUrl": "https://m.reddit.com/r/programming",
+      "exampleResult": "https://www.reddit.com/r/programming",
+      "error": null,
+      "includePattern": "^https://m\\.([^/]+)(.*)$",
+      "excludePattern": "",
+      "patternDesc": "Convert m.domain.com to www.domain.com",
+      "redirectUrl": "https://www.$1$2",
+      "patternType": "R",
+      "processMatches": "noProcessing",
+      "disabled": true,
+      "grouped": false,
+      "appliesTo": [
+        "main_frame"
+      ]
+    },
+    {
+      "description": "[Google AMP] Redirect to original",
+      "exampleUrl": "https://www.google.com/amp/s/example.com/article",
+      "exampleResult": "https://example.com/article",
+      "error": null,
+      "includePattern": "^https://www\\.google\\.[^/]+/amp/s/(.*)$",
+      "excludePattern": "",
+      "patternDesc": "Redirect Google AMP pages to original URLs",
+      "redirectUrl": "https://$1",
+      "patternType": "R",
+      "processMatches": "noProcessing",
+      "disabled": true,
+      "grouped": false,
+      "appliesTo": [
+        "main_frame"
+      ]
+    },
+    {
+      "description": "[YouTube] Shorts to regular video",
+      "exampleUrl": "https://www.youtube.com/shorts/dQw4w9WgXcQ",
+      "exampleResult": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      "error": null,
+      "includePattern": "^https://(?:www\\.)?youtube\\.com/shorts/([a-zA-Z0-9_-]+)(?:\\?.*)?$",
+      "excludePattern": "",
+      "patternDesc": "Convert YouTube Shorts to regular video player",
+      "redirectUrl": "https://www.youtube.com/watch?v=$1",
+      "patternType": "R",
+      "processMatches": "noProcessing",
+      "disabled": true,
+      "grouped": false,
+      "appliesTo": [
+        "main_frame"
+      ]
+    },
+    {
+      "description": "[Reddit] Old Reddit redirect",
+      "exampleUrl": "https://www.reddit.com/r/programming",
+      "exampleResult": "https://old.reddit.com/r/programming",
+      "error": null,
+      "includePattern": "^https://(?:www\\.)?reddit\\.com/(.*)$",
+      "excludePattern": "^https://old\\.reddit\\.com/.*$",
+      "patternDesc": "Always use old Reddit interface",
+      "redirectUrl": "https://old.reddit.com/$1",
+      "patternType": "R",
+      "processMatches": "noProcessing",
+      "disabled": true,
+      "grouped": false,
+      "appliesTo": [
+        "main_frame"
+      ]
+    },
+    {
+      "description": "[Twitter] Nitter redirect",
+      "exampleUrl": "https://twitter.com/user/status/123456789",
+      "exampleResult": "https://nitter.net/user/status/123456789",
+      "error": null,
+      "includePattern": "^https://(?:www\\.)?(?:twitter|x)\\.com/(.*)$",
+      "excludePattern": "",
+      "patternDesc": "Redirect Twitter/X to Nitter privacy frontend",
+      "redirectUrl": "https://nitter.net/$1",
+      "patternType": "R",
+      "processMatches": "noProcessing",
+      "disabled": true,
+      "grouped": false,
+      "appliesTo": [
+        "main_frame"
+      ]
+    },
+    {
+      "description": "[Development] CDN to localhost",
+      "exampleUrl": "https://cdn.example.com/assets/main.js",
+      "exampleResult": "https://localhost:3000/assets/main.js",
+      "error": null,
+      "includePattern": "^https://cdn\\.example\\.com/(.*)$",
+      "excludePattern": "",
+      "patternDesc": "Redirect CDN assets to local development server",
+      "redirectUrl": "https://localhost:3000/$1",
+      "patternType": "R",
+      "processMatches": "noProcessing",
+      "disabled": true,
+      "grouped": false,
+      "appliesTo": [
+        "script",
+        "stylesheet",
+        "image",
+        "font"
+      ]
+    },
+    {
+      "description": "[Development] API staging to local",
+      "exampleUrl": "https://api-staging.example.com/v1/users",
+      "exampleResult": "https://localhost:8080/v1/users",
+      "error": null,
+      "includePattern": "^https://api-staging\\.example\\.com/(.*)$",
+      "excludePattern": "",
+      "patternDesc": "Redirect staging API calls to local development",
+      "redirectUrl": "https://localhost:8080/$1",
+      "patternType": "R",
+      "processMatches": "noProcessing",
+      "disabled": true,
+      "grouped": false,
+      "appliesTo": [
+        "xmlhttprequest"
+      ]
+    },
+    {
+      "description": "[Tracking] Skip URL shorteners",
+      "exampleUrl": "https://bit.ly/3example",
+      "exampleResult": "https://bit.ly/3example",
+      "error": null,
+      "includePattern": "^https://(?:bit\\.ly|tinyurl\\.com|t\\.co)/(.*)$",
+      "excludePattern": "",
+      "patternDesc": "Example: Detect URL shorteners (modify redirect as needed)",
+      "redirectUrl": "https://example.com/unshorten?url=https://$1",
+      "patternType": "R",
+      "processMatches": "noProcessing",
+      "disabled": true,
+      "grouped": false,
+      "appliesTo": [
+        "main_frame"
+      ]
+    },
+    {
+      "description": "[GitHub] Raw file viewer",
+      "exampleUrl": "https://github.com/user/repo/blob/main/file.txt",
+      "exampleResult": "https://raw.githubusercontent.com/user/repo/main/file.txt",
+      "error": null,
+      "includePattern": "^https://github\\.com/([^/]+)/([^/]+)/blob/(.+)$",
+      "excludePattern": "",
+      "patternDesc": "Convert GitHub blob URLs to raw file URLs",
+      "redirectUrl": "https://raw.githubusercontent.com/$1/$2/$3",
+      "patternType": "R",
+      "processMatches": "noProcessing",
+      "disabled": true,
+      "grouped": false,
+      "appliesTo": [
+        "main_frame"
+      ]
+    },
+    {
+      "description": "[DuckDuckGo] Google !bangs to DDG",
+      "exampleUrl": "https://www.google.com/search?q=%21reddit+programming",
+      "exampleResult": "https://duckduckgo.com/?q=!reddit+programming",
+      "error": null,
+      "includePattern": "^https://www\\.google\\.com/search\\?.*q=(.*)$",
+      "excludePattern": "",
+      "patternDesc": "Redirect Google searches to DuckDuckGo (simplified)",
+      "redirectUrl": "https://duckduckgo.com/?q=$1",
+      "patternType": "R",
+      "processMatches": "noProcessing",
+      "disabled": true,
+      "grouped": false,
+      "appliesTo": [
+        "main_frame"
+      ]
+    },
+    {
+      "description": "[DuckDuckGo] !reddit custom bang",
+      "exampleUrl": "https://duckduckgo.com/?q=!reddit+programming",
+      "exampleResult": "https://www.reddit.com/search/?q=programming",
+      "error": null,
+      "includePattern": "^https://duckduckgo\\.com/\\?q=%21reddit\\+(.*)$",
+      "excludePattern": "",
+      "patternDesc": "Custom !reddit bang for direct Reddit search",
+      "redirectUrl": "https://www.reddit.com/search/?q=$1",
+      "patternType": "R",
+      "processMatches": "noProcessing",
+      "disabled": true,
+      "grouped": false,
+      "appliesTo": [
+        "main_frame"
+      ]
+    },
+    {
+      "description": "[DuckDuckGo] !gh GitHub search",
+      "exampleUrl": "https://duckduckgo.com/?q=!gh+javascript",
+      "exampleResult": "https://github.com/search?q=javascript",
+      "error": null,
+      "includePattern": "^https://duckduckgo\\.com/\\?q=%21gh\\+(.*)$",
+      "excludePattern": "",
+      "patternDesc": "Custom !gh bang for GitHub search",
+      "redirectUrl": "https://github.com/search?q=$1",
+      "patternType": "R",
+      "processMatches": "noProcessing",
+      "disabled": true,
+      "grouped": false,
+      "appliesTo": [
+        "main_frame"
+      ]
+    },
+    {
+      "description": "[DuckDuckGo] !yt YouTube search",
+      "exampleUrl": "https://duckduckgo.com/?q=!yt+coding+tutorials",
+      "exampleResult": "https://www.youtube.com/results?search_query=coding+tutorials",
+      "error": null,
+      "includePattern": "^https://duckduckgo\\.com/\\?q=%21yt\\+(.*)$",
+      "excludePattern": "",
+      "patternDesc": "Custom !yt bang for YouTube search",
+      "redirectUrl": "https://www.youtube.com/results?search_query=$1",
+      "patternType": "R",
+      "processMatches": "noProcessing",
+      "disabled": true,
+      "grouped": false,
+      "appliesTo": [
+        "main_frame"
+      ]
+    },
+    {
+      "description": "[DuckDuckGo] !so Stack Overflow search",
+      "exampleUrl": "https://duckduckgo.com/?q=!so+javascript+promises",
+      "exampleResult": "https://stackoverflow.com/search?q=javascript+promises",
+      "error": null,
+      "includePattern": "^https://duckduckgo\\.com/\\?q=%21so\\+(.*)$",
+      "excludePattern": "",
+      "patternDesc": "Custom !so bang for Stack Overflow search",
+      "redirectUrl": "https://stackoverflow.com/search?q=$1",
+      "patternType": "R",
+      "processMatches": "noProcessing",
+      "disabled": true,
+      "grouped": false,
+      "appliesTo": [
+        "main_frame"
+      ]
+    },
+    {
+      "description": "[DuckDuckGo] !w Wikipedia search",
+      "exampleUrl": "https://duckduckgo.com/?q=!w+artificial+intelligence",
+      "exampleResult": "https://en.wikipedia.org/wiki/Special:Search?search=artificial+intelligence",
+      "error": null,
+      "includePattern": "^https://duckduckgo\\.com/\\?q=%21w\\+(.*)$",
+      "excludePattern": "",
+      "patternDesc": "Custom !w bang for Wikipedia search",
+      "redirectUrl": "https://en.wikipedia.org/wiki/Special:Search?search=$1",
+      "patternType": "R",
+      "processMatches": "noProcessing",
+      "disabled": true,
+      "grouped": false,
+      "appliesTo": [
+        "main_frame"
+      ]
+    }
+  ]
+}
