@@ -87,15 +87,71 @@ Opera extension is no longer present (as of 2023/01/16)
 - Description: Convert GitHub blob URLs to raw file URLs
 - Applies to: main_frame
 
+## Fun with !bangs
+
+What are bangs?: <https://duckduckgo.com/bangs>
+
+### Google to DuckDuckGo (Simplified)
+- Example URL: `https://www.google.com/search?q=%21reddit+programming`
+- Include pattern: `^https://www\.google\.com/search\?.*q=(.*)$`
+- Redirect to: `https://duckduckgo.com/?q=$1`
+- Pattern type: Regular Expression
+- Description: Redirect Google searches to DuckDuckGo (simplified)
+- Applies to: main_frame
+
+### Custom Bang Shortcuts
+
+#### !reddit Custom Bang
+- Example URL: `https://duckduckgo.com/?q=!reddit+programming`
+- Include pattern: `^https://duckduckgo\.com/\?q=%21reddit\+(.*)$`
+- Redirect to: `https://www.reddit.com/search/?q=$1`
+- Pattern type: Regular Expression
+- Description: Custom !reddit bang for direct Reddit search
+- Applies to: main_frame
+
+#### !gh GitHub Search
+- Example URL: `https://duckduckgo.com/?q=!gh+javascript`
+- Include pattern: `^https://duckduckgo\.com/\?q=%21gh\+(.*)$`
+- Redirect to: `https://github.com/search?q=$1`
+- Pattern type: Regular Expression
+- Description: Custom !gh bang for GitHub search
+- Applies to: main_frame
+
+#### !yt YouTube Search
+- Example URL: `https://duckduckgo.com/?q=!yt+coding+tutorials`
+- Include pattern: `^https://duckduckgo\.com/\?q=%21yt\+(.*)$`
+- Redirect to: `https://www.youtube.com/results?search_query=$1`
+- Pattern type: Regular Expression
+- Description: Custom !yt bang for YouTube search
+- Applies to: main_frame
+
+#### !so Stack Overflow Search
+- Example URL: `https://duckduckgo.com/?q=!so+javascript+promises`
+- Include pattern: `^https://duckduckgo\.com/\?q=%21so\+(.*)$`
+- Redirect to: `https://stackoverflow.com/search?q=$1`
+- Pattern type: Regular Expression
+- Description: Custom !so bang for Stack Overflow search
+- Applies to: main_frame
+
+#### !w Wikipedia Search
+- Example URL: `https://duckduckgo.com/?q=!w+artificial+intelligence`
+- Include pattern: `^https://duckduckgo\.com/\?q=%21w\+(.*)$`
+- Redirect to: `https://en.wikipedia.org/wiki/Special:Search?search=$1`
+- Pattern type: Regular Expression
+- Description: Custom !w bang for Wikipedia search
+- Applies to: main_frame
+
 ### Import Ready Examples
+
 A complete set of these examples is available in `example_redirects.json` for easy import:
+
 1. Open Redirector
 2. Click "Edit Redirects"
 3. Click "Import" button
 4. Select `example_redirects.json`
 5. Enable the rules you want to use
 
-### Important Notes for Manifest V3:
+### Important Notes for Manifest V3
 
 1. **Resource Types**
    Valid resource types in Manifest V3 are:
