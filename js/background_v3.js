@@ -11,9 +11,16 @@ log.enabled = true;
 var enableNotifications = false;
 var storageArea = chrome.storage.local; // Default to local storage
 
-function isDarkMode() {
-  return matchMedia('(prefers-color-scheme: dark)').matches;
-}
+// Default to light mode
+let isDarkModeEnabled = false;
+
+// Listen for theme changes from popup or content scripts
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === 'theme-changed') {
+    isDarkModeEnabled = message.isDarkMode;
+    updateIcon();
+  }
+});
 
 var isFirefox = false; // Service workers don't have navigator.userAgent directly
 
@@ -38,7 +45,7 @@ function setIcon(image) {
 function updateIcon() {
   chrome.storage.local.get({ disabled: false }, function (obj) {
     // Set icon based on theme
-    if (isDarkMode()) {
+    if (isDarkModeEnabled) {
       setIcon('icon-dark-theme');
     } else {
       setIcon('icon-light-theme');
@@ -69,11 +76,75 @@ function convertRedirectToV3Rule(redirect, ruleId) {
     }`
   );
 
+  // Valid resourceTypes for Manifest V3
+  const validResourceTypes = [
+    'csp_report',
+    'font',
+    'image',
+    'main_frame',
+    'media',
+    'object',
+    'other',
+    'ping',
+    'script',
+    'stylesheet',
+    'sub_frame',
+    'webbundle',
+    'websocket',
+    'webtransport',
+    'xmlhttprequest'
+  ];
+
+  // Filter and map resourceTypes to valid V3 values
+  let resourceTypes = redirect.appliesTo || ['main_frame'];
+  const originalTypes = [...resourceTypes];
+
+  resourceTypes = resourceTypes
+    .map((type) => {
+      // Map old V2 types to V3 equivalents
+      if (type === 'imageset') {
+        log(`    🔄 Mapping resourceType: ${type} → image`);
+        return 'image';
+      }
+      if (type === 'object_subrequest') {
+        log(`    🔄 Mapping resourceType: ${type} → object`);
+        return 'object';
+      }
+      if (type === 'history') {
+        log(
+          `    ❌ Removing invalid resourceType: ${type} (not supported in V3)`
+        );
+        return null;
+      }
+      return type;
+    })
+    .filter((type) => type && validResourceTypes.includes(type));
+
+  // Log any filtered types
+  const filteredTypes = originalTypes.filter(
+    (type) =>
+      !resourceTypes.includes(type) &&
+      type !== 'imageset' &&
+      type !== 'object_subrequest' &&
+      type !== 'history'
+  );
+  if (filteredTypes.length > 0) {
+    log(`    ❌ Filtered invalid resourceTypes: ${filteredTypes.join(', ')}`);
+  }
+
+  // Ensure we always have at least one valid resourceType
+  if (resourceTypes.length === 0) {
+    log(`    ⚠️  No valid resourceTypes found, defaulting to main_frame`);
+    resourceTypes = ['main_frame'];
+  }
+
+  log(`    → Final resourceTypes: ${resourceTypes.join(', ')}`);
+
   const rule = {
     id: ruleId,
     priority: 1,
     condition: {
-      resourceTypes: redirect.appliesTo || ['main_frame']
+      resourceTypes
     },
     action: {
       type: 'redirect'
@@ -454,5 +525,32 @@ chrome.runtime.onInstalled.addListener(function (details) {
   initialize();
 });
 
+// Keep-alive mechanism
+const KEEP_ALIVE_INTERVAL = 25; // seconds
+
+function keepAlive() {
+  // Create an alarm that fires every KEEP_ALIVE_INTERVAL seconds
+  chrome.alarms.create('keepAlive', {
+    periodInMinutes: KEEP_ALIVE_INTERVAL / 60
+  });
+
+  // Listen for the alarm
+  chrome.alarms.onAlarm.addListener((alarm) => {
+    if (alarm.name === 'keepAlive') {
+      // Perform a lightweight operation to keep the service worker alive
+      log('Service worker keep-alive ping');
+      updateIcon();
+    }
+  });
+
+  // Also keep alive on any tab updates
+  chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+    if (changeInfo.status === 'complete') {
+      updateIcon();
+    }
+  });
+}
+
 // Initialize immediately when service worker starts
 initialize();
+keepAlive();
