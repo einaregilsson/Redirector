@@ -3,6 +3,7 @@
   "name": "Redirector",
   "description": "Automatically redirect content based on user-defined rules.",
   "version": "3.5.4",
+  "minimum_chrome_version": "88",
   "icons": {
     "16": "images/icon-light-theme-16.png",
     "19": "images/icon-light-theme-19.png",
@@ -29,7 +30,7 @@
   },
 
   "background": {
-    "service_worker": "js/background_v3.js"
+    "service_worker": "js/background.js"
   },
 
   "options_ui": {

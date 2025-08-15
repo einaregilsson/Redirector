@@ -6,7 +6,8 @@ function log(msg, force) {
     console.log('REDIRECTOR V3: ' + msg);
   }
 }
-log.enabled = true;
+// Enable logging in development (unpacked) builds, disable in production (store) builds
+log.enabled = !chrome.runtime.getManifest().key;
 
 var enableNotifications = false;
 var storageArea = chrome.storage.local; // Default to local storage
